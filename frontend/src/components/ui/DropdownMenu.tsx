@@ -34,7 +34,7 @@ export function DropdownMenu({ trigger, items }: { trigger: ReactNode; items: Me
       </div>
       {open && (
         <div
-          className="absolute right-0 mt-1 w-48 bg-white border border-border rounded-xl shadow-lg py-1.5 z-30 tf-fade-in"
+          className="absolute right-0 mt-1 w-48 bg-card border border-border rounded-xl shadow-lg dark:shadow-black/40 py-1.5 z-30 tf-fade-in"
           onClick={(e) => e.stopPropagation()}
         >
           {items.map((item) => (

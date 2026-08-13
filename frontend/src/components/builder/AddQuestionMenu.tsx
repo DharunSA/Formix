@@ -21,7 +21,7 @@ export function AddQuestionMenu({ onAdd }: { onAdd: (type: QuestionType) => void
   return (
     <div className="relative" ref={ref}>
       {open && (
-        <div className="absolute bottom-full mb-2 left-0 w-64 bg-white border border-border rounded-xl shadow-lg py-2 max-h-80 overflow-y-auto tf-scrollbar tf-fade-in z-20">
+        <div className="absolute bottom-full mb-2 left-0 w-64 bg-card border border-border rounded-xl shadow-lg py-2 max-h-80 overflow-y-auto tf-scrollbar tf-fade-in z-20">
           {QUESTION_TYPES.map(({ type, label, icon: Icon, hint }) => (
             <button
               key={type}

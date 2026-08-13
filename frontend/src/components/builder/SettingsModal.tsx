@@ -113,8 +113,14 @@ export function SettingsModal({
                   style={{ background: color, boxShadow: selected ? `0 0 0 2px white, 0 0 0 4px ${settings.theme_color ?? "#0d0d0d"}` : "none" }}
                   aria-label={color}
                 >
+                  {/* Contrasts against this swatch's own literal color, not the app theme -
+                      text-ink would flip to near-white in dark mode and vanish here. */}
                   {selected && (
-                    <CheckIcon width={14} height={14} className={color === "#0d0d0d" ? "text-white" : "text-ink"} />
+                    <CheckIcon
+                      width={14}
+                      height={14}
+                      className={color === "#0d0d0d" ? "text-white" : "text-[#191919]"}
+                    />
                   )}
                 </button>
               );

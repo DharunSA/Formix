@@ -19,14 +19,14 @@ export function QuestionEditor({
   };
 
   return (
-    <div className="max-w-xl mx-auto py-10 px-6">
+    <div className="max-w-xl mx-auto py-10 px-6 tf-fade-in">
       <div className="mb-6">
         <label className="text-xs font-medium text-ink-soft uppercase tracking-wide">Question type</label>
         <div className="relative mt-1.5">
           <select
             value={question.type}
             onChange={(e) => changeType(e.target.value as QuestionType)}
-            className="w-full appearance-none border border-border rounded-lg px-3.5 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-ink/20 focus:border-ink cursor-pointer"
+            className="w-full appearance-none border border-border rounded-lg px-3.5 py-2.5 text-sm bg-card focus:outline-none focus:ring-2 focus:ring-ink/20 focus:border-ink cursor-pointer"
           >
             {QUESTION_TYPES.map((t) => (
               <option key={t.type} value={t.type}>
@@ -80,7 +80,7 @@ export function QuestionEditor({
           <select
             value={question.settings?.max ?? 5}
             onChange={(e) => onChange({ settings: { ...question.settings, max: Number(e.target.value) } })}
-            className="mt-1.5 border border-border rounded-lg px-3.5 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-ink/20 focus:border-ink cursor-pointer"
+            className="mt-1.5 border border-border rounded-lg px-3.5 py-2 text-sm bg-card focus:outline-none focus:ring-2 focus:ring-ink/20 focus:border-ink cursor-pointer"
           >
             {[3, 5, 7, 10].map((n) => (
               <option key={n} value={n}>

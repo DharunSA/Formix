@@ -11,12 +11,16 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: Size;
 }
 
+// `text-background` (rather than a hardcoded text-white) is intentional: --ink and
+// --background are inverses of each other in both themes, so pairing them keeps
+// the primary/outline buttons legible whether --ink resolves to near-black (light
+// mode) or near-white (dark mode) without needing separate dark: overrides.
 const variantClasses: Record<Variant, string> = {
-  primary: "bg-ink text-white hover:bg-black disabled:bg-neutral-300",
-  secondary: "bg-surface text-ink hover:bg-neutral-200 border border-border",
-  outline: "bg-transparent text-ink border border-ink hover:bg-ink hover:text-white",
+  primary: "bg-ink text-background hover:opacity-90 disabled:opacity-40",
+  secondary: "bg-surface text-ink hover:bg-border/70 border border-border",
+  outline: "bg-transparent text-ink border border-ink hover:bg-ink hover:text-background",
   ghost: "bg-transparent text-ink hover:bg-surface",
-  danger: "bg-danger text-white hover:bg-red-700",
+  danger: "bg-danger text-white hover:opacity-90",
 };
 
 const sizeClasses: Record<Size, string> = {

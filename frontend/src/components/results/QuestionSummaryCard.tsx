@@ -7,7 +7,7 @@ export function QuestionSummaryCard({ summary, accent }: { summary: QuestionSumm
   const maxCount = summary.counts ? Math.max(...Object.values(summary.counts), 1) : 0;
 
   return (
-    <div className="bg-white border border-border rounded-2xl p-5">
+    <div className="bg-card border border-border rounded-2xl p-5">
       <div className="flex items-center gap-2 mb-4">
         <Icon width={15} height={15} className="text-ink-soft shrink-0" />
         <h3 className="text-sm font-semibold text-ink flex-1 truncate">{summary.title}</h3>

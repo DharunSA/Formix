@@ -75,17 +75,20 @@ Open `http://localhost:3000`.
 
 ## Architecture overview
 
-- **Creator dashboard** (`/`) lists forms with status + response/question counts, and
-  supports create / rename / duplicate / delete / publish-unpublish, all via modals
-  and toasts.
+- **Creator dashboard** (`/`) lists forms with status + response/question counts,
+  with search, status filtering, and sorting (last updated / most responses /
+  title), and supports create / rename / duplicate / delete / publish-unpublish,
+  all via modals and toasts.
 - **Builder** (`/forms/[id]/edit`) is a three-pane layout: a drag-to-reorder question
-  list (dnd-kit) on the left, an editor for the selected question in the center, and
-  a live, interactive preview of that question (styled like the real respondent
-  screen) on the right. Edits are debounced and auto-saved (~900ms after the last
-  change) with a "Saving… / Saved" indicator, rather than a single big "Save" button
-  — closer to how Typeform's own editor behaves. New questions are optimistic:
-  they get a temporary negative client-side id and are reconciled with the real
-  server id after the next autosave.
+  list (dnd-kit) on the left — each question can also be duplicated in place — an
+  editor for the selected question in the center, and a live, interactive preview
+  of that question (styled like the real respondent screen) on the right. A
+  Settings modal covers the welcome screen text, thank-you message, and
+  theme/background color. Edits are debounced and auto-saved (~900ms after the
+  last change) with a "Saving… / Saved" indicator, rather than a single big "Save"
+  button — closer to how Typeform's own editor behaves. New questions are
+  optimistic: they get a temporary negative client-side id and are reconciled
+  with the real server id after the next autosave.
 - **Respondent flow** (`/f/[slug]` for a published form, plus `/forms/[id]/preview`
   for the creator to test drafts) is one shared `RespondentFlow` component: a
   welcome screen, one animated full-screen question at a time (Framer Motion slide
@@ -102,6 +105,29 @@ Open `http://localhost:3000`.
   for responsiveness, and again authoritatively on the server
   (`app/validation.py`) before a response is ever persisted — the client check is a
   UX nicety, not the source of truth.
+
+## Bonus features implemented
+
+- **CSV export** — `GET /api/forms/{id}/responses/export.csv`, exposed as an
+  "Export CSV" button on the results page.
+- **Partial-response tracking / completion rate** — `responses.completed` +
+  nullable `submitted_at` let a response persist even if a respondent drops off
+  mid-form; the results page shows total vs. completed vs. partial with a small
+  completion bar, backed by `GET /api/forms/{id}/summary`.
+- **Custom themes** — per-form accent color and background color, editable from
+  the builder's Settings modal, applied live to the builder's preview panel and
+  to the actual respondent flow.
+- **Dark mode** — a toggle (top-right of the dashboard/builder/results headers)
+  switches the *creator-facing* app shell between light and dark via a CSS
+  custom-property theme (`globals.css` / `lib/theme.ts`), persisted to
+  `localStorage`. This is deliberately scoped away from the public respondent
+  flow and the builder's live-preview panel, which always render with the
+  *form's own* theme (`theme_color`/`theme_background`) regardless of the
+  creator's app preference — a respondent should never see the creator's
+  personal dark-mode setting bleed into the form they're filling out.
+
+Not implemented (out of scope per the assignment's own bonus/mocked list):
+logic jumps / conditional branching, file-upload questions.
 
 ## Database schema
 

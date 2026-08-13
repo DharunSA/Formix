@@ -26,6 +26,7 @@ export function QuestionList({
   onSelect,
   onReorder,
   onDelete,
+  onDuplicate,
   onAdd,
 }: {
   questions: Question[];
@@ -33,6 +34,7 @@ export function QuestionList({
   onSelect: (id: number) => void;
   onReorder: (questions: Question[]) => void;
   onDelete: (id: number) => void;
+  onDuplicate: (id: number) => void;
   onAdd: (type: QuestionType) => void;
 }) {
   const sensors = useSensors(
@@ -61,6 +63,7 @@ export function QuestionList({
                 selected={q.id === selectedId}
                 onSelect={() => onSelect(q.id)}
                 onDelete={() => onDelete(q.id)}
+                onDuplicate={() => onDuplicate(q.id)}
               />
             ))}
           </SortableContext>

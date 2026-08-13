@@ -19,14 +19,14 @@ export function ResponsesTable({
 }) {
   if (responses.length === 0) {
     return (
-      <div className="text-center py-16 text-ink-soft border border-dashed border-border rounded-2xl bg-white">
+      <div className="text-center py-16 text-ink-soft border border-dashed border-border rounded-2xl bg-card">
         No responses yet. Share your form to start collecting answers.
       </div>
     );
   }
 
   return (
-    <div className="bg-white border border-border rounded-2xl overflow-hidden">
+    <div className="bg-card border border-border rounded-2xl overflow-hidden">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-border text-left text-ink-soft">

@@ -34,7 +34,7 @@ export function OptionsEditor({
           <button
             onClick={() => remove(opt.id)}
             disabled={options.length <= 2}
-            className="text-neutral-300 hover:text-danger disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+            className="text-neutral-300 dark:text-neutral-600 hover:text-danger disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
           >
             <TrashIcon width={15} height={15} />
           </button>

@@ -5,7 +5,7 @@ import { CSS } from "@dnd-kit/utilities";
 import clsx from "clsx";
 import type { Question } from "@/lib/types";
 import { questionTypeMeta } from "@/lib/question-types";
-import { GripIcon, TrashIcon } from "@/components/ui/icons";
+import { CopyIcon, GripIcon, TrashIcon } from "@/components/ui/icons";
 
 export function QuestionListItem({
   question,
@@ -13,12 +13,14 @@ export function QuestionListItem({
   selected,
   onSelect,
   onDelete,
+  onDuplicate,
 }: {
   question: Question;
   index: number;
   selected: boolean;
   onSelect: () => void;
   onDelete: () => void;
+  onDuplicate: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: question.id,
@@ -33,14 +35,14 @@ export function QuestionListItem({
       onClick={onSelect}
       className={clsx(
         "group flex items-center gap-2 rounded-lg px-2 py-2.5 cursor-pointer border",
-        selected ? "bg-white border-ink shadow-sm" : "border-transparent hover:bg-white/70",
+        selected ? "bg-card border-ink shadow-sm" : "border-transparent hover:bg-card/70",
         isDragging && "opacity-50"
       )}
     >
       <button
         {...attributes}
         {...listeners}
-        className="text-neutral-300 hover:text-ink-soft cursor-grab active:cursor-grabbing shrink-0"
+        className="text-neutral-300 dark:text-neutral-600 hover:text-ink-soft cursor-grab active:cursor-grabbing shrink-0"
         onClick={(e) => e.stopPropagation()}
         aria-label="Drag to reorder"
       >
@@ -53,9 +55,20 @@ export function QuestionListItem({
       <button
         onClick={(e) => {
           e.stopPropagation();
+          onDuplicate();
+        }}
+        className="opacity-0 group-hover:opacity-100 text-neutral-300 dark:text-neutral-600 hover:text-ink-soft shrink-0 cursor-pointer"
+        aria-label="Duplicate question"
+        title="Duplicate question"
+      >
+        <CopyIcon width={13} height={13} />
+      </button>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
           onDelete();
         }}
-        className="opacity-0 group-hover:opacity-100 text-neutral-300 hover:text-danger shrink-0 cursor-pointer"
+        className="opacity-0 group-hover:opacity-100 text-neutral-300 dark:text-neutral-600 hover:text-danger shrink-0 cursor-pointer"
         aria-label="Delete question"
       >
         <TrashIcon width={14} height={14} />

@@ -14,6 +14,9 @@ import { LivePreviewPanel } from "./LivePreviewPanel";
 import { SettingsModal } from "./SettingsModal";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { useTheme } from "@/lib/theme";
+import clsx from "clsx";
 import { ArrowRightIcon, CheckIcon, EyeIcon, LinkIcon, LoaderIcon, SettingsIcon } from "@/components/ui/icons";
 
 type FormMeta = Pick<
@@ -33,6 +36,7 @@ const nextTempId = () => tempIdCounter--;
 export function BuilderClient({ formId }: { formId: number }) {
   const router = useRouter();
   const qc = useQueryClient();
+  const { theme, toggle: toggleTheme, mounted: themeMounted } = useTheme();
   const { data, isLoading } = useQuery({ queryKey: ["form", formId], queryFn: () => api.getForm(formId) });
 
   const [meta, setMeta] = useState<FormMeta | null>(null);
@@ -136,6 +140,26 @@ export function BuilderClient({ formId }: { formId: number }) {
     setSelectedId(id);
   };
 
+  const duplicateQuestion = (id: number) => {
+    setQuestions((prev) => {
+      if (!prev) return prev;
+      const index = prev.findIndex((q) => q.id === id);
+      if (index === -1) return prev;
+      const original = prev[index];
+      const newId = nextTempId();
+      const copy: Question = {
+        ...original,
+        id: newId,
+        options: original.options?.map((o) => ({ ...o, id: `opt_${Math.random().toString(36).slice(2, 8)}` })) ?? null,
+        settings: original.settings ? { ...original.settings } : null,
+      };
+      const next = [...prev];
+      next.splice(index + 1, 0, copy);
+      setSelectedId(newId);
+      return next;
+    });
+  };
+
   const deleteQuestion = (id: number) => {
     setQuestions((prev) => {
       const next = prev?.filter((q) => q.id !== id) ?? [];
@@ -167,15 +191,20 @@ export function BuilderClient({ formId }: { formId: number }) {
 
   if (isLoading || !meta || !questions) {
     return (
-      <div className="h-screen flex items-center justify-center text-ink-soft gap-2">
+      <div
+        className={clsx(
+          "h-screen flex items-center justify-center text-ink-soft gap-2 bg-page",
+          theme === "dark" && "dark"
+        )}
+      >
         <LoaderIcon width={18} height={18} /> Loading form...
       </div>
     );
   }
 
   return (
-    <div className="h-screen flex flex-col bg-[#fbfbfa]">
-      <header className="border-b border-border bg-white px-5 py-3 flex items-center justify-between gap-4 shrink-0">
+    <div className={clsx("h-screen flex flex-col bg-page tf-theme-transition", theme === "dark" && "dark")}>
+      <header className="border-b border-border bg-card px-5 py-3 flex items-center justify-between gap-4 shrink-0">
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => router.push("/")}
@@ -238,17 +267,19 @@ export function BuilderClient({ formId }: { formId: number }) {
             {status === "published" ? "Unpublish" : "Publish"}
             {status !== "published" && <ArrowRightIcon width={14} height={14} />}
           </Button>
+          <ThemeToggle theme={theme} onToggle={toggleTheme} mounted={themeMounted} />
         </div>
       </header>
 
       <div className="flex-1 grid grid-cols-[260px_1fr_400px] min-h-0">
-        <aside className="border-r border-border bg-[#f6f6f4] min-h-0">
+        <aside className="border-r border-border bg-panel min-h-0">
           <QuestionList
             questions={questions}
             selectedId={selectedId}
             onSelect={setSelectedId}
             onReorder={setQuestions}
             onDelete={deleteQuestion}
+            onDuplicate={duplicateQuestion}
             onAdd={addQuestion}
           />
         </aside>
@@ -267,7 +298,7 @@ export function BuilderClient({ formId }: { formId: number }) {
           )}
         </main>
 
-        <aside className="border-l border-border p-4 bg-[#f6f6f4] min-h-0">
+        <aside className="border-l border-border p-4 bg-panel min-h-0">
           <LivePreviewPanel
             question={selectedQuestion}
             index={Math.max(selectedIndex, 0)}

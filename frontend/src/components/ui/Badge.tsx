@@ -11,8 +11,8 @@ export function Badge({
     <span
       className={clsx(
         "inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full",
-        tone === "success" && "bg-emerald-50 text-emerald-700",
-        tone === "draft" && "bg-amber-50 text-amber-700",
+        tone === "success" && "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400",
+        tone === "draft" && "bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400",
         tone === "neutral" && "bg-surface text-ink-soft"
       )}
     >

@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Dark mode is opt-in via a `.dark` class (see lib/theme.tsx), scoped to
+   creator-facing surfaces only - the respondent flow keeps its own
+   per-form theme (theme_color / theme_background) regardless of the
+   creator's app-wide preference. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #1a1a1a;
@@ -7,8 +13,33 @@
   --ink-soft: #4a4a4a;
   --border: #e6e6e4;
   --surface: #f8f8f6;
+  --page: #fbfbfa;
+  --panel: #f6f6f4;
+  --card: #ffffff;
   --accent: #0d0d0d;
   --danger: #dc2626;
+}
+
+.dark {
+  --background: #0b0b0c;
+  --foreground: #ededec;
+  --ink: #f2f2f0;
+  --ink-soft: #9c9c96;
+  --border: #2c2c2c;
+  --surface: #1a1a1b;
+  --page: #0b0b0c;
+  --panel: #131314;
+  --card: #18181a;
+  --accent: #f2f2f0;
+  --danger: #f87171;
+  /* The .dark class lives on a div nested inside <body>, not on <body>/<html>
+     itself (dark mode is scoped away from the public respondent flow - see
+     lib/theme.ts) - so `body { color: var(--foreground) }` never repaints.
+     Setting color here explicitly means anything under this wrapper that
+     doesn't set its own text color class (a bare <textarea>/<input>, say)
+     still inherits the correct dark-scoped foreground instead of falling
+     through to <body>'s light one. */
+  color: var(--foreground);
 }
 
 @theme inline {
@@ -18,6 +49,9 @@
   --color-ink-soft: var(--ink-soft);
   --color-border: var(--border);
   --color-surface: var(--surface);
+  --color-page: var(--page);
+  --color-panel: var(--panel);
+  --color-card: var(--card);
   --color-danger: var(--danger);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -37,6 +71,11 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+.tf-theme-transition,
+.tf-theme-transition * {
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 ::selection {
@@ -66,7 +105,7 @@ body {
 }
 
 .tf-scrollbar::-webkit-scrollbar-thumb {
-  background: #d8d8d5;
+  background: var(--border);
   border-radius: 999px;
 }
 

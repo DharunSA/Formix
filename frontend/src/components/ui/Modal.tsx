@@ -39,7 +39,7 @@ export function Modal({
           }}
         >
           <motion.div
-            className="bg-white rounded-2xl shadow-2xl w-full overflow-hidden"
+            className="bg-card rounded-2xl shadow-2xl w-full overflow-hidden"
             style={{ maxWidth: width }}
             initial={{ opacity: 0, y: 12, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
