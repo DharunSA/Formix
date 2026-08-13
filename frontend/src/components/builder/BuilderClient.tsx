@@ -35,20 +35,26 @@ export function BuilderClient({ formId }: { formId: number }) {
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
   const [publishing, setPublishing] = useState(false);
   const loadedRef = useRef(false);
+  // Serialized snapshot of what's currently persisted on the server. Used to tell
+  // "the user changed something" apart from "our own save just echoed state back",
+  // which previously caused an autosave loop (see saveAll below).
+  const lastSavedRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (data && !loadedRef.current) {
-      setMeta({
+      const initialMeta: FormMeta = {
         title: data.title,
         description: data.description,
         welcome_title: data.welcome_title,
         welcome_description: data.welcome_description,
         thank_you_message: data.thank_you_message,
         theme_color: data.theme_color,
-      });
+      };
+      setMeta(initialMeta);
       setQuestions(data.questions);
       setStatus(data.status);
       setSelectedId(data.questions[0]?.id ?? null);
+      lastSavedRef.current = JSON.stringify({ meta: initialMeta, questions: data.questions });
       loadedRef.current = true;
     }
   }, [data]);
@@ -59,27 +65,40 @@ export function BuilderClient({ formId }: { formId: number }) {
       try {
         await api.patchForm(formId, currentMeta);
         const saved = await api.saveQuestions(formId, currentQuestions);
-        // Reconcile temp negative ids with real server ids without disrupting selection.
-        setQuestions((prev) => {
-          if (!prev) return prev;
-          const selectedIndex = prev.findIndex((q) => q.id === selectedId);
-          if (selectedIndex !== -1 && saved.questions[selectedIndex]) {
-            setSelectedId(saved.questions[selectedIndex].id);
-          }
-          return saved.questions;
+
+        // Map temp (negative) client-side ids to the real ids the server just assigned,
+        // positionally against what we sent. We only ever patch the `id` field on top of
+        // whatever is currently in state - never replace the array wholesale - so edits
+        // made locally while this request was in flight (new questions, title changes)
+        // are never clobbered by this response.
+        const idMap = new Map<number, number>();
+        currentQuestions.forEach((q, i) => {
+          if (q.id < 0 && saved.questions[i]) idMap.set(q.id, saved.questions[i].id);
         });
+
+        if (idMap.size > 0) {
+          setQuestions((prev) =>
+            prev ? prev.map((q) => (idMap.has(q.id) ? { ...q, id: idMap.get(q.id)! } : q)) : prev
+          );
+          setSelectedId((sid) => (sid !== null && idMap.has(sid) ? idMap.get(sid)! : sid));
+        }
+
+        const reconciledQuestions = currentQuestions.map((q) => ({ ...q, id: idMap.get(q.id) ?? q.id }));
+        lastSavedRef.current = JSON.stringify({ meta: currentMeta, questions: reconciledQuestions });
         setSaveState("saved");
       } catch (err) {
         setSaveState("idle");
         toast.error(err instanceof Error ? err.message : "Couldn't save changes");
       }
     },
-    [formId, selectedId]
+    [formId]
   );
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (!loadedRef.current || !meta || !questions) return;
+    const snapshot = JSON.stringify({ meta, questions });
+    if (snapshot === lastSavedRef.current) return; // nothing new to save - avoids the autosave-loop
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       saveAll(meta, questions);
@@ -87,8 +106,7 @@ export function BuilderClient({ formId }: { formId: number }) {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meta, questions]);
+  }, [meta, questions, saveAll]);
 
   const updateQuestion = (id: number, patch: Partial<Question>) => {
     setQuestions((prev) => (prev ? prev.map((q) => (q.id === id ? { ...q, ...patch } : q)) : prev));
