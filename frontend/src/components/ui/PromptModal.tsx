@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import { Modal } from "./Modal";
 import { Button } from "./Button";
 
@@ -24,10 +24,13 @@ export function PromptModal({
   placeholder?: string;
 }) {
   const [value, setValue] = useState(initialValue);
-
-  useEffect(() => {
+  // Reset the field whenever the modal transitions to open, without an effect
+  // (see https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes).
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
     if (open) setValue(initialValue);
-  }, [open, initialValue]);
+  }
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();

@@ -17,6 +17,7 @@ export interface RespondentFormShape {
   welcome_description?: string | null;
   thank_you_message?: string | null;
   theme_color?: string | null;
+  theme_background?: string | null;
   questions: Question[];
 }
 
@@ -88,8 +89,14 @@ export function RespondentFlow({
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
-      const isTextArea = target.tagName === "TEXTAREA";
-      if (e.key === "Enter" && !(isTextArea && !(e.metaKey || e.ctrlKey))) {
+      // Text/email/number/long-text fields handle their own Enter (see QuestionField)
+      // and stopPropagation so this never double-fires for them. The one case that
+      // still reaches here from a textarea is Shift+Enter, which should insert a
+      // newline rather than advance.
+      if (e.key === "Enter" && target.tagName === "TEXTAREA" && e.shiftKey) {
+        return;
+      }
+      if (e.key === "Enter") {
         e.preventDefault();
         goNext();
       } else if (e.key === "ArrowUp") {
@@ -126,7 +133,7 @@ export function RespondentFlow({
     <div
       ref={containerRef}
       className="h-screen w-screen overflow-hidden relative bg-[var(--tf-bg,#ffffff)] flex flex-col"
-      style={{ ["--tf-accent" as string]: accent }}
+      style={{ ["--tf-accent" as string]: accent, ["--tf-bg" as string]: form.theme_background || "#ffffff" }}
     >
       <ProgressBar progress={progress} />
 

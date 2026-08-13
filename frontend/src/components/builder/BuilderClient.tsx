@@ -11,13 +11,20 @@ import { emptyQuestionDefaults } from "@/lib/question-types";
 import { QuestionList } from "./QuestionList";
 import { QuestionEditor } from "./QuestionEditor";
 import { LivePreviewPanel } from "./LivePreviewPanel";
+import { SettingsModal } from "./SettingsModal";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { ArrowRightIcon, CheckIcon, EyeIcon, LinkIcon, LoaderIcon } from "@/components/ui/icons";
+import { ArrowRightIcon, CheckIcon, EyeIcon, LinkIcon, LoaderIcon, SettingsIcon } from "@/components/ui/icons";
 
 type FormMeta = Pick<
   FormDetail,
-  "title" | "description" | "welcome_title" | "welcome_description" | "thank_you_message" | "theme_color"
+  | "title"
+  | "description"
+  | "welcome_title"
+  | "welcome_description"
+  | "thank_you_message"
+  | "theme_color"
+  | "theme_background"
 >;
 
 let tempIdCounter = -1;
@@ -34,6 +41,7 @@ export function BuilderClient({ formId }: { formId: number }) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
   const [publishing, setPublishing] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const loadedRef = useRef(false);
   // Serialized snapshot of what's currently persisted on the server. Used to tell
   // "the user changed something" apart from "our own save just echoed state back",
@@ -49,6 +57,7 @@ export function BuilderClient({ formId }: { formId: number }) {
         welcome_description: data.welcome_description,
         thank_you_message: data.thank_you_message,
         theme_color: data.theme_color,
+        theme_background: data.theme_background,
       };
       setMeta(initialMeta);
       setQuestions(data.questions);
@@ -197,6 +206,10 @@ export function BuilderClient({ formId }: { formId: number }) {
               </>
             )}
           </span>
+          <Button variant="secondary" size="sm" onClick={() => setSettingsOpen(true)}>
+            <SettingsIcon width={14} height={14} />
+            Settings
+          </Button>
           <Link href={`/forms/${formId}/results`}>
             <Button variant="secondary" size="sm">
               Results
@@ -260,9 +273,18 @@ export function BuilderClient({ formId }: { formId: number }) {
             index={Math.max(selectedIndex, 0)}
             total={questions.length}
             themeColor={meta.theme_color ?? "#0d0d0d"}
+            themeBackground={meta.theme_background ?? "#ffffff"}
           />
         </aside>
       </div>
+
+      <SettingsModal
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        formTitle={meta.title}
+        settings={meta}
+        onChange={(patch) => setMeta((m) => (m ? { ...m, ...patch } : m))}
+      />
     </div>
   );
 }

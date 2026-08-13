@@ -24,12 +24,15 @@ export function QuestionField({
     if (autoFocus && inputRef.current) {
       inputRef.current.focus();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question.id, autoFocus]);
 
+  // Stops propagation once handled here so the page-level keydown listener (which
+  // advances on Enter for non-field questions like multiple choice) doesn't also
+  // fire for the same keypress and double-advance.
   const handleEnter = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+      e.stopPropagation();
       onSubmit?.();
     }
   };
@@ -59,12 +62,14 @@ export function QuestionField({
           value={(value as string) ?? ""}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+            if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
+              e.stopPropagation();
               onSubmit?.();
             }
+            // Shift+Enter falls through to the browser default (insert a newline).
           }}
-          placeholder="Type your answer here..."
+          placeholder="Type your answer here... (Shift+Enter for a new line)"
           rows={3}
           className="tf-underline-input resize-none"
         />

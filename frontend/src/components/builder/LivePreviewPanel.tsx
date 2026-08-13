@@ -10,11 +10,13 @@ export function LivePreviewPanel({
   index,
   total,
   themeColor,
+  themeBackground,
 }: {
   question: Question | null;
   index: number;
   total: number;
   themeColor: string;
+  themeBackground?: string;
 }) {
   const [value, setValue] = useState<unknown>(null);
 
@@ -28,8 +30,8 @@ export function LivePreviewPanel({
 
   return (
     <div
-      className="h-full flex flex-col rounded-2xl border border-border bg-white overflow-hidden"
-      style={{ ["--tf-accent" as string]: themeColor }}
+      className="h-full flex flex-col rounded-2xl border border-border overflow-hidden"
+      style={{ ["--tf-accent" as string]: themeColor, background: themeBackground || "#ffffff" }}
     >
       <div className="h-1 bg-neutral-100">
         <div
