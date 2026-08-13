@@ -1,0 +1,250 @@
+"use client";
+
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
+import { api, ApiError } from "@/lib/api";
+import type { FormDetail, Question, QuestionType } from "@/lib/types";
+import { emptyQuestionDefaults } from "@/lib/question-types";
+import { QuestionList } from "./QuestionList";
+import { QuestionEditor } from "./QuestionEditor";
+import { LivePreviewPanel } from "./LivePreviewPanel";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import { ArrowRightIcon, CheckIcon, EyeIcon, LinkIcon, LoaderIcon } from "@/components/ui/icons";
+
+type FormMeta = Pick<
+  FormDetail,
+  "title" | "description" | "welcome_title" | "welcome_description" | "thank_you_message" | "theme_color"
+>;
+
+let tempIdCounter = -1;
+const nextTempId = () => tempIdCounter--;
+
+export function BuilderClient({ formId }: { formId: number }) {
+  const router = useRouter();
+  const qc = useQueryClient();
+  const { data, isLoading } = useQuery({ queryKey: ["form", formId], queryFn: () => api.getForm(formId) });
+
+  const [meta, setMeta] = useState<FormMeta | null>(null);
+  const [questions, setQuestions] = useState<Question[] | null>(null);
+  const [status, setStatus] = useState<"draft" | "published">("draft");
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
+  const [publishing, setPublishing] = useState(false);
+  const loadedRef = useRef(false);
+
+  useEffect(() => {
+    if (data && !loadedRef.current) {
+      setMeta({
+        title: data.title,
+        description: data.description,
+        welcome_title: data.welcome_title,
+        welcome_description: data.welcome_description,
+        thank_you_message: data.thank_you_message,
+        theme_color: data.theme_color,
+      });
+      setQuestions(data.questions);
+      setStatus(data.status);
+      setSelectedId(data.questions[0]?.id ?? null);
+      loadedRef.current = true;
+    }
+  }, [data]);
+
+  const saveAll = useMemo(
+    () => async (currentMeta: FormMeta, currentQuestions: Question[]) => {
+      setSaveState("saving");
+      try {
+        await api.patchForm(formId, currentMeta);
+        const saved = await api.saveQuestions(formId, currentQuestions);
+        // Reconcile temp negative ids with real server ids without disrupting selection.
+        setQuestions((prev) => {
+          if (!prev) return prev;
+          const selectedIndex = prev.findIndex((q) => q.id === selectedId);
+          if (selectedIndex !== -1 && saved.questions[selectedIndex]) {
+            setSelectedId(saved.questions[selectedIndex].id);
+          }
+          return saved.questions;
+        });
+        setSaveState("saved");
+      } catch (err) {
+        setSaveState("idle");
+        toast.error(err instanceof Error ? err.message : "Couldn't save changes");
+      }
+    },
+    [formId, selectedId]
+  );
+
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (!loadedRef.current || !meta || !questions) return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      saveAll(meta, questions);
+    }, 900);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meta, questions]);
+
+  const updateQuestion = (id: number, patch: Partial<Question>) => {
+    setQuestions((prev) => (prev ? prev.map((q) => (q.id === id ? { ...q, ...patch } : q)) : prev));
+  };
+
+  const addQuestion = (type: QuestionType) => {
+    const id = nextTempId();
+    const newQuestion: Question = {
+      id,
+      type,
+      title: "",
+      description: null,
+      required: false,
+      order_index: questions?.length ?? 0,
+      ...emptyQuestionDefaults(type),
+    };
+    setQuestions((prev) => [...(prev ?? []), newQuestion]);
+    setSelectedId(id);
+  };
+
+  const deleteQuestion = (id: number) => {
+    setQuestions((prev) => {
+      const next = prev?.filter((q) => q.id !== id) ?? [];
+      if (selectedId === id) setSelectedId(next[0]?.id ?? null);
+      return next;
+    });
+  };
+
+  const handlePublishToggle = async () => {
+    if (!meta || !questions) return;
+    setPublishing(true);
+    try {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      await saveAll(meta, questions);
+      const updated = status === "published" ? await api.unpublishForm(formId) : await api.publishForm(formId);
+      setStatus(updated.status);
+      qc.invalidateQueries({ queryKey: ["forms"] });
+      toast.success(updated.status === "published" ? "Form published!" : "Form unpublished");
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : "Couldn't update publish status");
+    } finally {
+      setPublishing(false);
+    }
+  };
+
+  const selectedQuestion = questions?.find((q) => q.id === selectedId) ?? null;
+  const selectedIndex = questions?.findIndex((q) => q.id === selectedId) ?? -1;
+  const shareUrl = data && typeof window !== "undefined" ? `${window.location.origin}/f/${data.share_slug}` : "";
+
+  if (isLoading || !meta || !questions) {
+    return (
+      <div className="h-screen flex items-center justify-center text-ink-soft gap-2">
+        <LoaderIcon width={18} height={18} /> Loading form...
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-screen flex flex-col bg-[#fbfbfa]">
+      <header className="border-b border-border bg-white px-5 py-3 flex items-center justify-between gap-4 shrink-0">
+        <div className="flex items-center gap-3 min-w-0">
+          <button
+            onClick={() => router.push("/")}
+            className="text-ink-soft hover:text-ink text-sm cursor-pointer shrink-0"
+          >
+            ← Forms
+          </button>
+          <input
+            value={meta.title}
+            onChange={(e) => setMeta({ ...meta, title: e.target.value })}
+            className="text-base font-semibold text-ink bg-transparent focus:outline-none focus:bg-surface rounded px-1.5 py-1 min-w-0 w-64"
+          />
+          <Badge tone={status === "published" ? "success" : "draft"}>
+            {status === "published" ? "Published" : "Draft"}
+          </Badge>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-xs text-ink-soft flex items-center gap-1 mr-2 w-16">
+            {saveState === "saving" && (
+              <>
+                <LoaderIcon width={12} height={12} /> Saving
+              </>
+            )}
+            {saveState === "saved" && (
+              <>
+                <CheckIcon width={12} height={12} /> Saved
+              </>
+            )}
+          </span>
+          <Link href={`/forms/${formId}/results`}>
+            <Button variant="secondary" size="sm">
+              Results
+            </Button>
+          </Link>
+          <Link href={`/forms/${formId}/preview`} target="_blank">
+            <Button variant="secondary" size="sm">
+              <EyeIcon width={14} height={14} />
+              Preview
+            </Button>
+          </Link>
+          {status === "published" && (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                navigator.clipboard.writeText(shareUrl);
+                toast.success("Share link copied");
+              }}
+            >
+              <LinkIcon width={14} height={14} />
+              Copy link
+            </Button>
+          )}
+          <Button size="sm" onClick={handlePublishToggle} disabled={publishing}>
+            {status === "published" ? "Unpublish" : "Publish"}
+            {status !== "published" && <ArrowRightIcon width={14} height={14} />}
+          </Button>
+        </div>
+      </header>
+
+      <div className="flex-1 grid grid-cols-[260px_1fr_400px] min-h-0">
+        <aside className="border-r border-border bg-[#f6f6f4] min-h-0">
+          <QuestionList
+            questions={questions}
+            selectedId={selectedId}
+            onSelect={setSelectedId}
+            onReorder={setQuestions}
+            onDelete={deleteQuestion}
+            onAdd={addQuestion}
+          />
+        </aside>
+
+        <main className="overflow-y-auto tf-scrollbar min-h-0">
+          {selectedQuestion ? (
+            <QuestionEditor
+              key={selectedQuestion.id}
+              question={selectedQuestion}
+              onChange={(patch) => updateQuestion(selectedQuestion.id, patch)}
+            />
+          ) : (
+            <div className="h-full flex items-center justify-center text-ink-soft text-sm">
+              Add a question to get started
+            </div>
+          )}
+        </main>
+
+        <aside className="border-l border-border p-4 bg-[#f6f6f4] min-h-0">
+          <LivePreviewPanel
+            question={selectedQuestion}
+            index={Math.max(selectedIndex, 0)}
+            total={questions.length}
+            themeColor={meta.theme_color ?? "#0d0d0d"}
+          />
+        </aside>
+      </div>
+    </div>
+  );
+}
