@@ -8,7 +8,9 @@ import type {
   ResponseListItem,
 } from "./types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL = rawApiUrl.replace(/\/$/, "");
+
 
 export class ApiError extends Error {
   status: number;
