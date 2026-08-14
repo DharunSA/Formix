@@ -32,8 +32,8 @@ export function HeroSection() {
             </p>
 
             <div className="flex flex-wrap gap-4 mt-2">
-              <Link href="/signup" className="lp-btn-primary lp-font-btn px-8 py-4 text-base">
-                Get started — it&apos;s free
+              <Link href="/dashboard" className="lp-btn-primary lp-font-btn px-8 py-4 text-base">
+                Get started — no login needed
               </Link>
               <Link href="#features" className="lp-btn-secondary lp-font-btn px-8 py-4 text-base">
                 See how it works

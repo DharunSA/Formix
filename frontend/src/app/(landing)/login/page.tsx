@@ -24,9 +24,16 @@ const slides = [
 
 export default function LoginPage() {
   const router = useRouter();
+
+  // Instant zero-barrier access: redirect login directly to dashboard
+  useEffect(() => {
+    router.replace("/dashboard");
+  }, [router]);
+
   const [current, setCurrent] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [email, setEmail] = useState("");
+
 
   const next = useCallback(() => setCurrent((c) => (c + 1) % slides.length), []);
   const prev = useCallback(() => setCurrent((c) => (c - 1 + slides.length) % slides.length), []);

@@ -46,6 +46,12 @@ function getSlideClass(i: number, current: number): string {
 /* ─── Component ─────────────────────────────────────────── */
 export default function SignupPage() {
   const router = useRouter();
+
+  // Instant zero-barrier access: redirect signup directly to dashboard
+  useEffect(() => {
+    router.replace("/dashboard");
+  }, [router]);
+
   const [state, dispatch] = useReducer(carouselReducer, { current: 0 });
   const [isPlaying, setIsPlaying] = useState(true);
 
@@ -57,6 +63,7 @@ export default function SignupPage() {
   }, [isPlaying]);
 
   const handleSignup = () => router.push("/dashboard");
+
 
   return (
     <>

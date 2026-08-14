@@ -24,10 +24,10 @@ export function CtaSection() {
           conversational experiences that people actually enjoy filling out.
         </p>
         <Link
-          href="/signup"
+          href="/dashboard"
           className="lp-btn-primary lp-font-btn px-10 py-5 text-lg shadow-2xl hover:shadow-lp-primary/20 transition-all"
         >
-          Get started — it&apos;s free
+          Open App — Instant Access
         </Link>
         <p className="lp-font-label text-lp-muted">
           No credit card required · Free plan available

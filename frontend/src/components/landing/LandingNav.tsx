@@ -49,10 +49,11 @@ export function LandingNav() {
           </AnimatePresence>
         </Link>
 
-        {/* CTA only — "Log in" and "Integrations" removed */}
-        <Link href="/signup" className="lp-btn-primary lp-font-btn">
-          Get started — it&apos;s free
+        {/* CTA — Direct Instant Access to Dashboard */}
+        <Link href="/dashboard" className="lp-btn-primary lp-font-btn">
+          Open App — Free Access
         </Link>
+
       </div>
     </header>
   );
