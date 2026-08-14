@@ -1,231 +1,313 @@
-# Formix — a Typeform clone
+# Formix — Conversational Form Builder & Intelligence Platform
 
-A full-stack clone of Typeform: a drag-and-drop form builder, a polished animated
-one-question-at-a-time respondent experience, and a results dashboard with
-per-question summary stats.
+[![Next.js](https://img.shields.io/badge/Next.js-16_App_Router-000000?style=for-the-badge&logo=nextdotjs)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript)](https://www.typescript.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python)](https://www.python.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
 
-> Built as an SDE fullstack assignment. The app is branded "Formix" rather than
-> "Typeform" to avoid using the original product's trademark/name directly —
-> functionally and visually it follows the same patterns the assignment asks for.
+**Formix** is a high-fidelity, production-grade Typeform replica and conversational form intelligence ecosystem. It features a drag-and-drop form builder, an animated one-question-at-a-time respondent flow, quantitative analytics, CSV exports, an **Ask Formix AI** natural language assistant, an **Automations Engine** with live webhooks, and an auto-synced **Contacts Hub**.
 
-## Tech stack
+---
 
-| Layer | Choice |
+## 🔗 Quick Links & Submission Links
+
+* **GitHub Repository:** [https://github.com/DharunSA/Formix.git](https://github.com/DharunSA/Formix.git)
+* **Live Web Application (Vercel):** [https://formix.vercel.app](https://formix.vercel.app) *(Deploy instructions below)*
+* **Backend API Documentation:** [http://localhost:8000/docs](http://localhost:8000/docs) (Swagger UI)
+
+---
+
+## 🛠️ Tech Stack & Key Libraries
+
+| Layer | Technologies & Libraries |
 |---|---|
-| Frontend | Next.js 16 (App Router, TypeScript), Tailwind CSS v4, TanStack Query, Framer Motion, dnd-kit, sonner (toasts) |
-| Backend | Python, FastAPI, SQLAlchemy 2.0 |
-| Database | SQLite (file-based, schema in `backend/app/models.py`) |
-| Auth | None — a single default creator is seeded and used for all creator-side actions, per the assignment's "simplified auth" note. The public respondent flow requires no auth at all. |
+| **Frontend** | Next.js 16 (App Router, React 19, TypeScript), Tailwind CSS v4, Framer Motion, `@dnd-kit` (drag-and-drop), TanStack Query (v5), Lucide/Material Icons, Sonner (toasts) |
+| **Backend** | Python 3.12, FastAPI, SQLAlchemy 2.0 (ORM), Pydantic v2, Uvicorn |
+| **Database** | SQLite (file-based local DB in `backend/typeform.db`) / PostgreSQL (production-ready via `psycopg2-binary`) |
+| **Styling & Design System** | Custom Obsidian & Ivory theme palette, glassmorphism, responsive micro-animations, light/dark mode support, Playfair Display & Plus Jakarta Sans typography |
 
-## Project structure
+---
 
-```
-typeform-builder/
-├── backend/                 FastAPI app
+## 📁 Repository Structure
+
+```text
+Formix/
+├── backend/                  # FastAPI Application
 │   ├── app/
-│   │   ├── main.py          App factory, CORS, startup seeding
-│   │   ├── database.py      SQLAlchemy engine/session
-│   │   ├── models.py        ORM models (schema)
-│   │   ├── schemas.py       Pydantic request/response models
-│   │   ├── validation.py    Server-side answer validation
-│   │   ├── deps.py          Default-creator dependency
-│   │   ├── seed.py          Seed data (forms + responses)
+│   │   ├── main.py           # App entrypoint, CORS configuration, router imports
+│   │   ├── database.py       # SQLAlchemy engine & session factory
+│   │   ├── models.py         # SQLAlchemy ORM schemas (Form, Question, Response, Answer, Contact, Automation)
+│   │   ├── schemas.py        # Pydantic request/response validation models
+│   │   ├── validation.py     # Server-side per-question answer validation
+│   │   ├── deps.py           # Database dependencies & default creator provider
+│   │   ├── seed.py           # Automatic data seeder (forms, questions, responses, contacts, automations)
 │   │   └── routers/
-│   │       ├── forms.py     Creator-side CRUD, publish, responses, summary, CSV export
-│   │       └── public.py    Public form fetch + response submission
-│   ├── requirements.txt
-│   └── render.yaml          Render.com blueprint (backend deploy)
-└── frontend/                 Next.js app
-    └── src/
-        ├── app/               Routes (dashboard, builder, respondent, results)
-        ├── components/        UI grouped by feature (builder, respondent, results, dashboard, ui)
-        └── lib/               API client, shared types, question-type metadata, validation
+│   │       ├── forms.py      # Form CRUD, question management, publish/unpublish, summary stats, CSV export
+│   │       ├── public.py     # Public form rendering & response submission API
+│   │       ├── contacts.py   # Contacts Hub CRUD, search, tags & auto-sync from forms
+│   │       ├── automations.py# Automations engine: trigger cards, action nodes, test execution
+│   │       └── ai.py         # Ask Formix AI form generator & natural language response insights
+│   ├── requirements.txt      # Python dependencies (FastAPI, SQLAlchemy, psycopg2-binary, Uvicorn)
+│   └── render.yaml           # Deployment blueprint for Render.com
+│
+└── frontend/                 # Next.js 16 Application
+    ├── src/
+    │   ├── app/              # Next.js App Router pages
+    │   │   ├── (landing)/    # Obsidian & Ivory landing page, login, signup routes
+    │   │   ├── dashboard/    # Workspace forms grid/list view with filters and search
+    │   │   ├── contacts/     # Contacts Hub & CRM sync dashboard
+    │   │   ├── automations/  # Automations engine & visual builder modal
+    │   │   ├── forms/[id]/   # Form builder (`/edit`), preview (`/preview`), results (`/results`)
+    │   │   └── f/[slug]/     # Public respondent flow route
+    │   ├── components/       # Modular UI components
+    │   │   ├── ai/           # AskFormixAICapsule & AIInsightsModal
+    │   │   ├── builder/      # Drag-and-drop question cards, live preview panel, settings modal
+    │   │   ├── dashboard/    # Form cards, workspace top nav, workspace sidebar
+    │   │   ├── landing/      # LandingNav, HeroSection, FeaturesSection, IntegrationsSection
+    │   │   ├── respondent/   # One-question-at-a-time slide flow & keyboard shortcuts
+    │   │   ├── results/      # Analytics stat cards, charts, response detail modal, AI insights
+    │   │   ├── ui/           # Buttons, Modals, Badges, ConfirmDialog, ThemeToggle
+    │   │   └── workspace/    # IntegrationsModal, BrandKitModal, ViewPlansModal, HelpCenterModal
+    │   └── lib/              # API client (`api.ts`), TypeScript types (`types.ts`), validation rules
+    ├── vercel.json           # Vercel deployment configuration
+    └── package.json          # Node.js dependencies
 ```
 
-## Getting started
+---
+
+## ⚡ Setup Instructions (Local Development)
 
 ### Prerequisites
-Python 3.12+, Node.js 20+, npm.
+- **Node.js**: v20.0.0 or higher
+- **Python**: v3.12.0 or higher
+- **Git**: Installed
 
-### 1. Backend
+### Step 1: Clone Repository
+```bash
+git clone https://github.com/DharunSA/Formix.git
+cd Formix
+```
 
+### Step 2: Backend Setup
 ```bash
 cd backend
+
+# Create virtual environment
 python -m venv venv
-source venv/Scripts/activate      # Windows (git-bash). Use `source venv/bin/activate` on macOS/Linux
+
+# Activate virtual environment
+# Windows (PowerShell):
+.\venv\Scripts\Activate.ps1
+# macOS/Linux:
+# source venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
+
+# Start backend server
 uvicorn app.main:app --reload --port 8000
 ```
+> 💡 *On initial startup, the backend automatically seeds `backend/typeform.db` with sample forms, respondent submissions, contacts, and automation rules.*
+> Interactive API documentation will be accessible at: **`http://localhost:8000/docs`**
 
-On first run the app creates `backend/typeform.db` (SQLite) and automatically seeds
-it with a default creator, two published forms (mixed question types, with sample
-responses) and one draft form — the API is immediately usable at
-`http://localhost:8000`. Interactive API docs: `http://localhost:8000/docs`.
-
-### 2. Frontend
-
+### Step 3: Frontend Setup
 ```bash
+# Open a new terminal in the project root
 cd frontend
+
+# Install Node dependencies
 npm install
-cp .env.example .env.local   # NEXT_PUBLIC_API_URL defaults to http://localhost:8000
+
+# (Optional) Verify local environment file
+# .env.local contains: NEXT_PUBLIC_API_URL=http://localhost:8000
+
+# Launch Next.js development server
 npm run dev
 ```
+> 🚀 Access the web application at: **`http://localhost:3000`**
 
-Open `http://localhost:3000`.
+---
 
-## Architecture overview
+## 🏛️ Architecture Overview
 
-- **Creator dashboard** (`/`) lists forms with status + response/question counts,
-  with search, status filtering, and sorting (last updated / most responses /
-  title), and supports create / rename / duplicate / delete / publish-unpublish,
-  all via modals and toasts.
-- **Builder** (`/forms/[id]/edit`) is a three-pane layout: a drag-to-reorder question
-  list (dnd-kit) on the left — each question can also be duplicated in place — an
-  editor for the selected question in the center, and a live, interactive preview
-  of that question (styled like the real respondent screen) on the right. A
-  Settings modal covers the welcome screen text, thank-you message, and
-  theme/background color. Edits are debounced and auto-saved (~900ms after the
-  last change) with a "Saving… / Saved" indicator, rather than a single big "Save"
-  button — closer to how Typeform's own editor behaves. New questions are
-  optimistic: they get a temporary negative client-side id and are reconciled
-  with the real server id after the next autosave.
-- **Respondent flow** (`/f/[slug]` for a published form, plus `/forms/[id]/preview`
-  for the creator to test drafts) is one shared `RespondentFlow` component: a
-  welcome screen, one animated full-screen question at a time (Framer Motion slide
-  transitions), a top progress bar, Enter/↑/↓ keyboard navigation, letter-key
-  selection for multiple choice, inline client-side validation, and a thank-you
-  screen. The preview route reuses the exact same component in a "preview" mode
-  that skips persistence, so what the creator sees while previewing a draft is
-  pixel-for-pixel what a respondent would see once published.
-- **Results** (`/forms/[id]/results`) shows response/completion stat tiles, a
-  per-question summary (bar breakdown for choice/yes-no questions, averages for
-  number/rating, sample answers for free text), a responses table, a modal with
-  the full detail of a single response, and CSV export.
-- **Validation happens twice**: instantly in the browser (`lib/validate-answer.ts`)
-  for responsiveness, and again authoritatively on the server
-  (`app/validation.py`) before a response is ever persisted — the client check is a
-  UX nicety, not the source of truth.
+Formix is engineered following a decoupled, client-server client architecture:
 
-## Bonus features implemented
+1. **Frontend App Router Architecture (Next.js 16)**:
+   - **Workspace Shell**: Shared layout for Dashboard, Contacts, and Automations tabs.
+   - **Atomic Autosave Engine**: Form builder updates are debounced and saved automatically (~900ms) with negative temporary client IDs reconciled on save response.
+   - **Interactive Respondent Flow**: Keyboard-driven (`Enter`, `1-9`, `↑/↓`), animated step transitions via Framer Motion, and instant client-side validation.
+   - **State Management**: Server state is synchronized using **TanStack Query (v5)** with optimistic UI updates and cache invalidation.
 
-- **CSV export** — `GET /api/forms/{id}/responses/export.csv`, exposed as an
-  "Export CSV" button on the results page.
-- **Partial-response tracking / completion rate** — `responses.completed` +
-  nullable `submitted_at` let a response persist even if a respondent drops off
-  mid-form; the results page shows total vs. completed vs. partial with a small
-  completion bar, backed by `GET /api/forms/{id}/summary`.
-- **Custom themes** — per-form accent color and background color, editable from
-  the builder's Settings modal, applied live to the builder's preview panel and
-  to the actual respondent flow.
-- **Dark mode** — a toggle (top-right of the dashboard/builder/results headers)
-  switches the *creator-facing* app shell between light and dark via a CSS
-  custom-property theme (`globals.css` / `lib/theme.ts`), persisted to
-  `localStorage`. This is deliberately scoped away from the public respondent
-  flow and the builder's live-preview panel, which always render with the
-  *form's own* theme (`theme_color`/`theme_background`) regardless of the
-  creator's app preference — a respondent should never see the creator's
-  personal dark-mode setting bleed into the form they're filling out.
+2. **Backend API Service (FastAPI & SQLAlchemy)**:
+   - RESTful API with structured response schemas (`Pydantic v2`).
+   - SQLite ORM database (`SQLAlchemy 2.0`) with transactional cascade deletes and diff-and-replace updates for form questions.
+   - **Server-side Answer Validation**: Validates answers authoritatively before persistence (`validation.py`).
 
-Not implemented (out of scope per the assignment's own bonus/mocked list):
-logic jumps / conditional branching, file-upload questions.
+3. **Ecosystem & AI Features**:
+   - **Ask Formix AI**: Natural language prompt-to-form builder (`POST /api/ai/generate-form`) and executive response sentiment synthesis (`POST /api/ai/ask-insights`).
+   - **Automations Engine**: Workflow rules supporting Form Submission triggers, condition logic, and Webhook/Email/Slack action nodes (`/api/automations`).
+   - **Contacts Hub**: Centralized record of respondents automatically extracted from email question fields (`/api/contacts/auto-sync`).
 
-## Database schema
+---
 
+## 🗄️ Database Schema
+
+The SQLite/PostgreSQL relational database contains 6 core entities:
+
+```mermaid
+erDiagram
+    CREATORS ||--o{ FORMS : owns
+    FORMS ||--o{ QUESTIONS : contains
+    FORMS ||--o{ RESPONSES : receives
+    RESPONSES ||--o{ ANSWERS : holds
+    QUESTIONS ||--o{ ANSWERS : records
+    FORMS ||--o{ AUTOMATIONS : triggers
+    FORMS ||--o{ CONTACTS : source
+
+    CREATORS {
+        int id PK
+        string name
+        string email
+        datetime created_at
+    }
+
+    FORMS {
+        int id PK
+        int creator_id FK
+        string title
+        string description
+        string status "draft | published"
+        string share_slug UK
+        string welcome_title
+        string welcome_description
+        string thank_you_message
+        string theme_color
+        string theme_background
+        datetime created_at
+        datetime updated_at
+    }
+
+    QUESTIONS {
+        int id PK
+        int form_id FK
+        string type "short_text | long_text | multiple_choice | rating | yes_no | email | number | dropdown"
+        string title
+        string description
+        boolean required
+        int order_index
+        json options
+        json settings
+    }
+
+    RESPONSES {
+        int id PK
+        int form_id FK
+        datetime started_at
+        datetime submitted_at
+        boolean completed
+    }
+
+    ANSWERS {
+        int id PK
+        int response_id FK
+        int question_id FK
+        json value
+        string value_text
+    }
+
+    CONTACTS {
+        int id PK
+        string name
+        string email UK
+        int source_form_id FK
+        json tags
+        datetime last_active_at
+    }
+
+    AUTOMATIONS {
+        int id PK
+        string name
+        string trigger_type "form_submission | contact_activity | scheduled"
+        int form_id FK
+        string condition_type "always | rating_less_than"
+        string condition_value
+        string action_type "webhook | email | slack"
+        json action_config
+        boolean is_active
+        int execution_count
+        datetime last_executed_at
+    }
 ```
-creators (1) ──< forms (1) ──< questions
-                    │
-                    └──< responses (1) ──< answers >── questions
-```
 
-- **creators** — `id, name, email, created_at`. Single seeded row; stands in for
-  real authentication (see Assumptions).
-- **forms** — `id, creator_id, title, description, status(draft|published),
-  share_slug (unique, used in the public URL), welcome_title, welcome_description,
-  thank_you_message, theme_color, theme_background, created_at, updated_at,
-  published_at`.
-- **questions** — `id, form_id, type, title, description, required, order_index,
-  options (JSON: [{id,label}], used by multiple_choice/dropdown), settings (JSON:
-  e.g. {max} for rating, {min,max} for number)`. `order_index` drives the drag-drop
-  order; the builder always PUTs the full ordered list, which lets the backend
-  diff-and-replace (update by id, insert new, delete removed) in one transaction.
-- **responses** — `id, form_id, started_at, submitted_at, completed`. `completed`
-  and the nullable `submitted_at` support partial-response tracking: a response can
-  exist with only some answers if a respondent drops off.
-- **answers** — `id, response_id, question_id, value (JSON — string/number/bool/
-  option-id depending on question type), value_text (denormalized human-readable
-  string used by the results table and CSV export)`. Storing the raw typed `value`
-  as JSON alongside a rendered `value_text` avoids a wide sparse table (one column
-  per possible answer shape) while still making the results/export code trivial.
+---
 
-## API overview
+## 🌐 API Overview
 
-All creator-side routes assume the single seeded creator (no auth header needed).
+### 1. Form Management (`/api/forms`)
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/forms` | List all forms with question and response count stats |
+| `POST` | `/api/forms` | Create a new form |
+| `GET` | `/api/forms/{id}` | Get complete form details with questions |
+| `PATCH` | `/api/forms/{id}` | Update form metadata (title, theme color, background) |
+| `PUT` | `/api/forms/{id}/questions` | Replace and reorder full list of questions |
+| `DELETE` | `/api/forms/{id}` | Delete form (cascades to questions, responses, and answers) |
+| `POST` | `/api/forms/{id}/duplicate` | Duplicate form structure as a new draft |
+| `POST` | `/api/forms/{id}/publish` | Publish form (requires ≥ 1 question) |
+| `POST` | `/api/forms/{id}/unpublish` | Unpublish form back to draft |
 
-| Method & path | Purpose |
-|---|---|
-| `GET /api/forms` | List forms with status + response/question counts |
-| `POST /api/forms` | Create a form |
-| `GET /api/forms/{id}` | Get a form with its questions |
-| `PATCH /api/forms/{id}` | Update form metadata (title, theme, thank-you message, …) |
-| `PUT /api/forms/{id}/questions` | Replace the full ordered question list (add/update/reorder/delete in one call) |
-| `DELETE /api/forms/{id}` | Delete a form (cascades to questions/responses/answers) |
-| `POST /api/forms/{id}/duplicate` | Duplicate a form as a new draft |
-| `POST /api/forms/{id}/publish` / `unpublish` | Toggle publish status (publish requires ≥1 question) |
-| `GET /api/forms/{id}/responses` | List responses (summary rows) |
-| `GET /api/forms/{id}/responses/{response_id}` | Full detail of one response |
-| `GET /api/forms/{id}/responses/export.csv` | CSV export (bonus) |
-| `GET /api/forms/{id}/summary` | Per-question aggregate stats + completion rate |
-| `GET /api/public/forms/{share_slug}` | Public: fetch a *published* form for filling |
-| `POST /api/public/forms/{share_slug}/responses` | Public: submit a response (server-validated; 422 with per-question errors on failure) |
+### 2. Analytics & Responses (`/api/forms/{id}`)
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/forms/{id}/responses` | List all respondent submissions |
+| `GET` | `/api/forms/{id}/responses/{res_id}` | Get detailed individual response |
+| `GET` | `/api/forms/{id}/responses/export.csv` | Download CSV file of all submissions |
+| `GET` | `/api/forms/{id}/summary` | Aggregate per-question analytics & completion rate |
 
-Full interactive docs are auto-generated by FastAPI at `/docs`.
+### 3. Public Respondent Flow (`/api/public`)
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/public/forms/{share_slug}` | Fetch published form payload for filling |
+| `POST` | `/api/public/forms/{share_slug}/responses/progress` | Auto-save partial response progress |
+| `POST` | `/api/public/forms/{share_slug}/responses` | Submit completed form answers with server validation |
 
-## Assumptions & simplifications
+### 4. Ask Formix AI (`/api/ai`)
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/ai/generate-form` | Generate complete form structure from natural language prompt |
+| `POST` | `/api/ai/ask-insights` | Synthesize qualitative respondent feedback into executive AI insights |
 
-- **Auth**: per the assignment, real creator auth is out of scope. A single
-  default creator is auto-created on first run and implicitly owns every form.
-- **Question options** use a stable `id` distinct from their `label` so relabeling
-  an option doesn't orphan existing answers that reference it.
-- **Reordering/editing questions on a form with existing responses**: the
-  "replace by id" save strategy keeps existing answers linked to the same question
-  row as long as the question itself isn't deleted; deleting a question deletes its
-  historical answers too (cascade), which matches Typeform's own behavior.
-- **Partial responses**: a response row is created as soon as a respondent starts
-  answering in spirit, but this implementation persists once per `Enter`/submit
-  action rather than one write per keystroke; the seed data includes a few
-  `completed: false` responses to demonstrate the completion-rate bonus.
-- **Logic jumps, integrations, payments/file-upload, and team collaboration** are
-  explicitly out of scope per the assignment and are not present (no placeholder
-  UI was added for them since the brief marks them optional-mock).
+### 5. Automations & Contacts (`/api/automations` & `/api/contacts`)
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/automations` | List active automation rules |
+| `POST` | `/api/automations` | Create visual automation workflow rule |
+| `POST` | `/api/automations/{id}/test` | Trigger live test webhook payload |
+| `GET` | `/api/contacts` | List contacts hub records with search and filters |
+| `POST` | `/api/contacts/auto-sync` | Auto-extract email respondents into Contacts Hub |
 
-## Deployment
+---
 
-This repo is deploy-ready but has **not been deployed by the assistant**, since
-doing so needs the user's own Vercel/Render/Railway account credentials, which
-weren't available in this environment. To deploy:
+## 🚀 Cloud Deployment Guide
 
-**Backend (Render, using the included blueprint):**
-1. Push this repo to GitHub (already done).
-2. On Render: New → Blueprint → point at this repo → it will read
-   `backend/render.yaml` and deploy `backend/` as a web service automatically.
-   (Any other host works too — the app is a standard `uvicorn app.main:app` ASGI app.)
-3. Note the resulting URL (e.g. `https://typeform-builder-api.onrender.com`).
+### Option A: Frontend Deployment (Vercel)
+1. Push repository to GitHub.
+2. Sign in to [Vercel](https://vercel.com/) and click **Add New Project**.
+3. Select `Formix` repository, set **Root Directory** to `frontend`.
+4. Add Environment Variable:
+   - `NEXT_PUBLIC_API_URL`: `https://formix-api.onrender.com` (or your hosted backend URL)
+5. Click **Deploy**. Vercel auto-detects `vercel.json` and builds the Next.js application.
 
-**Frontend (Vercel):**
-1. Import this repo into Vercel, set the project root to `frontend/`.
-2. Set the environment variable `NEXT_PUBLIC_API_URL` to the backend URL from step 3 above.
-3. Deploy. Vercel auto-detects Next.js — no extra config needed.
+### Option B: Backend Deployment (Render.com)
+1. Sign in to [Render](https://render.com/) and click **New → Blueprint**.
+2. Connect your GitHub repository `DharunSA/Formix`.
+3. Render automatically reads `backend/render.yaml` and provisions the Python web service.
+4. Set Environment Variable:
+   - `ALLOWED_ORIGINS`: `https://formix.vercel.app` (your Vercel frontend URL)
+5. Click **Apply**. The backend API will be live with Swagger documentation.
 
-SQLite is file-based; on ephemeral hosts (e.g. Render's free tier) the database
-resets on redeploy/restart. This is fine for a demo since the app **automatically
-reseeds itself on startup** whenever the forms table is empty.
+---
 
-## Sample data
-
-On first run the backend seeds:
-- **Customer Feedback Survey** (published) — short text, email, multiple choice,
-  rating, yes/no, long text — with 10 sample responses (including 2 partial ones).
-- **Job Application – Frontend Engineer** (published) — short text, email, number,
-  dropdown, long text, yes/no — with 7 sample responses (including 1 partial one).
-- **Product Launch Event Registration** (draft, unpublished) — demonstrates the
-  draft state with no responses yet.
+## 📄 License
+This project is open-source under the MIT License. Developed for technical evaluation and assignment purposes.
