@@ -12,11 +12,13 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { QuestionSummaryCard } from "./QuestionSummaryCard";
 import { ResponsesTable } from "./ResponsesTable";
 import { ResponseDetailModal } from "./ResponseDetailModal";
-import { BarChartIcon, CheckIcon, DownloadIcon, LinkIcon, LoaderIcon } from "@/components/ui/icons";
+import { AIInsightsModal } from "@/components/ai/AIInsightsModal";
+import { BarChartIcon, CheckIcon, DownloadIcon, LinkIcon, LoaderIcon, SparkleIcon } from "@/components/ui/icons";
 import { toast } from "sonner";
 
 export function ResultsClient({ formId }: { formId: number }) {
   const [selectedResponse, setSelectedResponse] = useState<number | null>(null);
+  const [aiInsightsOpen, setAiInsightsOpen] = useState(false);
   const { theme, toggle, mounted } = useTheme();
 
   const { data: form, isLoading: loadingForm } = useQuery({
@@ -75,6 +77,15 @@ export function ResultsClient({ formId }: { formId: number }) {
               Copy link
             </Button>
           )}
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setAiInsightsOpen(true)}
+            className="border-purple-200 dark:border-purple-900 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-950/30"
+          >
+            <SparkleIcon width={14} height={14} className="text-purple-600" />
+            AI Insights
+          </Button>
           <a href={api.exportCsvUrl(formId)} download>
             <Button size="sm">
               <DownloadIcon width={14} height={14} />
@@ -84,6 +95,12 @@ export function ResultsClient({ formId }: { formId: number }) {
           <ThemeToggle theme={theme} onToggle={toggle} mounted={mounted} />
         </div>
       </header>
+
+      <AIInsightsModal
+        formId={formId}
+        open={aiInsightsOpen}
+        onClose={() => setAiInsightsOpen(false)}
+      />
 
       <main className="max-w-5xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">

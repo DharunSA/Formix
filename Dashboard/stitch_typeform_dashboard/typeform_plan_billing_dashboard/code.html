@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Plan &amp; Billing - Typeform</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&amp;family=Playfair+Display:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#474012",
+                        "on-primary-fixed-variant": "#4f434b",
+                        "on-primary-fixed": "#221920",
+                        "tertiary-container": "#b7ac74",
+                        "surface-container-low": "#f4f3f1",
+                        "surface-dim": "#dadad8",
+                        "surface-container-high": "#e9e8e6",
+                        "on-surface-variant": "#4c4549",
+                        "on-background": "#1a1c1b",
+                        "primary": "#0b0409",
+                        "surface-container-highest": "#e3e2e0",
+                        "inverse-on-surface": "#f1f1ef",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#685b63",
+                        "on-secondary-fixed": "#1d1a26",
+                        "on-tertiary-fixed-variant": "#4f4719",
+                        "inverse-primary": "#d3c2cb",
+                        "on-primary": "#ffffff",
+                        "surface": "#faf9f7",
+                        "inverse-surface": "#2f3130",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#d3c2cb",
+                        "secondary-container": "#e7dff1",
+                        "surface-bright": "#faf9f7",
+                        "tertiary": "#675f2e",
+                        "secondary-fixed-dim": "#cbc3d5",
+                        "surface-variant": "#e3e2e0",
+                        "secondary-fixed": "#e7dff1",
+                        "tertiary-fixed-dim": "#d3c78c",
+                        "on-secondary-container": "#676271",
+                        "on-secondary-fixed-variant": "#494553",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#cec4c8",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#f0e3a6",
+                        "on-tertiary-fixed": "#201c00",
+                        "outline": "#7d7579",
+                        "primary-fixed": "#f0dee7",
+                        "surface-container": "#efeeec",
+                        "primary-container": "#261c23",
+                        "background": "#faf9f7",
+                        "secondary": "#615c6b",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#1a1c1b",
+                        "on-primary-container": "#91828b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-padding": "120px",
+                        "stack-sm": "12px",
+                        "gutter": "32px",
+                        "stack-lg": "64px",
+                        "margin-x": "24px",
+                        "container-max": "1280px",
+                        "stack-md": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-md": ["Playfair Display"],
+                        "button-text": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Playfair Display"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "display-xl-mobile": ["Playfair Display"],
+                        "display-xl": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["20px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "400" }],
+                        "button-text": ["16px", { "lineHeight": "1", "fontWeight": "600" }],
+                        "headline-lg": ["48px", { "lineHeight": "1.2", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-lg": ["14px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-xl-mobile": ["48px", { "lineHeight": "1.2", "fontWeight": "400" }],
+                        "display-xl": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #F9F8F6; /* Ivory base */
+            color: #261C23; /* Obsidian primary */
+        }
+        .soft-shadow {
+            box-shadow: 0 40px 40px -10px rgba(38, 28, 35, 0.08);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col md:flex-row overflow-x-hidden">
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden md:flex flex-col gap-2 p-4 h-screen w-64 fixed left-0 top-0 bg-surface dark:bg-surface-container-low border-r border-surface-variant z-40">
+<div class="mb-8 px-4 py-2">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Typeform</h1>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 mb-6 bg-surface-container-lowest rounded-xl soft-shadow">
+<img alt="DS Avatar" class="w-10 h-10 rounded-full object-cover bg-surface-variant" data-alt="A small, professional headshot avatar of a user in a clean, brightly lit modern office setting. The style is sleek, realistic, and matches a premium SaaS application aesthetic with soft lighting and a neutral background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuASqTiOXGK9CJUi_mDz4g1-_bGOBRx3TVk3wDlpldbb0SD3aR2-gqPlNlOJMV330FymuRqD_ellT8SA9nhMFO6LSLAjiqU93gTPZY_6FGK4-TA5oiMXH5jSoDWFM7A2e0b_ujtnScinnCO7QNmyAbmPY20e_oGa3fCXQz1jtiWaKO67QtxIqdjpU0Bmpjz8dxT4zskxcvnGw757d-5PVZO7wtZkatfbyYQZCODUo50zbV5zt6FtxP84dw"/>
+<div>
+<p class="font-button-text text-button-text text-primary">Domenic S.</p>
+<p class="font-label-lg text-label-lg text-on-surface-variant">Pro Plan</p>
+</div>
+</div>
+<ul class="flex flex-col gap-2 flex-grow">
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-xl transition-all duration-200 cursor-pointer active:scale-98 font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+                    Personal Info
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-xl transition-all duration-200 cursor-pointer active:scale-98 font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                    Account Settings
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container dark:bg-secondary-fixed-dim text-on-secondary-container dark:text-on-secondary-fixed-variant rounded-xl font-bold transition-all duration-200 cursor-pointer active:scale-98 font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+                    Plan &amp; Billing
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-xl transition-all duration-200 cursor-pointer active:scale-98 font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="extension">extension</span>
+                    Integrations
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-xl transition-all duration-200 cursor-pointer active:scale-98 font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined" data-icon="shield">shield</span>
+                    Security
+                </a>
+</li>
+</ul>
+<div class="mt-auto px-2">
+<button class="w-full py-3 px-4 bg-primary-container text-on-primary rounded-full font-button-text text-button-text hover:opacity-90 transition-opacity">Upgrade Now</button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-grow md:ml-64 p-margin-x md:p-gutter max-w-container-max mx-auto w-full pt-24 md:pt-16">
+<!-- Mobile Top Nav (visible only on mobile) -->
+<header class="md:hidden fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-surface/90 shadow-sm flex justify-between items-center px-6 py-4">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Typeform</h1>
+<button class="text-primary"><span class="material-symbols-outlined" data-icon="menu">menu</span></button>
+</header>
+<!-- Page Header -->
+<div class="mb-stack-lg">
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4">Plan &amp; Billing</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Manage your subscription, track your usage, and view your billing history.</p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-stack-lg">
+<!-- Current Plan Card (Span 2 columns) -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-[24px] p-8 soft-shadow border border-surface-variant relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+<div class="absolute top-0 right-0 w-64 h-64 bg-secondary-container opacity-20 rounded-full blur-3xl -mr-10 -mt-10"></div>
+<div class="flex flex-col h-full justify-between relative z-10">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary mb-2">Pro Plan</h2>
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-tertiary-container/30 text-on-tertiary-container font-label-lg text-label-lg">
+<span class="w-2 h-2 rounded-full bg-tertiary mr-2"></span> Active
+                                </span>
+</div>
+<div class="text-right">
+<p class="font-headline-md text-headline-md text-primary">$49<span class="font-body-md text-body-md text-on-surface-variant">/mo</span></p>
+<p class="font-label-lg text-label-lg text-on-surface-variant mt-1">Billed annually</p>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 max-w-md">You are currently on the Pro plan, giving you access to advanced logic, unlimited forms, and premium support.</p>
+</div>
+<div class="flex gap-4">
+<button class="bg-primary-container text-on-primary px-8 py-3 rounded-full font-button-text text-button-text hover:opacity-90 transition-opacity">Upgrade Plan</button>
+<button class="bg-transparent border border-outline text-primary px-8 py-3 rounded-full font-button-text text-button-text hover:bg-surface-variant transition-colors">Cancel Subscription</button>
+</div>
+</div>
+</div>
+<!-- Usage Card -->
+<div class="bg-surface-container-lowest rounded-[24px] p-8 soft-shadow border border-surface-variant flex flex-col hover:-translate-y-1 transition-transform duration-300">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-secondary" data-icon="bar_chart">bar_chart</span>
+<h3 class="font-body-lg text-body-lg text-primary font-semibold">Response Usage</h3>
+</div>
+<div class="flex-grow flex flex-col justify-center">
+<div class="flex justify-between items-end mb-3">
+<span class="font-headline-md text-headline-md text-primary">1,250</span>
+<span class="font-body-md text-body-md text-on-surface-variant mb-1">/ 2,000 limit</span>
+</div>
+<!-- Progress Bar Container -->
+<div class="w-full bg-surface-variant rounded-full h-3 mb-3 overflow-hidden">
+<!-- Progress Bar Fill -->
+<div class="bg-primary-container h-3 rounded-full" style="width: 62.5%;"></div>
+</div>
+<p class="font-label-lg text-label-lg text-on-surface-variant text-right">Renews in 12 days</p>
+</div>
+</div>
+</div>
+<!-- Billing History Table Section -->
+<section class="bg-surface-container-lowest rounded-[32px] p-8 soft-shadow border border-surface-variant mb-section-padding">
+<h3 class="font-headline-md text-headline-md text-primary mb-6">Billing History</h3>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-surface-variant">
+<th class="py-4 px-4 font-label-lg text-label-lg text-on-surface-variant font-semibold">Date</th>
+<th class="py-4 px-4 font-label-lg text-label-lg text-on-surface-variant font-semibold">Description</th>
+<th class="py-4 px-4 font-label-lg text-label-lg text-on-surface-variant font-semibold">Amount</th>
+<th class="py-4 px-4 font-label-lg text-label-lg text-on-surface-variant font-semibold text-right">Invoice</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md">
+<tr class="border-b border-surface-variant/50 hover:bg-surface/50 transition-colors">
+<td class="py-4 px-4 text-primary">Oct 1, 2024</td>
+<td class="py-4 px-4 text-on-surface-variant">Pro Plan - Annual</td>
+<td class="py-4 px-4 text-primary font-medium">$588.00</td>
+<td class="py-4 px-4 text-right">
+<button class="text-secondary hover:text-primary transition-colors flex items-center justify-end gap-1 ml-auto group">
+<span class="font-label-lg text-label-lg group-hover:underline">Download</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="download">download</span>
+</button>
+</td>
+</tr>
+<tr class="border-b border-surface-variant/50 hover:bg-surface/50 transition-colors">
+<td class="py-4 px-4 text-primary">Oct 1, 2023</td>
+<td class="py-4 px-4 text-on-surface-variant">Pro Plan - Annual</td>
+<td class="py-4 px-4 text-primary font-medium">$588.00</td>
+<td class="py-4 px-4 text-right">
+<button class="text-secondary hover:text-primary transition-colors flex items-center justify-end gap-1 ml-auto group">
+<span class="font-label-lg text-label-lg group-hover:underline">Download</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="download">download</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface/50 transition-colors">
+<td class="py-4 px-4 text-primary">Oct 1, 2022</td>
+<td class="py-4 px-4 text-on-surface-variant">Basic Plan - Annual</td>
+<td class="py-4 px-4 text-primary font-medium">$288.00</td>
+<td class="py-4 px-4 text-right">
+<button class="text-secondary hover:text-primary transition-colors flex items-center justify-end gap-1 ml-auto group">
+<span class="font-label-lg text-label-lg group-hover:underline">Download</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="download">download</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mt-6 flex justify-center">
+<button class="bg-transparent text-primary px-6 py-2 rounded-full font-label-lg text-label-lg hover:bg-surface-variant transition-colors flex items-center gap-2">
+                    View Older Transactions <span class="material-symbols-outlined text-[18px]" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+</section>
+</main>
+</body></html>

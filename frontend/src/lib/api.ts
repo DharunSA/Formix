@@ -116,4 +116,49 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ answers, completed, response_id: responseId ?? undefined }),
     }),
+
+  // Contacts
+  listContacts: (search?: string, formId?: number) => {
+    const params = new URLSearchParams();
+    if (search) params.set("search", search);
+    if (formId) params.set("form_id", formId.toString());
+    const qs = params.toString();
+    return request<import("./types").Contact[]>(`/api/contacts${qs ? `?${qs}` : ""}`);
+  },
+  createContact: (data: { name?: string; email: string; source_form_id?: number; tags?: string[] }) =>
+    request<import("./types").Contact>("/api/contacts", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  autoSyncContacts: () =>
+    request<import("./types").ContactAutoSyncResult>("/api/contacts/auto-sync", { method: "POST" }),
+  deleteContact: (id: number) => request<void>(`/api/contacts/${id}`, { method: "DELETE" }),
+
+  // Automations
+  listAutomations: () => request<import("./types").Automation[]>("/api/automations"),
+  createAutomation: (data: import("./types").AutomationCreateInput) =>
+    request<import("./types").Automation>("/api/automations", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  updateAutomation: (id: number, data: Partial<import("./types").AutomationCreateInput>) =>
+    request<import("./types").Automation>(`/api/automations/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
+  deleteAutomation: (id: number) => request<void>(`/api/automations/${id}`, { method: "DELETE" }),
+  testAutomation: (id: number) =>
+    request<import("./types").AutomationTestResult>(`/api/automations/${id}/test`, { method: "POST" }),
+
+  // AI Assistant
+  generateFormWithAI: (prompt: string) =>
+    request<FormDetail>("/api/ai/generate-form", {
+      method: "POST",
+      body: JSON.stringify({ prompt }),
+    }),
+  getAIInsights: (formId: number, query?: string) =>
+    request<import("./types").AIInsights>("/api/ai/ask-insights", {
+      method: "POST",
+      body: JSON.stringify({ form_id: formId, query }),
+    }),
 };

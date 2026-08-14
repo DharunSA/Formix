@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app import models
+from app.database import get_db
 
 
 def get_default_creator(db: Session) -> models.Creator:

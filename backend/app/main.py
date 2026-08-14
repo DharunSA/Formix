@@ -2,11 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, SessionLocal, engine
-from app.routers import forms, public
+from app.routers import ai, automations, contacts, forms, public
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Typeform Builder API", version="1.0.0")
+app = FastAPI(title="Formix API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,6 +18,9 @@ app.add_middleware(
 
 app.include_router(forms.router)
 app.include_router(public.router)
+app.include_router(contacts.router)
+app.include_router(automations.router)
+app.include_router(ai.router)
 
 
 @app.on_event("startup")

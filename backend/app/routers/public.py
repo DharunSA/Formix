@@ -138,6 +138,61 @@ def submit_response(share_slug: str, payload: schemas.ResponseCreate, db: Sessio
             )
         )
 
+    # 1. Contact Extraction from Email fields
+    if payload.completed:
+        extracted_email = None
+        extracted_name = "Anonymous"
+        for q in form.questions:
+            val = validated.get(q.id)
+            if val and isinstance(val, str) and "@" in val and "." in val:
+                extracted_email = val.strip().lower()
+            if val and isinstance(val, str) and "name" in q.title.lower() and len(val.strip()) > 1:
+                extracted_name = val.strip()
+
+        if extracted_email:
+            existing_contact = db.query(models.Contact).filter(models.Contact.email == extracted_email).first()
+            if existing_contact:
+                existing_contact.submissions_count += 1
+                existing_contact.last_active_at = now_utc()
+                if extracted_name != "Anonymous" and existing_contact.name in ("Anonymous", "", None):
+                    existing_contact.name = extracted_name
+            else:
+                new_contact = models.Contact(
+                    name=extracted_name,
+                    email=extracted_email,
+                    source_form_id=form.id,
+                    tags=["Form Respondent", "Auto-Synced"],
+                    submissions_count=1,
+                    created_at=now_utc(),
+                    last_active_at=now_utc(),
+                )
+                db.add(new_contact)
+
+        # 2. Trigger Active Automations for this form
+        automations = (
+            db.query(models.Automation)
+            .filter(
+                models.Automation.is_active == True,
+                (models.Automation.form_id == form.id) | (models.Automation.form_id == None),
+            )
+            .all()
+        )
+        for auto in automations:
+            # Check condition
+            should_run = True
+            if auto.condition_type == "rating_less_than" and auto.condition_value:
+                try:
+                    thresh = float(auto.condition_value)
+                    # Check if any rating is less than thresh
+                    ratings = [v for q_id, v in validated.items() if isinstance(v, (int, float))]
+                    should_run = any(r < thresh for r in ratings) if ratings else False
+                except ValueError:
+                    should_run = True
+
+            if should_run:
+                auto.execution_count += 1
+                auto.last_executed_at = now_utc()
+
     db.commit()
     db.refresh(response)
     return response

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Support - Typeform</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&amp;family=Plus+Jakarta+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#4f434b",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#f0e3a6",
+                        "on-surface": "#1a1c1b",
+                        "secondary-container": "#e7dff1",
+                        "on-secondary-container": "#676271",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#e9e8e6",
+                        "surface-container": "#efeeec",
+                        "tertiary-fixed-dim": "#d3c78c",
+                        "surface-variant": "#e3e2e0",
+                        "primary": "#0b0409",
+                        "surface": "#faf9f7",
+                        "inverse-on-surface": "#f1f1ef",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#4f4719",
+                        "on-background": "#1a1c1b",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#e7dff1",
+                        "surface-bright": "#faf9f7",
+                        "on-primary-container": "#91828b",
+                        "surface-tint": "#685b63",
+                        "on-secondary-fixed": "#1d1a26",
+                        "inverse-primary": "#d3c2cb",
+                        "secondary-fixed-dim": "#cbc3d5",
+                        "outline-variant": "#cec4c8",
+                        "primary-fixed-dim": "#d3c2cb",
+                        "tertiary-container": "#b7ac74",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#201c00",
+                        "on-surface-variant": "#4c4549",
+                        "surface-container-low": "#f4f3f1",
+                        "inverse-surface": "#2f3130",
+                        "on-primary-fixed": "#221920",
+                        "tertiary": "#675f2e",
+                        "outline": "#7d7579",
+                        "on-tertiary-container": "#474012",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#494553",
+                        "background": "#faf9f7",
+                        "surface-dim": "#dadad8",
+                        "surface-container-highest": "#e3e2e0",
+                        "on-tertiary": "#ffffff",
+                        "secondary": "#615c6b",
+                        "primary-fixed": "#f0dee7",
+                        "primary-container": "#261c23"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "12px",
+                        "margin-x": "24px",
+                        "container-max": "1280px",
+                        "stack-lg": "64px",
+                        "stack-md": "24px",
+                        "section-padding": "120px",
+                        "gutter": "32px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Playfair Display"],
+                        "display-xl-mobile": ["Playfair Display"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "button-text": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Playfair Display"],
+                        "display-xl": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "400" }],
+                        "display-xl-mobile": ["48px", { "lineHeight": "1.2", "fontWeight": "400" }],
+                        "body-lg": ["20px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-lg": ["14px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "button-text": ["16px", { "lineHeight": "1", "fontWeight": "600" }],
+                        "headline-lg": ["48px", { "lineHeight": "1.2", "fontWeight": "400" }],
+                        "display-xl": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #F9F8F6; } /* Ivory base */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid #EBEBEB;
+            border-radius: 24px;
+            box-shadow: 0px 10px 40px -10px rgba(38, 28, 35, 0.08); /* 8% obsidian shadow */
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0px 14px 44px -10px rgba(38, 28, 35, 0.12);
+        }
+        .input-field {
+            border: 1px solid #EBEBEB;
+            border-radius: 16px;
+            transition: border-color 0.2s ease;
+        }
+        .input-field:focus {
+            border-color: #261C23;
+            border-width: 2px;
+            outline: none;
+        }
+    </style>
+</head>
+<body class="text-on-surface font-body-md antialiased pt-20 flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-x h-20 max-w-container-max mx-auto bg-surface/90 dark:bg-surface-container/90 backdrop-blur-md border-b border-outline-variant/30 dark:border-outline-variant/10">
+<div class="flex items-center gap-gutter">
+<a class="text-headline-md font-headline-md font-bold text-primary dark:text-on-primary-fixed" href="#">Typeform</a>
+<div class="hidden md:flex gap-stack-md">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary-fixed transition-colors font-label-lg text-label-lg hover:bg-secondary-container/50 dark:hover:bg-secondary-container/20 rounded-lg px-3 py-2 transition-all duration-200" href="#">Contact us</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary-fixed transition-colors font-label-lg text-label-lg hover:bg-secondary-container/50 dark:hover:bg-secondary-container/20 rounded-lg px-3 py-2 transition-all duration-200" href="#">Community</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-on-primary-fixed transition-colors font-label-lg text-label-lg hover:bg-secondary-container/50 dark:hover:bg-secondary-container/20 rounded-lg px-3 py-2 transition-all duration-200" href="#">Pricing</a>
+</div>
+</div>
+<div class="flex items-center gap-stack-sm">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center hover:bg-secondary-container/50 rounded-lg">
+<span class="material-symbols-outlined">help</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center hover:bg-secondary-container/50 rounded-lg">
+<span class="material-symbols-outlined">language</span>
+</button>
+<div class="hidden md:flex gap-stack-sm ml-stack-md">
+<button class="font-button-text text-button-text px-6 py-3 rounded-full border border-primary text-primary hover:bg-surface-container-high transition-colors">Sign in</button>
+<button class="font-button-text text-button-text px-6 py-3 rounded-full bg-primary-container text-on-primary hover:bg-primary transition-colors">Get started</button>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow max-w-container-max mx-auto w-full px-margin-x py-section-padding">
+<header class="mb-stack-lg text-center md:text-left">
+<h1 class="font-display-xl-mobile md:font-display-xl text-display-xl-mobile md:text-display-xl text-primary mb-stack-sm">Get in touch with Support</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">We're here to help you build beautiful, conversational forms. Search our knowledge base or send us a message directly.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column: Knowledge Base Search (Bento Style) -->
+<div class="lg:col-span-5 flex flex-col gap-gutter">
+<section class="glass-card p-8 flex flex-col justify-between h-full bg-surface-container-lowest">
+<div>
+<div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center mb-stack-md">
+<span class="material-symbols-outlined text-on-secondary-container" data-weight="fill" style="font-variation-settings: 'FILL' 1;">search</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-primary mb-stack-sm">Search Knowledge Base</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-stack-lg">Find quick answers, tutorials, and best practices in our comprehensive help center.</p>
+</div>
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full input-field py-4 pl-12 pr-4 font-body-md bg-surface-container-lowest text-on-surface placeholder-on-surface-variant/60 focus:ring-0" placeholder="How do I connect to Google Sheets?" type="text"/>
+</div>
+</section>
+<!-- Decorative Image/Texture Card -->
+<div class="glass-card h-48 overflow-hidden relative hidden md:block">
+<div class="w-full h-full bg-cover bg-center opacity-80 mix-blend-multiply" data-alt="A macro shot of beautifully textured, premium off-white paper with a subtle lavender watercolor wash gently bleeding across the surface. The lighting is bright, soft, and indirect, casting no harsh shadows. The aesthetic is clean, minimalist editorial modernism, feeling highly tactile and organic, serving as an abstract representation of calm creativity and support." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAdJP4m9etGgIw5DF2GGqwhyH7fB6rVjzbm1vlvS35dLcF8LJNNw9shFF71NUj-38FxXFpcMoI3xQY9c3eRgu0FGbswYqqeJLesTki2oS_3FZ5BA5ZOi05upCq_FpVpOlVwWp5W3n2KEifq0MlIf-q2MOWdCM_Xi3Uoi7MPlk2Jmmolj0FObcs25M12RH6jmFJjLshKtnawn2oSbnDpEigEZuLFeN6XKdm_U-elXqsfRl9VMY3qdGSXHw')"></div>
+</div>
+</div>
+<!-- Right Column: Support Ticket Form -->
+<div class="lg:col-span-7">
+<section class="glass-card p-8 md:p-12 bg-surface-container-lowest">
+<div class="flex items-center gap-stack-sm mb-stack-lg border-b border-surface-variant pb-stack-sm">
+<span class="material-symbols-outlined text-primary" data-weight="fill" style="font-variation-settings: 'FILL' 1;">mail</span>
+<h2 class="font-headline-md text-headline-md text-primary">Submit a Support Ticket</h2>
+</div>
+<form class="flex flex-col gap-stack-md">
+<div class="flex flex-col gap-2">
+<label class="font-label-lg text-label-lg text-on-surface" for="email">Email Address</label>
+<input class="w-full input-field py-3 px-4 font-body-md bg-surface-container-lowest text-on-surface focus:ring-0" id="email" placeholder="hello@yourcompany.com" type="email"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-lg text-label-lg text-on-surface" for="category">What do you need help with?</label>
+<div class="relative">
+<select class="w-full input-field py-3 pl-4 pr-10 font-body-md bg-surface-container-lowest text-on-surface appearance-none focus:ring-0" id="category">
+<option disabled="" selected="" value="">Select a topic...</option>
+<option value="billing">Billing &amp; Subscriptions</option>
+<option value="integrations">Integrations (Zapier, Sheets, etc.)</option>
+<option value="builder">Form Builder Issues</option>
+<option value="other">Something else</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-lg text-label-lg text-on-surface" for="description">Description</label>
+<textarea class="w-full input-field py-3 px-4 font-body-md bg-surface-container-lowest text-on-surface focus:ring-0 resize-y" id="description" placeholder="Please provide as much detail as possible..." rows="5"></textarea>
+</div>
+<div class="flex items-start gap-3 mt-2">
+<input class="mt-1 rounded text-primary focus:ring-primary border-outline-variant bg-surface-container-lowest" id="consent" type="checkbox"/>
+<label class="font-body-md text-body-md text-on-surface-variant text-sm" for="consent">I agree to the processing of my personal data as described in the Privacy Policy.</label>
+</div>
+<button class="mt-stack-sm font-button-text text-button-text px-8 py-4 rounded-full bg-primary-container text-on-primary hover:bg-primary transition-all self-start flex items-center gap-2" type="submit">
+                            Send Message
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</form>
+</section>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-stack-lg px-margin-x flex flex-col items-center gap-stack-md bg-secondary-container dark:bg-primary-container rounded-t-xl mt-auto">
+<div class="font-headline-md text-headline-md font-black text-primary dark:text-on-primary-fixed mb-stack-sm">Typeform</div>
+<div class="flex flex-wrap justify-center gap-stack-md mb-stack-md">
+<a class="font-label-lg text-label-lg text-on-secondary-container/80 dark:text-on-primary-container/80 hover:text-primary dark:hover:text-on-primary-fixed underline transition-all" href="#">Legal</a>
+<a class="font-label-lg text-label-lg text-on-secondary-container/80 dark:text-on-primary-container/80 hover:text-primary dark:hover:text-on-primary-fixed underline transition-all" href="#">Privacy Policy</a>
+<a class="font-label-lg text-label-lg text-on-secondary-container/80 dark:text-on-primary-container/80 hover:text-primary dark:hover:text-on-primary-fixed underline transition-all" href="#">Terms of Service</a>
+<a class="font-label-lg text-label-lg text-on-secondary-container/80 dark:text-on-primary-container/80 hover:text-primary dark:hover:text-on-primary-fixed underline transition-all" href="#">Cookies</a>
+<a class="font-label-lg text-label-lg text-on-secondary-container/80 dark:text-on-primary-container/80 hover:text-primary dark:hover:text-on-primary-fixed underline transition-all" href="#">Status</a>
+<a class="font-label-lg text-label-lg text-primary dark:text-on-primary-fixed underline hover:text-primary dark:hover:text-on-primary-fixed transition-all opacity-70" href="#">Contact Support</a>
+</div>
+<p class="font-body-md text-body-md text-on-secondary-container dark:text-on-primary-container text-center">© Typeform 2024. All rights reserved. Built for humans.</p>
+</footer>
+</body></html>

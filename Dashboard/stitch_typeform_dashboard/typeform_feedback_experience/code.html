@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Typeform - Give Feedback</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&amp;family=Plus+Jakarta+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-primary-fixed-variant": "#4f434b",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#f0e3a6",
+                        "on-surface": "#1a1c1b",
+                        "secondary-container": "#e7dff1",
+                        "on-secondary-container": "#676271",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#e9e8e6",
+                        "surface-container": "#efeeec",
+                        "tertiary-fixed-dim": "#d3c78c",
+                        "surface-variant": "#e3e2e0",
+                        "primary": "#0b0409",
+                        "surface": "#faf9f7",
+                        "inverse-on-surface": "#f1f1ef",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#4f4719",
+                        "on-background": "#1a1c1b",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#e7dff1",
+                        "surface-bright": "#faf9f7",
+                        "on-primary-container": "#91828b",
+                        "surface-tint": "#685b63",
+                        "on-secondary-fixed": "#1d1a26",
+                        "inverse-primary": "#d3c2cb",
+                        "secondary-fixed-dim": "#cbc3d5",
+                        "outline-variant": "#cec4c8",
+                        "primary-fixed-dim": "#d3c2cb",
+                        "tertiary-container": "#b7ac74",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#201c00",
+                        "on-surface-variant": "#4c4549",
+                        "surface-container-low": "#f4f3f1",
+                        "inverse-surface": "#2f3130",
+                        "on-primary-fixed": "#221920",
+                        "tertiary": "#675f2e",
+                        "outline": "#7d7579",
+                        "on-tertiary-container": "#474012",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#494553",
+                        "background": "#faf9f7",
+                        "surface-dim": "#dadad8",
+                        "surface-container-highest": "#e3e2e0",
+                        "on-tertiary": "#ffffff",
+                        "secondary": "#615c6b",
+                        "primary-fixed": "#f0dee7",
+                        "primary-container": "#261c23"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        "stack-sm": "12px",
+                        "margin-x": "24px",
+                        "container-max": "1280px",
+                        "stack-lg": "64px",
+                        "stack-md": "24px",
+                        "section-padding": "120px",
+                        "gutter": "32px"
+                    },
+                    fontFamily: {
+                        "headline-md": ["Playfair Display"],
+                        "display-xl-mobile": ["Playfair Display"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "button-text": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Playfair Display"],
+                        "display-xl": ["Playfair Display"]
+                    },
+                    fontSize: {
+                        "headline-md": ["32px", { lineHeight: "1.3", fontWeight: "400" }],
+                        "display-xl-mobile": ["48px", { lineHeight: "1.2", fontWeight: "400" }],
+                        "body-lg": ["20px", { lineHeight: "1.6", fontWeight: "400" }],
+                        "body-md": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+                        "label-lg": ["14px", { lineHeight: "1", letterSpacing: "0.05em", fontWeight: "600" }],
+                        "button-text": ["16px", { lineHeight: "1", fontWeight: "600" }],
+                        "headline-lg": ["48px", { lineHeight: "1.2", fontWeight: "400" }],
+                        "display-xl": ["72px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .slide-up {
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .slide-down {
+            animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideDown {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-40px); }
+        }
+        .form-section {
+            display: none;
+            opacity: 0;
+        }
+        .form-section.active {
+            display: flex;
+        }
+        
+        /* Custom Rating styles */
+        .rating-box {
+            transition: all 0.2s ease;
+        }
+        .rating-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px -10px rgba(38, 28, 35, 0.08);
+            border-color: #261c23;
+        }
+        .rating-box.selected {
+            background-color: #261c23;
+            color: #ffffff;
+            border-color: #261c23;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md h-screen w-full overflow-hidden flex flex-col">
+<!-- Header (Suppressed main nav, keeping only brand for trust context) -->
+<header class="w-full fixed top-0 left-0 z-50 p-6 flex justify-between items-center">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-on-primary-fixed tracking-tight">Typeform</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center w-full max-w-3xl mx-auto px-6 relative h-full">
+<!-- Question 1: Rating -->
+<section class="form-section active flex-col w-full slide-up gap-8" id="q1">
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-2 text-primary">
+<span class="font-label-lg text-label-lg">1</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">arrow_right_alt</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary md:font-headline-lg font-headline-md md:text-headline-lg text-headline-md">How would you rate your recent experience?</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">On a scale from 1 to 10, where 10 is excellent.</p>
+</div>
+<div class="grid grid-cols-10 gap-2 w-full mt-8">
+<!-- Rating Boxes generated via JS for compactness, hardcoded for predictability here -->
+<button class="rating-box aspect-square flex items-center justify-center border border-outline-variant rounded-lg font-body-lg text-body-lg bg-surface-container-lowest text-primary" onclick="selectRating(this, 1)">1</button>
+<button class="rating-box aspect-square flex items-center justify-center border border-outline-variant rounded-lg font-body-lg text-body-lg bg-surface-container-lowest text-primary" onclick="selectRating(this, 2)">2</button>
+<button class="rating-box aspect-square flex items-center justify-center border border-outline-variant rounded-lg font-body-lg text-body-lg bg-surface-container-lowest text-primary" onclick="selectRating(this, 3)">3</button>
+<button class="rating-box aspect-square flex items-center justify-center border border-outline-variant rounded-lg font-body-lg text-body-lg bg-surface-container-lowest text-primary" onclick="selectRating(this, 4)">4</button>
+<button class="rating-box aspect-square flex items-center justify-center border border-outline-variant rounded-lg font-body-lg text-body-lg bg-surface-container-lowest text-primary" onclick="selectRating(this, 5)">5</button>
+<button class="rating-box aspect-square flex items-center justify-center border border-outline-variant rounded-lg font-body-lg text-body-lg bg-surface-container-lowest text-primary" onclick="selectRating(this, 6)">6</button>
+<button class="rating-box aspect-square flex items-center justify-center border border-outline-variant rounded-lg font-body-lg text-body-lg bg-surface-container-lowest text-primary" onclick="selectRating(this, 7)">7</button>
+<button class="rating-box aspect-square flex items-center justify-center border border-outline-variant rounded-lg font-body-lg text-body-lg bg-surface-container-lowest text-primary" onclick="selectRating(this, 8)">8</button>
+<button class="rating-box aspect-square flex items-center justify-center border border-outline-variant rounded-lg font-body-lg text-body-lg bg-surface-container-lowest text-primary" onclick="selectRating(this, 9)">9</button>
+<button class="rating-box aspect-square flex items-center justify-center border border-outline-variant rounded-lg font-body-lg text-body-lg bg-surface-container-lowest text-primary" onclick="selectRating(this, 10)">10</button>
+</div>
+<div class="flex justify-between w-full mt-2 font-body-md text-body-md text-on-surface-variant">
+<span>Not great</span>
+<span>Exceptional</span>
+</div>
+</section>
+<!-- Question 2: Long Text -->
+<section class="form-section flex-col w-full gap-8" id="q2">
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-2 text-primary">
+<span class="font-label-lg text-label-lg">2</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">arrow_right_alt</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary md:font-headline-lg font-headline-md md:text-headline-lg text-headline-md">What could we do better?</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">We are always looking to improve. Share your thoughts.</p>
+</div>
+<div class="w-full mt-8">
+<textarea class="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 text-headline-md font-headline-md placeholder:text-surface-variant text-primary resize-none py-4 transition-colors" placeholder="Type your answer here..." rows="4"></textarea>
+</div>
+<div class="flex justify-start mt-8">
+<button class="bg-primary-container text-on-primary font-button-text text-button-text px-8 py-4 rounded-full flex items-center gap-2 hover:bg-on-surface transition-colors shadow-lg shadow-primary-container/20" onclick="nextSlide(2, 3)">
+                    OK
+                    <span class="material-symbols-outlined text-lg">check</span>
+</button>
+</div>
+</section>
+<!-- Question 3: Submit -->
+<section class="form-section flex-col w-full items-center text-center gap-8" id="q3">
+<div class="flex flex-col gap-4 items-center">
+<span class="material-symbols-outlined text-6xl text-primary mb-4" style="font-variation-settings: 'FILL' 1;">done_all</span>
+<h1 class="font-headline-lg text-headline-lg text-primary md:font-headline-lg font-headline-md md:text-headline-lg text-headline-md">Thank you for your feedback!</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-md">Your input helps us create a better experience for everyone.</p>
+</div>
+<div class="flex justify-center mt-8">
+<button class="bg-primary-container text-on-primary font-button-text text-button-text px-8 py-4 rounded-full flex items-center gap-2 hover:bg-on-surface transition-colors shadow-lg shadow-primary-container/20">
+                    Submit Feedback
+                </button>
+</div>
+</section>
+</main>
+<!-- Progress Indicator -->
+<footer class="w-full fixed bottom-0 left-0 p-6 flex items-center justify-between bg-surface/90 backdrop-blur-md">
+<div class="flex items-center gap-4">
+<div class="w-32 h-1 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary transition-all duration-500 ease-out w-1/3" id="progress-bar"></div>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface-variant"><span id="current-step">1</span> of 3</span>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg hover:bg-secondary-container/50 transition-colors text-primary flex items-center justify-center" onclick="prevSlide()">
+<span class="material-symbols-outlined">expand_less</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-secondary-container/50 transition-colors text-primary flex items-center justify-center" onclick="nextSlideManual()">
+<span class="material-symbols-outlined">expand_more</span>
+</button>
+</div>
+</footer>
+<script>
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        function updateProgress() {
+            const percentage = (currentStep / totalSteps) * 100;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+            document.getElementById('current-step').textContent = currentStep;
+        }
+
+        function transitionSlides(hideId, showId) {
+            const hideEl = document.getElementById(`q${hideId}`);
+            const showEl = document.getElementById(`q${showId}`);
+            
+            if(!hideEl || !showEl) return;
+
+            hideEl.classList.remove('slide-up');
+            hideEl.classList.add('slide-down');
+            
+            setTimeout(() => {
+                hideEl.classList.remove('active', 'slide-down');
+                showEl.classList.add('active', 'slide-up');
+                currentStep = showId;
+                updateProgress();
+            }, 500); // Wait for exit animation
+        }
+
+        function nextSlide(from, to) {
+            transitionSlides(from, to);
+        }
+
+        function nextSlideManual() {
+            if(currentStep < totalSteps) {
+                transitionSlides(currentStep, currentStep + 1);
+            }
+        }
+        
+        function prevSlide() {
+            if(currentStep > 1) {
+                // simple reverse transition for demo purposes
+                const hideEl = document.getElementById(`q${currentStep}`);
+                const showEl = document.getElementById(`q${currentStep - 1}`);
+                
+                hideEl.classList.remove('active', 'slide-up', 'slide-down');
+                showEl.classList.add('active', 'slide-up');
+                currentStep--;
+                updateProgress();
+            }
+        }
+
+        function selectRating(btn, value) {
+            // Remove selected from all siblings
+            const siblings = btn.parentElement.children;
+            for(let i=0; i<siblings.length; i++) {
+                siblings[i].classList.remove('selected');
+            }
+            // Add to clicked
+            btn.classList.add('selected');
+            
+            // Auto advance after slight delay for visual feedback
+            setTimeout(() => {
+                nextSlide(1, 2);
+            }, 600);
+        }
+    </script>
+</body></html>

@@ -124,3 +124,68 @@ export interface ApiValidationError {
   question_id: number;
   message: string;
 }
+
+export interface Contact {
+  id: number;
+  name?: string | null;
+  email: string;
+  source_form_id?: number | null;
+  source_form_title?: string | null;
+  submissions_count: number;
+  tags?: string[] | null;
+  last_active_at: string;
+  created_at: string;
+}
+
+export interface ContactAutoSyncResult {
+  synced_count: number;
+  new_contacts: number;
+  updated_contacts: number;
+  message: string;
+}
+
+export interface Automation {
+  id: number;
+  name: string;
+  trigger_type: string;
+  form_id?: number | null;
+  form_title?: string | null;
+  condition_type: string;
+  condition_value?: string | null;
+  action_type: string;
+  action_config?: Record<string, unknown> | null;
+  is_active: boolean;
+  execution_count: number;
+  last_executed_at?: string | null;
+  created_at: string;
+}
+
+export interface AutomationCreateInput {
+  name: string;
+  trigger_type: string;
+  form_id?: number | null;
+  condition_type: string;
+  condition_value?: string | null;
+  action_type: string;
+  action_config?: Record<string, unknown> | null;
+  is_active?: boolean;
+}
+
+export interface AutomationTestResult {
+  success: boolean;
+  status_code?: number | null;
+  message: string;
+  executed_at: string;
+}
+
+export interface AIInsights {
+  form_id: number;
+  form_title: string;
+  total_responses: number;
+  sentiment_score: number;
+  sentiment_label: string;
+  executive_summary: string;
+  key_findings: string[];
+  top_quotes: string[];
+  action_recommendations: string[];
+}

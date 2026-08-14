@@ -1,0 +1,330 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>All Contacts - Typeform</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style data-purpose="typography">
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      background-color: #f7f7f7;
+      color: #3d3d3d;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+<!-- BEGIN: TopHeader -->
+<header class="bg-white border-b border-gray-200 px-4 h-14 flex items-center justify-between sticky top-0 z-50">
+<div class="flex items-center space-x-3">
+<!-- User / Workspace Dropdown -->
+<button class="flex items-center hover:bg-gray-100 rounded-md py-1 px-2 transition-colors">
+<div class="bg-gray-800 text-white w-7 h-7 rounded-md flex items-center justify-center font-medium mr-2 shadow-sm">
+          D
+        </div>
+<span class="text-sm font-medium mr-1">dharun.s23</span>
+<i class="fas fa-chevron-down text-xs text-gray-500"></i>
+</button>
+</div>
+<div class="flex items-center space-x-4">
+<button class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
+<i class="fa-solid fa-shapes mr-2 text-gray-500"></i> Integrations
+      </button>
+<button class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
+<i class="fa-solid fa-briefcase mr-2 text-gray-500"></i> Brand kit
+      </button>
+<button class="bg-[#1e7e63] hover:bg-[#16604a] text-white text-sm font-medium py-1.5 px-4 rounded-full transition-colors">
+        View plans
+      </button>
+<button class="text-gray-500 hover:text-gray-700">
+<i class="fa-regular fa-circle-question text-lg"></i>
+</button>
+<button class="bg-gray-200 text-gray-600 text-xs font-bold w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">
+        DS
+      </button>
+</div>
+</header>
+<!-- END: TopHeader -->
+<!-- BEGIN: SecondaryNavigation -->
+<nav class="bg-white border-b border-gray-200 px-4 h-12 flex items-center sticky top-14 z-40">
+<div class="flex space-x-1 h-full">
+<button class="flex items-center text-sm font-medium text-gray-600 px-4 hover:text-gray-900 h-full">
+<i class="fa-solid fa-list-ul mr-2 text-gray-400"></i> Forms
+      </button>
+<button class="flex items-center text-sm font-medium text-gray-900 px-4 h-full border-b-2 border-gray-900">
+<i class="fa-solid fa-user-group mr-2"></i> Contacts
+      </button>
+<button class="flex items-center text-sm font-medium text-gray-600 px-4 hover:text-gray-900 h-full">
+<i class="fa-solid fa-bolt mr-2 text-gray-400"></i> Automations
+      </button>
+
+</div>
+</nav>
+<!-- END: SecondaryNavigation -->
+<!-- BEGIN: MainContentWrapper -->
+<div class="flex flex-1 overflow-hidden">
+<!-- BEGIN: Sidebar -->
+<aside class="w-64 bg-gray-50 flex flex-col justify-between border-r border-gray-200 sticky top-26 h-[calc(100vh-104px)] overflow-y-auto hidden md:flex">
+<div class="p-4 flex flex-col gap-4">
+<button class="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium py-2 px-4 rounded-md shadow-sm flex items-center justify-center transition-colors">
+<i class="fa-solid fa-user-plus mr-2"></i> Add contact
+        </button>
+<div>
+<div class="mb-2">
+<span class="text-[11px] font-semibold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">Early access</span>
+</div>
+<div class="flex items-center justify-between text-sm font-medium text-gray-800 mb-1 px-2 py-1.5 rounded-md cursor-pointer hover:bg-gray-200">
+<div class="flex items-center">
+<i class="fa-solid fa-users mr-3 text-gray-500"></i> Contact lists
+            </div>
+<button class="text-gray-400 hover:text-gray-600" onclick="document.getElementById('create-list-modal').classList.remove('hidden')"><i class="fa-solid fa-plus"></i></button>
+</div>
+<div class="flex items-center justify-between text-sm text-gray-600 px-2 py-1.5 rounded-md bg-gray-200 cursor-pointer font-medium ml-6">
+<span class="">All contacts</span>
+<span class="text-xs text-gray-500 font-normal">0</span>
+</div>
+</div>
+</div>
+<div class="p-4 mt-auto">
+<div class="flex flex-col gap-1 mb-4">
+<button class="flex items-center text-sm text-gray-600 hover:text-gray-900 py-1.5 px-2 rounded-md hover:bg-gray-200 transition-colors">
+<i class="fa-solid fa-lock mr-3 w-4 text-center"></i> Contact permissions
+          </button>
+<button class="flex items-center text-sm text-gray-600 hover:text-gray-900 py-1.5 px-2 rounded-md hover:bg-gray-200 transition-colors">
+<i class="fa-solid fa-gear mr-3 w-4 text-center"></i> Contact settings
+          </button>
+</div>
+<div class="border border-purple-200 bg-white rounded-lg p-2 shadow-sm flex items-center focus-within:ring-2 focus-within:ring-purple-300 transition-all">
+<i class="fa-solid fa-microphone text-gray-400 ml-2 mr-3"></i>
+<input class="w-full text-sm border-none focus:ring-0 p-0 text-gray-700 placeholder-gray-400 bg-transparent" placeholder="Ask Typeform AI" type="text">
+<button class="text-gray-300 hover:text-gray-500 mr-1"><i class="fa-regular fa-paper-plane"></i></button>
+</div>
+</div>
+</aside>
+<!-- END: Sidebar -->
+<!-- BEGIN: MainContentArea -->
+<main class="flex-1 p-6 lg:p-8 overflow-y-auto bg-[#f9fafb]">
+<div class="max-w-6xl mx-auto flex flex-col h-full">
+<!-- Main Header & Controls -->
+<div class="flex justify-between items-end mb-6">
+<h1 class="text-2xl font-normal text-gray-900">All contacts</h1>
+<button class="flex items-center text-sm font-medium text-gray-700 border border-gray-300 bg-white hover:bg-gray-50 py-1.5 px-3 rounded-md shadow-sm transition-colors">
+<i class="fa-solid fa-users mr-2 text-gray-500"></i> Public
+          </button>
+</div>
+<!-- Toolbar -->
+<div class="flex justify-between items-center mb-6">
+<div class="flex items-center space-x-2 w-full max-w-lg">
+<div class="relative w-full max-w-xs">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+</div>
+<input class="pl-10 pr-3 py-1.5 border border-gray-300 rounded-md w-full text-sm focus:ring-gray-900 focus:border-gray-900 shadow-sm text-gray-900 placeholder-gray-500" placeholder="Search contacts" type="text">
+</div>
+<button class="flex items-center text-sm font-medium text-gray-700 border border-gray-300 bg-white hover:bg-gray-50 py-1.5 px-3 rounded-md shadow-sm transition-colors" onclick="document.getElementById('filter-dropdown').classList.toggle('hidden')">
+<i class="fa-solid fa-filter mr-2 text-gray-500"></i> Filter
+            </button><div class="hidden absolute mt-2 w-[400px] bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-6" id="filter-dropdown">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-lg font-semibold text-gray-900">Filter</h3>
+<button class="text-gray-400 hover:text-gray-600" onclick="document.getElementById('filter-dropdown').classList.add('hidden')">
+<i class="fa-solid fa-xmark"></i>
+</button>
+</div>
+<div class="bg-gray-50 rounded-lg p-6 border border-gray-100">
+<h4 class="text-sm font-semibold text-gray-900 mb-4">Add filter</h4>
+<div class="relative mb-6">
+<div class="w-full bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
+  <div class="max-h-64 overflow-y-auto py-1">
+    <div class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors">
+      <div class="w-8 h-8 bg-gray-100 rounded flex items-center justify-center mr-3">
+        <i class="fa-regular fa-clock text-gray-600 text-sm"></i>
+      </div>
+      <span class="text-sm text-gray-700">Last change</span>
+    </div>
+    <div class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors">
+      <div class="w-8 h-8 bg-gray-100 rounded flex items-center justify-center mr-3">
+        <i class="fa-regular fa-envelope text-gray-600 text-sm"></i>
+      </div>
+      <span class="text-sm text-gray-700">Email</span>
+    </div>
+    <div class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors">
+      <div class="w-8 h-8 bg-gray-100 rounded flex items-center justify-center mr-3">
+        <i class="fa-solid fa-wand-magic-sparkles text-gray-600 text-sm"></i>
+      </div>
+      <span class="text-sm text-gray-700">Data enrichment</span>
+    </div>
+    <div class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors">
+      <div class="w-8 h-8 bg-gray-100 rounded flex items-center justify-center mr-3">
+        <i class="fa-solid fa-user-group text-gray-600 text-sm"></i>
+      </div>
+      <span class="text-sm text-gray-700">Name</span>
+    </div>
+    <div class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors">
+      <div class="w-8 h-8 bg-gray-100 rounded flex items-center justify-center mr-3">
+        <i class="fa-regular fa-comment-dots text-gray-600 text-sm"></i>
+      </div>
+      <span class="text-sm text-gray-700">Email subscription status</span>
+    </div>
+    <div class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors">
+      <div class="w-8 h-8 bg-gray-100 rounded flex items-center justify-center mr-3">
+        <i class="fa-solid fa-list-ul text-gray-600 text-sm"></i>
+      </div>
+      <span class="text-sm text-gray-700">Notes</span>
+    </div>
+    <div class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors">
+      <div class="w-8 h-8 bg-gray-100 rounded flex items-center justify-center mr-3">
+        <i class="fa-solid fa-phone text-gray-600 text-sm"></i>
+      </div>
+      <span class="text-sm text-gray-700">Phone number</span>
+    </div>
+    <div class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors">
+      <div class="w-8 h-8 bg-gray-100 rounded flex items-center justify-center mr-3">
+        <i class="fa-solid fa-list-ul text-gray-600 text-sm"></i>
+      </div>
+      <span class="text-sm text-gray-700">Job title</span>
+    </div>
+  </div>
+  <div class="border-t border-gray-100 p-3">
+    <div class="relative">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <i class="fa-solid fa-magnifying-glass text-gray-400 text-sm"></i>
+      </div>
+      <input type="text" class="w-full pl-9 pr-3 py-1.5 text-sm border-none focus:ring-0 text-gray-700 placeholder-gray-400" placeholder="Type something">
+    </div>
+  </div>
+</div>
+
+</div>
+<button class="flex items-center text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors">
+<i class="fa-solid fa-plus mr-2"></i> Add filter
+    </button>
+</div>
+<div class="flex justify-end space-x-3 mt-6">
+<button class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-md transition-colors" onclick="document.getElementById('filter-dropdown').classList.add('hidden')">Cancel</button>
+<button class="px-4 py-2 text-sm font-medium text-white bg-gray-800 hover:bg-gray-700 rounded-md shadow-sm transition-colors">Apply</button>
+</div>
+</div>
+</div>
+<div class="flex items-center space-x-3">
+<button class="text-gray-500 hover:text-gray-700 p-1.5 rounded-md hover:bg-gray-100 transition-colors" title="Sort">
+<i class="fa-solid fa-sort"></i>
+</button>
+<button class="text-gray-500 hover:text-gray-700 p-1.5 rounded-md hover:bg-gray-100 transition-colors" title="Customize columns">
+<i class="fa-solid fa-sliders"></i>
+</button>
+<div class="relative group">
+<button class="flex items-center text-sm font-medium text-white bg-gray-800 hover:bg-gray-700 py-1.5 px-4 rounded-md shadow-sm transition-colors">
+    Actions <i class="fa-solid fa-chevron-down ml-2 text-xs opacity-75"></i>
+</button>
+<!-- Dropdown Menu -->
+<div class="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-2 hidden group-hover:block">
+<!-- Section 1 -->
+<button class="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+<i class="fa-solid fa-user-plus mr-3 text-gray-500 w-4 text-center"></i>
+      Add new contact
+    </button>
+<button class="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+<i class="fa-solid fa-user-plus mr-3 text-gray-500 w-4 text-center"></i>
+      Import from CSV
+    </button>
+<div class="border-t border-gray-100 my-1"></div>
+<!-- Section 2 -->
+<button class="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+<div class="flex items-center">
+<i class="fa-solid fa-plus mr-3 text-gray-500 w-4 text-center"></i>
+        Add property
+      </div>
+<i class="fa-solid fa-chevron-right text-[10px] text-gray-400"></i>
+</button>
+<button class="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+<i class="fa-solid fa-gear mr-3 text-gray-500 w-4 text-center"></i>
+      Manage properties
+    </button>
+<div class="border-t border-gray-100 my-1"></div>
+<!-- Section 3 -->
+<div class="px-4 py-2">
+<span class="inline-block text-[11px] font-semibold text-blue-700 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full mb-2">
+        Automate follow-ups
+      </span>
+<button class="w-full flex items-center text-sm text-gray-700 hover:bg-gray-50 transition-colors py-1">
+<i class="fa-solid fa-wand-magic-sparkles mr-3 text-gray-500 w-4 text-center"></i>
+        Create automation
+      </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Empty State Content -->
+<div class="flex-1 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col items-center justify-center p-12 text-center">
+<div class="max-w-md">
+<h2 class="text-2xl font-normal text-gray-900 mb-4">Ready to build your contact list?</h2>
+<p class="text-gray-600 mb-8 leading-relaxed">
+              Create contacts automatically from forms with email questions.
+            </p>
+<ol class="text-left text-gray-700 mb-10 space-y-2 list-decimal list-inside mx-auto w-fit">
+<li class=""><a class="underline hover:text-gray-900" href="#">Add an email question</a> to a form</li>
+<li class="">Publish your form</li>
+<li class="">Click "Auto-add from forms" below</li>
+</ol>
+<div class="flex items-center justify-center space-x-3 mb-6">
+<button class="flex items-center text-sm font-medium text-gray-400 border border-gray-200 bg-gray-50 py-2 px-4 rounded-md cursor-not-allowed">
+<i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Auto-add from forms
+              </button>
+<button class="flex items-center text-sm font-medium text-gray-700 border border-gray-300 bg-white hover:bg-gray-50 py-2 px-4 rounded-md shadow-sm transition-colors">
+                Import contacts
+              </button>
+</div>
+<p class="text-sm text-gray-600">
+              Or, <a class="underline hover:text-gray-900" href="#">add individually.</a>
+</p>
+</div>
+</div>
+</div>
+</main>
+<!-- END: MainContentArea -->
+</div>
+<!-- END: MainContentWrapper -->
+<div class="hidden fixed inset-0 bg-black bg-opacity-50 z-[100] flex items-center justify-center p-4" id="create-list-modal">
+<div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden">
+<div class="flex justify-between items-center p-6 border-b border-gray-100">
+<div>
+<h2 class="text-2xl font-normal text-gray-900">Create list</h2>
+<p class="text-sm text-gray-500 mt-1">Lists will update automatically. Contacts will be included based on chosen filters.</p>
+</div>
+<button class="text-gray-400 hover:text-gray-600" onclick="document.getElementById('create-list-modal').classList.add('hidden')">
+<i class="fa-solid fa-xmark text-xl"></i>
+</button>
+</div>
+<div class="p-8 space-y-8">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">List name <span class="text-red-500">*</span></label>
+<input class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-gray-900 focus:border-gray-900 shadow-sm" placeholder="Enter list name" type="text">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-4">Filters <span class="text-red-500">*</span></label>
+<div class="bg-gray-50 rounded-lg p-8 border border-gray-100">
+<h4 class="text-sm font-semibold text-gray-900 mb-6">Add filter</h4>
+<div class="relative mb-8">
+<select class="w-full pl-4 pr-10 py-2.5 border border-gray-300 rounded-md text-sm focus:ring-gray-900 focus:border-gray-900 bg-white appearance-none">
+<option>Choose a question or data</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+<i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
+</div>
+</div>
+<button class="flex items-center text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors">
+<i class="fa-solid fa-plus mr-2"></i> Add filter
+          </button>
+</div>
+</div>
+</div>
+<div class="flex justify-end space-x-4 p-6 bg-gray-50 border-t border-gray-100">
+<button class="px-6 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 rounded-md transition-colors" onclick="document.getElementById('create-list-modal').classList.add('hidden')">Cancel</button>
+<button class="px-6 py-2 text-sm font-medium text-white bg-gray-800 hover:bg-gray-700 rounded-md shadow-sm transition-colors">Create list</button>
+</div>
+</div>
+</div>
+
+
+
+</body></html>

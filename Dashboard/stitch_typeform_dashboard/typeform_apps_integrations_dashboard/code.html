@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Apps &amp; Integrations - Typeform</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&amp;family=Playfair+Display:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-container": "#474012",
+                        "on-primary-fixed-variant": "#4f434b",
+                        "on-primary-fixed": "#221920",
+                        "tertiary-container": "#b7ac74",
+                        "surface-container-low": "#f4f3f1",
+                        "surface-dim": "#dadad8",
+                        "surface-container-high": "#e9e8e6",
+                        "on-surface-variant": "#4c4549",
+                        "on-background": "#1a1c1b",
+                        "primary": "#0b0409",
+                        "surface-container-highest": "#e3e2e0",
+                        "inverse-on-surface": "#f1f1ef",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#685b63",
+                        "on-secondary-fixed": "#1d1a26",
+                        "on-tertiary-fixed-variant": "#4f4719",
+                        "inverse-primary": "#d3c2cb",
+                        "on-primary": "#ffffff",
+                        "surface": "#faf9f7",
+                        "inverse-surface": "#2f3130",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#d3c2cb",
+                        "secondary-container": "#e7dff1",
+                        "surface-bright": "#faf9f7",
+                        "tertiary": "#675f2e",
+                        "secondary-fixed-dim": "#cbc3d5",
+                        "surface-variant": "#e3e2e0",
+                        "secondary-fixed": "#e7dff1",
+                        "tertiary-fixed-dim": "#d3c78c",
+                        "on-secondary-container": "#676271",
+                        "on-secondary-fixed-variant": "#494553",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#cec4c8",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#f0e3a6",
+                        "on-tertiary-fixed": "#201c00",
+                        "outline": "#7d7579",
+                        "primary-fixed": "#f0dee7",
+                        "surface-container": "#efeeec",
+                        "primary-container": "#261c23",
+                        "background": "#faf9f7",
+                        "secondary": "#615c6b",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#1a1c1b",
+                        "on-primary-container": "#91828b"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        "2xl": "1.5rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        "section-padding": "120px",
+                        "stack-sm": "12px",
+                        "gutter": "32px",
+                        "stack-lg": "64px",
+                        "margin-x": "24px",
+                        "container-max": "1280px",
+                        "stack-md": "24px"
+                    },
+                    fontFamily: {
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-md": ["Playfair Display"],
+                        "button-text": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Playfair Display"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "display-xl-mobile": ["Playfair Display"],
+                        "display-xl": ["Playfair Display"]
+                    },
+                    fontSize: {
+                        "body-lg": ["20px", { lineHeight: "1.6", fontWeight: "400" }],
+                        "headline-md": ["32px", { lineHeight: "1.3", fontWeight: "400" }],
+                        "button-text": ["16px", { lineHeight: "1", fontWeight: "600" }],
+                        "headline-lg": ["48px", { lineHeight: "1.2", fontWeight: "400" }],
+                        "body-md": ["16px", { lineHeight: "1.6", fontWeight: "400" }],
+                        "label-lg": ["14px", { lineHeight: "1", letterSpacing: "0.05em", fontWeight: "600" }],
+                        "display-xl-mobile": ["48px", { lineHeight: "1.2", fontWeight: "400" }],
+                        "display-xl": ["72px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "400" }]
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(38, 28, 35, 0.08)',
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-header {
+            backdrop-filter: blur(10px);
+        }
+        .integration-card {
+            transition: all 0.3s ease;
+        }
+        .integration-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px -10px rgba(38, 28, 35, 0.08);
+        }
+        /* Custom Toggle Switch styling */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #261C23;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #261C23;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen">
+<!-- TopNavBar (Web) / Hidden on Mobile -->
+<header class="hidden md:flex glass-header fixed top-0 w-full z-50 bg-surface/90 shadow-sm px-gutter py-4 justify-between items-center max-w-container-max mx-auto left-0 right-0">
+<div class="font-headline-md text-headline-md font-bold text-primary">Typeform</div>
+<nav class="flex gap-gutter items-center">
+<!-- Active logic: Assuming 'Settings' is active due to prompt context -->
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors active:scale-95 transition-transform" href="#">Profile</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors active:scale-95 transition-transform" href="#">Workspace</a>
+<a class="font-body-md text-body-md text-primary border-b-2 border-primary pb-1 active:scale-95 transition-transform" href="#">Settings</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="bg-primary-container text-on-primary font-button-text text-button-text px-6 py-3 rounded-full hover:bg-primary-container/90 transition-colors">Create Form</button>
+<img alt="DS User Avatar" class="w-10 h-10 rounded-full object-cover border border-outline-variant" data-alt="A small, circular avatar image showing a professional, modern headshot of a user. High quality, well-lit portrait suitable for a software dashboard user interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDflxzT2jKCdeO2ZXVE2S41fGdwjjMghY5hSnHOymfVMJIdwmbnYiN4-Je5zDoBavGR6YOkgkxl6dRShMyRhqlt6am5L3vnpdUEQaJaOwfFj7Jo8WzuoIKapGT-uzPz5t2jbf-6Py3gc8Exb9PWPF9MhB1uI1GIOwVDUWbDng0pnQE-TxbwWWMTcpTlCW-YTwF6vvEG9fAZbEQPP1_LRQRDaKe7Zw-y3KIYI7IdzPCBlSPfQxdnbrY54g"/>
+</div>
+</header>
+<div class="flex pt-[88px] md:pt-0">
+<!-- SideNavBar (Web) -->
+<aside class="hidden md:flex bg-surface h-screen w-64 fixed left-0 top-16 flex-col gap-2 p-4 z-40 border-r border-surface-container-high">
+<div class="mb-8 px-4 py-2">
+<div class="flex items-center gap-3">
+<img alt="DS Avatar" class="w-12 h-12 rounded-full object-cover" data-alt="A circular avatar for a user profile named Domenic S. It shows a modern, clean, well-lit professional headshot of a young adult, fitting an editorial modernism UI style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkCy-ihKt0xhRCtID188RL2-fXQvoUDscoZPCiPlcob7cUlYK7w6PpQNl8WGGKvkydmXYvKQq9d9M5434KZ7B0Zb3gBsrhtt5Ey9PWayl_QABURwcXzLyCiCsIgYfMGAk_gtKCalQUrBWZl9lHc6vl8TLsyDmRgh7cmEeaMWgO7SmYuYIaWSoyNlJv557F9aj9yzu_jtX5xAb1lDe165nCSGFOGyCZIQQ_emn77bbnJ9qcQaNlqhpXbg"/>
+<div>
+<h2 class="font-label-lg text-label-lg text-primary">Domenic S.</h2>
+<p class="text-sm text-on-surface-variant mt-1">Pro Plan</p>
+</div>
+</div>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 cursor-pointer active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-lg text-label-lg">Personal Info</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 cursor-pointer active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-lg text-label-lg">Account Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 cursor-pointer active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-lg text-label-lg">Plan &amp; Billing</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-secondary-container text-on-secondary-container font-bold transition-all duration-200 cursor-pointer active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="extension">extension</span>
+<span class="font-label-lg text-label-lg">Integrations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 cursor-pointer active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="shield">shield</span>
+<span class="font-label-lg text-label-lg">Security</span>
+</a>
+</nav>
+<div class="mt-auto px-2">
+<button class="w-full py-3 rounded-full border border-primary text-primary font-button-text text-button-text hover:bg-surface-container-high transition-colors">Upgrade Now</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 bg-background min-h-screen px-margin-x md:px-gutter py-section-padding md:py-24 max-w-container-max">
+<div class="max-w-5xl mx-auto">
+<header class="mb-12">
+<h1 class="font-headline-lg text-headline-lg text-primary mb-4">Apps &amp; Integrations</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Connect your favorite tools to streamline your workflow and sync data automatically.</p>
+</header>
+<!-- Search Bar -->
+<div class="mb-stack-lg relative max-w-xl">
+<span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full pl-12 pr-4 py-4 rounded-[16px] border border-surface-container-high bg-on-primary text-on-background font-body-md focus:outline-none focus:border-primary-container focus:border-2 transition-all shadow-sm" placeholder="Search integrations..." type="text"/>
+</div>
+<!-- Integration Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Slack Card -->
+<div class="integration-card bg-on-primary border border-surface-container-high rounded-[24px] p-8 flex flex-col h-full relative group">
+<div class="flex justify-between items-start mb-6">
+<div class="w-16 h-16 bg-surface-container-low rounded-2xl flex items-center justify-center p-3">
+<img alt="Slack Icon" class="w-full h-full object-contain" data-alt="The Slack logo icon, isolated on a light background. High resolution, clear vector-style graphic suitable for a modern SaaS dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAG8WWmbi3UegJA3q_MKkmiiKpj60WBTmHZJLs_qoOevt_50EBO_je5uoEnFGHTykUH7IlDzu4WkJfSCoILiQTRsCAcflrK8puveO6yc7fgXBSF5pUpG7y5zs7v93gamrs85iq5gf1f1wCifpbjaGFrLgnHHNY3a7ZCgV4KMoT2qFfYSW10VS56aTaBHGARqmNCbdJ_nxwMZBK05xr1mUeMuEeg2d4eyZoSqLbgLMvfsiZUbmZCm2zLFg"/>
+</div>
+<!-- Custom Toggle -->
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-surface-variant checked:border-primary-container transition-transform duration-200 ease-in-out z-10 top-0 checked:translate-x-6" id="toggle-slack" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer transition-colors duration-200 ease-in-out" for="toggle-slack"></label>
+</div>
+</div>
+<h3 class="font-headline-md text-2xl text-primary mb-2">Slack</h3>
+<p class="font-body-md text-on-surface-variant mb-6 flex-grow">Send form responses directly to your Slack channels and keep your team updated.</p>
+<div class="mt-auto">
+<button class="w-full py-3 rounded-full border border-primary text-primary font-button-text text-button-text hover:bg-surface-container-low transition-colors">Manage</button>
+</div>
+</div>
+<!-- Google Sheets Card -->
+<div class="integration-card bg-on-primary border border-surface-container-high rounded-[24px] p-8 flex flex-col h-full relative group">
+<div class="flex justify-between items-start mb-6">
+<div class="w-16 h-16 bg-surface-container-low rounded-2xl flex items-center justify-center p-3">
+<img alt="Google Sheets Icon" class="w-full h-full object-contain" data-alt="The Google Sheets logo icon, isolated on a light background. High resolution, crisp vector-style graphic suitable for a modern editorial SaaS interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRW-bOcfu1mpafW-1CXFJvPNx6XO1xYK7XqyhRml07KBwMGP54sLBVqKETQyYeM3TvxcQSn_dW5W9x3NUG-LCUPZdDsthfAUlIvxaA0LMSOqaekTZ8WMtQ2mh05q2rV-AVlJ_UcuESdvInsBUsBHoV5P6kjJT6uCF3kmgb6qBgvWEiL_jk1fHmT3d5KCPCTMwbBvWP67cFZCfOh2lM53w7-KY5_LQM8ADPgvEdxK3B3z6GEiyH5-m5PA"/>
+</div>
+<!-- Custom Toggle -->
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-surface-variant transition-transform duration-200 ease-in-out z-10 top-0" id="toggle-sheets" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer transition-colors duration-200 ease-in-out" for="toggle-sheets"></label>
+</div>
+</div>
+<h3 class="font-headline-md text-2xl text-primary mb-2">Google Sheets</h3>
+<p class="font-body-md text-on-surface-variant mb-6 flex-grow">Automatically export new entries to a spreadsheet for easy data analysis.</p>
+<div class="mt-auto">
+<button class="w-full py-3 rounded-full bg-primary-container text-on-primary font-button-text text-button-text hover:bg-primary-container/90 transition-colors">Connect</button>
+</div>
+</div>
+<!-- HubSpot Card -->
+<div class="integration-card bg-on-primary border border-surface-container-high rounded-[24px] p-8 flex flex-col h-full relative group">
+<div class="flex justify-between items-start mb-6">
+<div class="w-16 h-16 bg-surface-container-low rounded-2xl flex items-center justify-center p-3">
+<img alt="HubSpot Icon" class="w-full h-full object-contain" data-alt="The HubSpot sprocket logo icon, isolated on a light background. High quality, modern vector-style graphic suitable for a clean SaaS web application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4SkG5150QL1MAxyq5dRY61-0Pn7C77D4XfVsI7gGJNuOoD2A_7fK6ggfpekwyuUoRYn3c1SpTo7Exxhlbx-Xpknes-Nj_e-e2cXDv1WoZ4ztRLC0ypCVJhdubBpOYa7L4Mr7FbRf8Zq1T30k09OK0_5Osmi0Rurh7f9JrPe54ZhCgOHnWzAlaWRMbbaKodIr7k1bbfjcjLvSHrc1aE2ZxtusiUsR_bHTFRKnhR7VMUmETkgHPY2xj6A"/>
+</div>
+<!-- Custom Toggle -->
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-surface-variant transition-transform duration-200 ease-in-out z-10 top-0" id="toggle-hubspot" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer transition-colors duration-200 ease-in-out" for="toggle-hubspot"></label>
+</div>
+</div>
+<h3 class="font-headline-md text-2xl text-primary mb-2">HubSpot</h3>
+<p class="font-body-md text-on-surface-variant mb-6 flex-grow">Create and update contacts in your CRM whenever a form is submitted.</p>
+<div class="mt-auto">
+<button class="w-full py-3 rounded-full bg-primary-container text-on-primary font-button-text text-button-text hover:bg-primary-container/90 transition-colors">Connect</button>
+</div>
+</div>
+<!-- Webhooks Card -->
+<div class="integration-card bg-on-primary border border-surface-container-high rounded-[24px] p-8 flex flex-col h-full relative group">
+<div class="flex justify-between items-start mb-6">
+<div class="w-16 h-16 bg-surface-container-low rounded-2xl flex items-center justify-center p-3">
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="webhook">webhook</span>
+</div>
+<!-- Custom Toggle -->
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-surface-variant checked:border-primary-container transition-transform duration-200 ease-in-out z-10 top-0 checked:translate-x-6" id="toggle-webhooks" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer transition-colors duration-200 ease-in-out" for="toggle-webhooks"></label>
+</div>
+</div>
+<h3 class="font-headline-md text-2xl text-primary mb-2">Webhooks</h3>
+<p class="font-body-md text-on-surface-variant mb-6 flex-grow">Send real-time HTTP POST payloads to any URL when an event occurs.</p>
+<div class="mt-auto">
+<button class="w-full py-3 rounded-full border border-primary text-primary font-button-text text-button-text hover:bg-surface-container-low transition-colors">Manage</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer (from JSON) -->
+<footer class="mt-section-padding border-t border-surface-container-high pt-8 w-full bg-surface py-8 flex flex-col md:flex-row justify-between items-center px-gutter max-w-container-max mx-auto">
+<div class="font-label-lg text-label-lg text-on-surface-variant mb-4 md:mb-0">
+                    © 2024 Typeform SL. All rights reserved.
+                </div>
+<nav class="flex gap-6">
+<a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity hover:opacity-80" href="#">Support</a>
+<a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity hover:opacity-80" href="#">Privacy Policy</a>
+<a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity hover:opacity-80" href="#">Terms of Service</a>
+</nav>
+</footer>
+</main>
+</div>
+<!-- BottomNavBar (Mobile) / Hidden on Web -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface/90 backdrop-blur-md shadow-[0_-2px_10px_rgba(0,0,0,0.05)] flex justify-around items-center py-3 px-4 z-50">
+<a class="flex flex-col items-center gap-1 text-on-surface-variant active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="person">person</span>
+<span class="text-[10px] font-label-lg">Profile</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="grid_view">grid_view</span>
+<span class="text-[10px] font-label-lg">Workspace</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="settings">settings</span>
+<span class="text-[10px] font-label-lg">Settings</span>
+</a>
+</nav>
+</body></html>

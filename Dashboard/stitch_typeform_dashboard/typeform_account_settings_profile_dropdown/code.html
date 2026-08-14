@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Account Settings - Typeform</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&amp;family=Playfair+Display:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#474012",
+                        "on-primary-fixed-variant": "#4f434b",
+                        "on-primary-fixed": "#221920",
+                        "tertiary-container": "#b7ac74",
+                        "surface-container-low": "#f4f3f1",
+                        "surface-dim": "#dadad8",
+                        "surface-container-high": "#e9e8e6",
+                        "on-surface-variant": "#4c4549",
+                        "on-background": "#1a1c1b",
+                        "primary": "#0b0409",
+                        "surface-container-highest": "#e3e2e0",
+                        "inverse-on-surface": "#f1f1ef",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#685b63",
+                        "on-secondary-fixed": "#1d1a26",
+                        "on-tertiary-fixed-variant": "#4f4719",
+                        "inverse-primary": "#d3c2cb",
+                        "on-primary": "#ffffff",
+                        "surface": "#faf9f7",
+                        "inverse-surface": "#2f3130",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#d3c2cb",
+                        "secondary-container": "#e7dff1",
+                        "surface-bright": "#faf9f7",
+                        "tertiary": "#675f2e",
+                        "secondary-fixed-dim": "#cbc3d5",
+                        "surface-variant": "#e3e2e0",
+                        "secondary-fixed": "#e7dff1",
+                        "tertiary-fixed-dim": "#d3c78c",
+                        "on-secondary-container": "#676271",
+                        "on-secondary-fixed-variant": "#494553",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#cec4c8",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#f0e3a6",
+                        "on-tertiary-fixed": "#201c00",
+                        "outline": "#7d7579",
+                        "primary-fixed": "#f0dee7",
+                        "surface-container": "#efeeec",
+                        "primary-container": "#261c23",
+                        "background": "#faf9f7",
+                        "secondary": "#615c6b",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#1a1c1b",
+                        "on-primary-container": "#91828b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-padding": "120px",
+                        "stack-sm": "12px",
+                        "gutter": "32px",
+                        "stack-lg": "64px",
+                        "margin-x": "24px",
+                        "container-max": "1280px",
+                        "stack-md": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-md": ["Playfair Display"],
+                        "button-text": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Playfair Display"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "display-xl-mobile": ["Playfair Display"],
+                        "display-xl": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["20px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "400" }],
+                        "button-text": ["16px", { "lineHeight": "1", "fontWeight": "600" }],
+                        "headline-lg": ["48px", { "lineHeight": "1.2", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-lg": ["14px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-xl-mobile": ["48px", { "lineHeight": "1.2", "fontWeight": "400" }],
+                        "display-xl": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "400" }]
+                    },
+                    "boxShadow": {
+                        "soft": "0 10px 40px -10px rgba(38, 28, 35, 0.08)"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #F9F8F6;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-background antialiased relative min-h-screen">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 backdrop-blur-md bg-surface/90 shadow-sm border-b border-surface-container">
+<div class="flex justify-between items-center px-gutter py-4 w-full max-w-container-max mx-auto">
+<div class="flex items-center gap-8">
+<a class="font-headline-md text-headline-md font-bold text-primary tracking-tight" href="#">Typeform</a>
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="#">Workspace</a>
+<a class="font-label-lg text-label-lg text-primary border-b-2 border-primary pb-1 font-bold" href="#">Settings</a>
+<a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="#">Profile</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<button class="bg-primary-container text-on-primary rounded-full px-6 py-3 font-button-text text-button-text active:scale-95 transition-transform">Create Form</button>
+<!-- Profile Avatar Dropdown Trigger -->
+<div class="relative group">
+<button class="flex items-center gap-2 focus:outline-none" id="profileDropdownBtn">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-lg cursor-pointer hover:ring-2 hover:ring-primary transition-all">
+                            DS
+                        </div>
+</button>
+<!-- Profile Dropdown Menu -->
+<div class="absolute right-0 mt-2 w-72 bg-on-primary rounded-2xl shadow-soft border border-surface-container opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 origin-top-right transform scale-95 group-hover:scale-100 z-50" id="profileDropdown">
+<div class="p-6">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-xl">
+                                    DS
+                                </div>
+<div>
+<div class="font-label-lg text-label-lg text-on-background">DHARUN S</div>
+<div class="font-body-md text-sm text-on-surface-variant mt-1">dharun.s23@iiits.in</div>
+</div>
+</div>
+</div>
+<div class="h-px bg-surface-container w-full"></div>
+<div class="p-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-container-low transition-colors font-body-md text-body-md text-on-background" href="#">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="settings">settings</span>
+                                Account Settings
+                            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-container-low transition-colors font-body-md text-body-md text-on-background" href="#">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="apps">apps</span>
+                                Apps &amp; Integrations
+                            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-container-low transition-colors font-body-md text-body-md text-on-background" href="#">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="credit_card">credit_card</span>
+                                Plan &amp; Billing
+                            </a>
+</div>
+<div class="h-px bg-surface-container w-full"></div>
+<div class="p-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-container-low transition-colors font-body-md text-body-md" href="#" style="color: #D9383A;">
+<span class="material-symbols-outlined" data-icon="logout" style="color: #D9383A;">logout</span>
+                                Log Out
+                            </a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class="flex pt-[80px] max-w-container-max mx-auto px-gutter gap-8 min-h-screen">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col w-64 shrink-0 py-12 sticky top-[80px] h-[calc(100vh-80px)]">
+<div class="mb-8 px-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-xl">
+                        DS
+                    </div>
+<div>
+<div class="font-headline-md text-xl font-bold text-primary">Domenic S.</div>
+<div class="font-body-md text-sm text-on-surface-variant">Pro Plan</div>
+</div>
+</div>
+</div>
+<nav class="flex flex-col gap-2 flex-grow">
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-xl font-bold font-label-lg text-label-lg transition-all duration-200 cursor-pointer active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+                    Personal Info
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high rounded-xl font-label-lg text-label-lg transition-all duration-200 cursor-pointer active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                    Account Settings
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high rounded-xl font-label-lg text-label-lg transition-all duration-200 cursor-pointer active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+                    Plan &amp; Billing
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high rounded-xl font-label-lg text-label-lg transition-all duration-200 cursor-pointer active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="extension">extension</span>
+                    Integrations
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high rounded-xl font-label-lg text-label-lg transition-all duration-200 cursor-pointer active:scale-98" href="#">
+<span class="material-symbols-outlined" data-icon="shield">shield</span>
+                    Security
+                </a>
+</nav>
+<div class="mt-auto px-4 pb-8">
+<button class="w-full bg-primary-container text-on-primary rounded-full py-3 font-button-text text-button-text hover:opacity-90 transition-opacity">Upgrade Now</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-grow py-12 max-w-3xl">
+<h1 class="font-headline-lg text-headline-lg text-primary mb-8 tracking-tight">Account Settings</h1>
+<!-- Profile Settings Card -->
+<div class="bg-on-primary rounded-2xl shadow-soft border border-surface-container p-8 mb-8">
+<h2 class="font-headline-md text-2xl text-primary border-b border-surface-container pb-4 mb-8">Profile Information</h2>
+<div class="flex flex-col md:flex-row gap-12">
+<!-- Avatar Upload Section -->
+<div class="flex flex-col items-center gap-4 shrink-0">
+<div class="w-32 h-32 rounded-full bg-secondary-container flex items-center justify-center relative group overflow-hidden border-4 border-surface">
+<span class="font-headline-lg text-4xl text-on-secondary-container">DS</span>
+<div class="absolute inset-0 bg-primary-container/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+<span class="material-symbols-outlined text-on-primary text-3xl" data-icon="photo_camera">photo_camera</span>
+</div>
+</div>
+<button class="font-button-text text-button-text text-primary border border-primary rounded-full px-6 py-2 hover:bg-surface-container-low transition-colors">
+                            Change Avatar
+                        </button>
+<p class="font-body-md text-xs text-on-surface-variant text-center max-w-[150px]">JPG, GIF or PNG. Max size of 5MB.</p>
+</div>
+<!-- Form Fields -->
+<div class="flex-grow flex flex-col gap-6">
+<div>
+<label class="block font-label-lg text-label-lg text-on-background mb-2" for="fullName">Full Name</label>
+<input class="w-full bg-on-primary border border-surface-variant rounded-xl px-4 py-3 font-body-md text-body-md text-on-background focus:ring-2 focus:ring-primary focus:border-primary transition-shadow" id="fullName" placeholder="Enter your full name" type="text" value="DHARUN S"/>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-on-background mb-2" for="email">Email Address</label>
+<input class="w-full bg-surface-container-low border border-surface-variant rounded-xl px-4 py-3 font-body-md text-body-md text-on-surface-variant cursor-not-allowed" id="email" placeholder="Enter your email" readonly="" type="email" value="dharun.s23@iiits.in"/>
+<p class="font-body-md text-xs text-on-surface-variant mt-2">To change your email address, please contact support.</p>
+</div>
+</div>
+</div>
+<div class="flex justify-end mt-12 pt-6 border-t border-surface-container">
+<button class="bg-primary-container text-on-primary rounded-full px-8 py-4 font-button-text text-button-text hover:bg-primary-container/90 active:scale-95 transition-all shadow-md">Save Changes</button>
+</div>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="bg-surface w-full py-8 border-t border-surface-container mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center px-gutter max-w-container-max mx-auto gap-4">
+<p class="font-label-lg text-label-lg text-on-surface-variant">© 2024 Typeform SL. All rights reserved.</p>
+<div class="flex items-center gap-6">
+<a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity hover:opacity-80" href="#">Support</a>
+<a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity hover:opacity-80" href="#">Privacy Policy</a>
+<a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-opacity hover:opacity-80" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+</body></html>

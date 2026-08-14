@@ -129,3 +129,37 @@ class Answer(Base):
 
     response = relationship("Response", back_populates="answers")
     question = relationship("Question", back_populates="answers")
+
+
+class Contact(Base):
+    __tablename__ = "contacts"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=True, default="Anonymous")
+    email = Column(String, nullable=False, index=True)
+    source_form_id = Column(Integer, ForeignKey("forms.id", ondelete="SET NULL"), nullable=True)
+    submissions_count = Column(Integer, nullable=False, default=1)
+    tags = Column(JSON, nullable=True)
+    last_active_at = Column(DateTime(timezone=True), default=now_utc)
+    created_at = Column(DateTime(timezone=True), default=now_utc)
+
+    source_form = relationship("Form")
+
+
+class Automation(Base):
+    __tablename__ = "automations"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False, default="Untitled Automation")
+    trigger_type = Column(String, nullable=False, default="form_submission")
+    form_id = Column(Integer, ForeignKey("forms.id", ondelete="CASCADE"), nullable=True)
+    condition_type = Column(String, nullable=False, default="always")
+    condition_value = Column(String, nullable=True)
+    action_type = Column(String, nullable=False, default="webhook")
+    action_config = Column(JSON, nullable=True)
+    is_active = Column(Boolean, nullable=False, default=True)
+    execution_count = Column(Integer, nullable=False, default=0)
+    last_executed_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=now_utc)
+
+    form = relationship("Form")
