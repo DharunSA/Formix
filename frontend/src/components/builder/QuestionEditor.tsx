@@ -74,6 +74,21 @@ export function QuestionEditor({
         </div>
       )}
 
+      {question.type === "multiple_choice" && (
+        <div className="mb-5 flex items-center justify-between py-2 border-y border-border">
+          <div>
+            <span className="text-sm text-ink font-medium block">Multiple selection</span>
+            <span className="text-xs text-ink-soft block">Allow respondents to pick more than one option</span>
+          </div>
+          <Toggle
+            checked={!!question.settings?.multiple}
+            onChange={(multiple) =>
+              onChange({ settings: { ...question.settings, multiple } })
+            }
+          />
+        </div>
+      )}
+
       {question.type === "rating" && (
         <div className="mb-5">
           <label className="text-xs font-medium text-ink-soft uppercase tracking-wide">Max rating</label>

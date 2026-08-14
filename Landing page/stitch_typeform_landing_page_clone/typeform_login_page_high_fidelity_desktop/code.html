@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Typeform - Log in</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "primary-container": "#261c23",
+                        "on-tertiary-fixed": "#201c00",
+                        "on-primary-fixed": "#221920",
+                        "surface-container-low": "#f4f3f1",
+                        "tertiary": "#675f2e",
+                        "inverse-on-surface": "#f1f1ef",
+                        "surface-container-highest": "#e3e2e0",
+                        "surface-container-high": "#e9e8e6",
+                        "surface-bright": "#faf9f7",
+                        "on-secondary": "#ffffff",
+                        "surface-variant": "#e3e2e0",
+                        "background": "#faf9f7",
+                        "on-primary-fixed-variant": "#4f434b",
+                        "on-primary-container": "#91828b",
+                        "secondary": "#615c6b",
+                        "surface-container": "#efeeec",
+                        "tertiary-fixed-dim": "#d3c78c",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#dadad8",
+                        "primary-fixed-dim": "#d3c2cb",
+                        "secondary-fixed": "#e7dff1",
+                        "inverse-surface": "#2f3130",
+                        "surface-tint": "#685b63",
+                        "on-secondary-container": "#676271",
+                        "on-secondary-fixed-variant": "#494553",
+                        "on-tertiary-container": "#474012",
+                        "outline": "#7d7579",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#d3c2cb",
+                        "on-primary": "#ffffff",
+                        "primary": "#0b0409",
+                        "secondary-container": "#e7dff1",
+                        "on-surface-variant": "#4c4549",
+                        "on-background": "#1a1c1b",
+                        "on-tertiary-fixed-variant": "#4f4719",
+                        "primary-fixed": "#f0dee7",
+                        "outline-variant": "#cec4c8",
+                        "secondary-fixed-dim": "#cbc3d5",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#b7ac74",
+                        "on-surface": "#1a1c1b",
+                        "tertiary-fixed": "#f0e3a6",
+                        "surface": "#faf9f7",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#1d1a26",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "12px",
+                        "gutter": "32px",
+                        "stack-lg": "64px",
+                        "stack-md": "24px",
+                        "container-max": "1280px",
+                        "section-padding": "120px",
+                        "margin-x": "24px"
+                    },
+                    "fontFamily": {
+                        "display-xl-mobile": ["Playfair Display"],
+                        "display-xl": ["Playfair Display"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Playfair Display"],
+                        "headline-md": ["Playfair Display"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "button-text": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "display-xl-mobile": ["48px", { "lineHeight": "1.2", "fontWeight": "400" }],
+                        "display-xl": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+                        "body-lg": ["20px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg": ["48px", { "lineHeight": "1.2", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "400" }],
+                        "label-lg": ["14px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "button-text": ["16px", { "lineHeight": "1", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .carousel-track {
+            transition: transform 0.5s ease-in-out;
+        }
+        .bg-obsidian-glow {
+            background: linear-gradient(135deg, #261c23 40%, #3a2233 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface h-full flex flex-col font-body-md selection:bg-secondary-container selection:text-on-secondary-container">
+<nav class="flex justify-between items-center w-full px-margin-x h-20 max-w-container-max mx-auto bg-surface dark:bg-primary flat no shadows docked full-width top-0 z-50 absolute">
+<div class="flex items-center gap-2">
+<svg class="w-8 h-8 text-primary" fill="currentColor" viewbox="0 0 24 24"><path d="M4 4h4v16H4zM16 4h4v16h-4zM10 4h4v16h-4z"></path></svg>
+<span class="text-headline-md font-headline-md font-bold text-on-surface dark:text-on-primary tracking-tight">Typeform</span>
+</div>
+<div class="flex items-center gap-4 text-label-lg font-label-lg text-on-surface-variant font-medium">
+<span>Have a question? <a class="hover:underline transition-all duration-200 text-primary" href="#">Contact us</a></span>
+<button class="flex items-center gap-1 hover:bg-surface-container-low px-2 py-1 rounded transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">language</span>
+                English
+                <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+</div>
+</nav>
+<main class="flex-grow flex flex-col md:flex-row h-full pt-20 pb-4 px-4 md:px-8 gap-4 max-w-[1600px] mx-auto w-full">
+<section class="w-full md:w-1/2 flex flex-col justify-center items-center bg-surface-bright rounded-2xl p-8 relative">
+<div class="w-full max-w-[400px] flex flex-col gap-6">
+<div class="text-center md:text-left mb-4">
+<h1 class="font-headline-lg text-headline-lg text-on-background mb-3">Log in</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Build forms, gather responses, and automate your workflows.</p>
+</div>
+<div class="flex flex-col gap-3">
+<button class="flex items-center justify-center gap-3 w-full py-3 px-4 border border-outline-variant rounded-xl bg-on-secondary hover:bg-surface-container-lowest transition-colors font-button-text text-button-text text-on-surface shadow-sm">
+<svg class="w-5 h-5" viewbox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.16v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.16C1.43 8.55 1 10.22 1 12s.43 3.45 1.16 4.93l2.85-2.22.83-.62z" fill="#FBBC05"></path><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.16 7.07l3.68 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path></svg>
+                        Continue with Google
+                    </button>
+<button class="flex items-center justify-center gap-3 w-full py-3 px-4 border border-outline-variant rounded-xl bg-on-secondary hover:bg-surface-container-lowest transition-colors font-button-text text-button-text text-on-surface shadow-sm">
+<svg class="w-5 h-5" viewbox="0 0 21 21"><path d="M10 0H0v10h10V0z" fill="#f25022"></path><path d="M21 0H11v10h10V0z" fill="#7fba00"></path><path d="M10 11H0v10h10V11z" fill="#00a4ef"></path><path d="M21 11H11v10h10V11z" fill="#ffb900"></path></svg>
+                        Continue with Microsoft
+                    </button>
+</div>
+<div class="flex flex-col gap-4 mt-2">
+<div class="flex flex-col gap-2">
+<label class="font-body-md text-body-md text-on-surface" for="email">Email</label>
+<input class="w-full px-4 py-3 border border-outline-variant rounded-xl bg-on-secondary focus:border-primary-container focus:ring-0 focus:outline-none transition-colors font-body-md text-body-md" id="email" placeholder="Enter your email address" type="email"/>
+</div>
+<button class="w-full py-3 px-4 bg-primary-container text-on-primary rounded-full font-button-text text-button-text hover:opacity-90 transition-opacity">
+                        Continue with email
+                    </button>
+</div>
+<div class="text-center mt-2 flex flex-col gap-4">
+<a class="font-body-md text-body-md text-on-surface underline hover:text-primary transition-colors" href="#">Log in with SSO</a>
+<div class="h-px bg-surface-container-high w-full my-2"></div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                        Don't have an account? <a class="text-primary font-semibold hover:underline" href="#">Sign up</a>
+</p>
+</div>
+</div>
+</section>
+<section class="hidden md:flex w-1/2 bg-obsidian-glow rounded-3xl overflow-hidden relative flex-col justify-center items-center p-8">
+<div class="w-full max-w-[600px] flex flex-col items-center gap-8">
+<div class="text-center text-on-secondary mb-4 z-10">
+<h2 class="font-headline-md text-headline-md mb-2">Continue exploring powerful features</h2>
+<p class="font-body-lg text-body-lg opacity-80">that make data collection effortless</p>
+</div>
+<div class="relative w-full aspect-[4/3] rounded-2xl border border-surface-tint/30 bg-primary/20 overflow-hidden shadow-2xl z-10">
+<img class="w-full h-full object-cover rounded-2xl absolute inset-0 transition-opacity duration-500 opacity-100" data-alt="A modern SaaS interface showing a dark-themed feature card titled 'Collect responses'. It features a purple gradient header, a chat-bubble-like interface with text 'Build a feedback form for our upcoming launch...', and a partial view of a woman's face on the right." id="slide-1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxujM_mWlxSZrT-JVqeTT1FKeQo_5CjSnzgHp9_edGUueMbMxEWnBnDmNE3k4PDcpA1CeCLdd0axlNINyL_x9iZLiMh7O2NL1Hlavccoe3QialB26g3w1uS2cCtGSy_Sm4UNAl7-Wr9id9OnAsK-79n8U_6sKOYBX5agD7k1i7uVB3_bI-Z-MnxkzkfyFAaPmhjalHaVOqsgvS1TCalZpXHiE7TOlYTvEzGa2KRzUAUc5iLZgSfsAB53p6fxnmIkJm1UQ"/>
+<img class="w-full h-full object-cover rounded-2xl absolute inset-0 transition-opacity duration-500 opacity-0" data-alt="A modern SaaS interface showing a dark-themed feature card titled 'Manage your audience'. It displays floating translucent UI elements indicating automated actions like 'Enrich contact data' and 'Add new contact', floating above a form showing a woman with a water bottle." id="slide-2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfhDhIWPZ7ZSzmlAOEa74ZyrRdjXKW8kH01MqCRuKVxN4LlCKCQL07zDPWuCBV-hG0mjt9Nso3UdqjQn4OsZ3wZe3f91fax6WYe4OBOikRdc1GN6reznx1cTdlzQ0cTcYuYJdtjkB520SDlBpSBcS1kvezH29z2aq2dU1v8TuKbRl7qc-xC7Qw7tvDpN_o8WkHkLxauJbG7ihLGi7SlY-b8kVzN3OfQGFautVW1NjWbsku9Z4LiLB3zkfe4obPJNsf44k"/>
+<img class="w-full h-full object-cover rounded-2xl absolute inset-0 transition-opacity duration-500 opacity-0" data-alt="A modern SaaS interface showing a dark-themed feature card titled 'Automate workflows'. It displays layered translucent UI cards indicating automated actions: 'Send SMS reminder', 'Send follow-up email', and 'Identify trends', cascading downwards." id="slide-3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0DPG5CuOPLGxFTWky0VVfyflH35EXjpVubGcXNv3XhnICktSck-nbJJ_mOyYtsHxEmtnxT8ePnyEubFBAZFCNv0Kx9vxBf9ktjOtf2-Icfioi3e_Dg5q6Pw2GaoVR2_DxJsI_fy8XJslayeLydk1SY7hl1Hng6yqb1kq8TruxufUBpVx3Tg2KeISvcA3b61D8HjZgSvWhBPOqwcfaO1sbUGl5k_7F9qYiGKymEVtXitmwPxNZXjcvs3OqFlfWV8_K7SE"/>
+</div>
+<div class="flex items-center gap-6 mt-4 z-10">
+<button class="text-on-secondary/50 hover:text-on-secondary transition-colors p-2" onclick="prevSlide()">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="text-on-secondary hover:scale-110 transition-transform p-2" onclick="togglePlay()">
+<span class="material-symbols-outlined" id="play-icon" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+<div class="flex gap-2">
+<button class="w-2 h-2 rounded-full bg-on-secondary transition-all slide-dot" onclick="goToSlide(0)"></button>
+<button class="w-2 h-2 rounded-full bg-on-secondary/30 transition-all slide-dot" onclick="goToSlide(1)"></button>
+<button class="w-2 h-2 rounded-full bg-on-secondary/30 transition-all slide-dot" onclick="goToSlide(2)"></button>
+</div>
+<button class="text-on-secondary/50 hover:text-on-secondary transition-colors p-2" onclick="nextSlide()">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent pointer-events-none"></div>
+</section>
+</main>
+<script>
+        let currentSlide = 0;
+        const totalSlides = 3;
+        let isPlaying = true;
+        let slideInterval;
+
+        function updateSlides() {
+            for(let i=0; i<totalSlides; i++) {
+                document.getElementById(`slide-${i+1}`).style.opacity = i === currentSlide ? '1' : '0';
+            }
+            
+            const dots = document.querySelectorAll('.slide-dot');
+            dots.forEach((dot, index) => {
+                if(index === currentSlide) {
+                    dot.classList.remove('bg-on-secondary/30');
+                    dot.classList.add('bg-on-secondary');
+                } else {
+                    dot.classList.remove('bg-on-secondary');
+                    dot.classList.add('bg-on-secondary/30');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlides();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlides();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlides();
+            if(isPlaying) resetInterval();
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            const icon = document.getElementById('play-icon');
+            if(isPlaying) {
+                icon.textContent = 'pause';
+                startInterval();
+            } else {
+                icon.textContent = 'play_arrow';
+                clearInterval(slideInterval);
+            }
+        }
+
+        function startInterval() {
+            slideInterval = setInterval(nextSlide, 5000);
+        }
+
+        function resetInterval() {
+            clearInterval(slideInterval);
+            startInterval();
+        }
+
+        startInterval();
+    </script>
+</body></html>

@@ -3,7 +3,10 @@ import type { Question } from "./types";
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 function isEmpty(value: unknown) {
-  return value === null || value === undefined || (typeof value === "string" && value.trim() === "");
+  if (value === null || value === undefined) return true;
+  if (typeof value === "string" && value.trim() === "") return true;
+  if (Array.isArray(value) && value.length === 0) return true;
+  return false;
 }
 
 /** Client-side mirror of the backend's validate_answer - gives instant feedback before the network round-trip. */

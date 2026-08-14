@@ -24,10 +24,12 @@ export interface RespondentFormShape {
 export function RespondentFlow({
   form,
   mode,
+  onProgress,
   onSubmit,
 }: {
   form: RespondentFormShape;
   mode: "public" | "preview";
+  onProgress?: (answers: { question_id: number; value: unknown }[]) => Promise<void>;
   onSubmit: (answers: { question_id: number; value: unknown }[]) => Promise<void>;
 }) {
   const [stage, setStage] = useState<"welcome" | "question" | "thankyou">("welcome");
@@ -60,6 +62,14 @@ export function RespondentFlow({
       return next;
     });
 
+    // Fire progressive background save on progress
+    if (onProgress) {
+      const currentPayload = questions
+        .slice(0, index + 1)
+        .map((q) => ({ question_id: q.id, value: answers[q.id] ?? null }));
+      onProgress(currentPayload).catch(() => {});
+    }
+
     if (index < questions.length - 1) {
       setDirection(1);
       setIndex((i) => i + 1);
@@ -88,6 +98,9 @@ export function RespondentFlow({
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      // Avoid intercepting browser and OS shortcuts (Ctrl, Cmd, Alt)
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+
       const target = e.target as HTMLElement;
       // Text/email/number/long-text fields handle their own Enter (see QuestionField)
       // and stopPropagation so this never double-fires for them. The one case that
@@ -108,11 +121,24 @@ export function RespondentFlow({
       } else if (
         stage === "question" &&
         current?.type === "multiple_choice" &&
+        target.tagName !== "INPUT" &&
+        target.tagName !== "TEXTAREA" &&
+        target.tagName !== "SELECT" &&
         /^[a-zA-Z]$/.test(e.key)
       ) {
         const optIndex = e.key.toUpperCase().charCodeAt(0) - 65;
         const opt = current.options?.[optIndex];
-        if (opt) setAnswers((a) => ({ ...a, [current.id]: opt.id }));
+        if (opt) {
+          if (current.settings?.multiple) {
+            setAnswers((a) => {
+              const prev = Array.isArray(a[current.id]) ? (a[current.id] as string[]) : [];
+              const next = prev.includes(opt.id) ? prev.filter((id) => id !== opt.id) : [...prev, opt.id];
+              return { ...a, [current.id]: next };
+            });
+          } else {
+            setAnswers((a) => ({ ...a, [current.id]: opt.id }));
+          }
+        }
       }
     };
     window.addEventListener("keydown", onKey);

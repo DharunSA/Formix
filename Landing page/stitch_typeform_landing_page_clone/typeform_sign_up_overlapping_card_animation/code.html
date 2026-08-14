@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+
+<html lang="en" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign up - Typeform</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "surface-bright": "#faf9f7",
+                "on-primary-fixed": "#221920",
+                "primary-fixed-dim": "#d3c2cb",
+                "on-error-container": "#93000a",
+                "inverse-surface": "#2f3130",
+                "on-primary": "#ffffff",
+                "on-primary-fixed-variant": "#4f434b",
+                "on-secondary-fixed-variant": "#494553",
+                "primary-container": "#261c23",
+                "on-surface": "#1a1c1b",
+                "on-error": "#ffffff",
+                "surface-variant": "#e3e2e0",
+                "inverse-on-surface": "#f1f1ef",
+                "on-tertiary-fixed": "#201c00",
+                "tertiary-fixed": "#f0e3a6",
+                "primary": "#0b0409",
+                "on-secondary-fixed": "#1d1a26",
+                "surface-tint": "#685b63",
+                "secondary-container": "#e7dff1",
+                "primary-fixed": "#f0dee7",
+                "on-tertiary": "#ffffff",
+                "secondary-fixed-dim": "#cbc3d5",
+                "surface-container": "#efeeec",
+                "tertiary": "#675f2e",
+                "on-secondary-container": "#676271",
+                "surface-container-high": "#e9e8e6",
+                "on-primary-container": "#91828b",
+                "on-surface-variant": "#4c4549",
+                "inverse-primary": "#d3c2cb",
+                "error": "#ba1a1a",
+                "on-background": "#1a1c1b",
+                "on-tertiary-fixed-variant": "#4f4719",
+                "tertiary-fixed-dim": "#d3c78c",
+                "on-tertiary-container": "#474012",
+                "background": "#faf9f7",
+                "surface-container-lowest": "#ffffff",
+                "surface-container-low": "#f4f3f1",
+                "surface": "#faf9f7",
+                "secondary-fixed": "#e7dff1",
+                "tertiary-container": "#b7ac74",
+                "secondary": "#615c6b",
+                "error-container": "#ffdad6",
+                "on-secondary": "#ffffff",
+                "outline": "#7d7579",
+                "surface-dim": "#dadad8",
+                "outline-variant": "#cec4c8",
+                "surface-container-highest": "#e3e2e0",
+            'tf-dark': '#382D35',
+            'tf-surface': '#faf9f7',
+            'tf-primary': '#261c23',
+            'tf-border': '#dadad8',
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "gutter": "32px",
+                "stack-lg": "64px",
+                "stack-md": "24px",
+                "stack-sm": "12px",
+                "margin-x": "24px",
+                "container-max": "1280px",
+                "section-padding": "120px"
+        },
+        "fontFamily": {
+                "body-md": [
+                        "Plus Jakarta Sans"
+                ],
+                "headline-md": [
+                        "Playfair Display"
+                ],
+                "label-lg": [
+                        "Plus Jakarta Sans"
+                ],
+                "button-text": [
+                        "Plus Jakarta Sans"
+                ],
+                "headline-lg": [
+                        "Playfair Display"
+                ],
+                "body-lg": [
+                        "Plus Jakarta Sans"
+                ],
+                "display-xl-mobile": [
+                        "Playfair Display"
+                ],
+                "display-xl": [
+                        "Playfair Display"
+                ],
+            serif: ['"Playfair Display"', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+        },
+        "fontSize": {
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-md": [
+                        "32px",
+                        {
+                                "lineHeight": "1.3",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-lg": [
+                        "14px",
+                        {
+                                "lineHeight": "1",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "button-text": [
+                        "16px",
+                        {
+                                "lineHeight": "1",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-lg": [
+                        "48px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "400"
+                        }
+                ],
+                "body-lg": [
+                        "20px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "display-xl-mobile": [
+                        "48px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "400"
+                        }
+                ],
+                "display-xl": [
+                        "72px",
+                        {
+                                "lineHeight": "1.1",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style data-purpose="custom-styles">
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    h1, h2, h3, .font-serif {
+      font-family: '"Playfair Display"', serif;
+    }
+    
+    /* Overlapping Carousel Styles */
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 400px;
+      perspective: 1000px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .carousel-slide {
+      position: absolute;
+      width: 100%;
+      max-width: 600px;
+      transition: all 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+      opacity: 0;
+      transform: scale(0.9) translateY(20px);
+      z-index: 1;
+      pointer-events: none;
+    }
+    
+    .carousel-slide img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+    
+    .carousel-slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      z-index: 3;
+      pointer-events: auto;
+    }
+    
+    .carousel-slide.prev {
+      opacity: 0.6;
+      transform: scale(0.95) translateX(-15%) translateZ(-50px);
+      z-index: 2;
+    }
+    
+    .carousel-slide.next {
+      opacity: 0.6;
+      transform: scale(0.95) translateX(15%) translateZ(-50px);
+      z-index: 2;
+    }
+
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: rgba(255,255,255,0.4);
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .carousel-dot.active {
+      background-color: white;
+    }
+    .carousel-btn {
+      color: rgba(255,255,255,0.6);
+      transition: color 0.2s;
+      cursor: pointer;
+    }
+    .carousel-btn:hover {
+      color: white;
+    }
+    .carousel-btn.disabled {
+      color: rgba(255,255,255,0.2);
+      cursor: not-allowed;
+    }
+    .play-btn {
+      color: white;
+      cursor: pointer;
+    }
+    
+    .logo-container svg {
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .logo-container svg:hover {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="bg-tf-surface min-h-screen text-tf-primary antialiased flex flex-col md:flex-row overflow-x-hidden md:overflow-hidden">
+<!-- BEGIN: Left Panel (Carousel) -->
+<aside class="w-full md:w-1/2 bg-[#382D35] min-h-screen flex flex-col relative z-10 px-8 py-12 md:p-12 lg:p-16">
+<div class="flex-grow flex flex-col justify-center items-center mx-auto w-full">
+<!-- Carousel Wrapper -->
+<div class="w-full relative carousel-container mb-8" id="carouselTrack">
+<!-- Slide 1 -->
+<div class="carousel-slide active" data-index="0">
+<img alt="Form Builder Interface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDemvbnrRsCYXA3sNdcQ8I7pDHc_c67MalA8ipGrmD5r22xU1jx0-o52P4STfjXtAzNgnDfpp046Nte8H64ZFB2XJFg-C1x6gL5ikSzVjXFFrcRXie7RlUchq0D2DFUgaWe_4R9HceSz68ZU9UDjZlLODuo2j3WMlq1uVPv06ojW6e3dy9MK13FtRvFIdJE0J2Er11RsEdcVbI3iQY-8bKZ_V2ITpYaVY4D5FvG7K85bH-ErnNXJKfCpwF8wCgCtf9ipQM"/>
+</div>
+<!-- Slide 2 -->
+<div class="carousel-slide next" data-index="1">
+<img alt="Results Interface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuaM8U_wY2MIDZowyn-RuoXlYB2bzqgRFfwjZVFN_FpbLhpwsOL23QVlId4ahQSeVBm8WpodQdezrteC2D5takepjCnvrf4vCS6_hkCNeAjANAZAtXtQz_WyRxQtIexoDeGMZ8tO3AXyqiRi0q51mRYotVzdgvxoxrG9pJg44M2AErdCRj9W-WIRD4tMChgVez7OK9isjFWfcwPqAmwQa0Yg_iHWJVXnONu7EuZoXwjgoyqlLzKQSNUIJG8G5bH6C6BrM"/>
+</div>
+<!-- Slide 3 -->
+<div class="carousel-slide" data-index="2">
+<img alt="Automations Interface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmQTZDIl1wbd8KRreEDHwVlNqS_dPvPZRCePGDl2PYv5RS1TkNiABmPDDDbhhkAQgVmnWlhbvC-TTR-N9dBtzSQdb6t31E0jL8wb6QGWQUGBrc_dmfrAMC-Lfnt3C7RCl5fHUWeg3pF84_DT-TzEWp5tuL8dTMTejXnmp908SOn1Nu0YRaVnvugLuiGsAdEEEU4su8IHf4EMh1gikIQUtRG9nCHs2_ROsoHtuYQknQMyiqiQL9lcYMxKmvHoMN-bR8-FU"/>
+</div>
+</div>
+<!-- Carousel Controls -->
+<div class="flex items-center justify-center space-x-6 mb-16">
+<button aria-label="Previous slide" class="carousel-btn disabled" id="prevBtn">
+<svg fill="none" height="12" viewbox="0 0 12 12" width="12" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 10L4 6L8 2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<button aria-label="Play/Pause carousel" class="play-btn">
+<svg fill="none" height="14" viewbox="0 0 14 14" width="14" xmlns="http://www.w3.org/2000/svg">
+<path d="M3 2V12L11 7L3 2Z" fill="currentColor"></path>
+</svg>
+</button>
+<div class="flex space-x-3">
+<button aria-label="Go to slide 1" class="carousel-dot active" data-index="0"></button>
+<button aria-label="Go to slide 2" class="carousel-dot" data-index="1"></button>
+<button aria-label="Go to slide 3" class="carousel-dot" data-index="2"></button>
+</div>
+<button aria-label="Next slide" class="carousel-btn" id="nextBtn">
+<svg fill="none" height="12" viewbox="0 0 12 12" width="12" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 2L8 6L4 10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+<!-- Social Proof Logos -->
+<div class="w-full mx-auto flex flex-col items-center mt-auto">
+<div class="flex justify-center items-center logo-container text-white w-full"><img alt="Trusted brands" class="w-full max-w-[862px] h-auto opacity-80 hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8vJ4uq7TOpLGvr7Tq3ZkglV5Yx0UC4ONPNcwvIwCz01m3obnw_jBQ9ic_3rNulCML5y5v4636d-Pr4TzPNSYScPvKQTo1Z0G6MI3Mskc2DOzg4-hWBUc7SSMimihlnxN-wXlZgSUO4p-Av7rKeUdRAGuiZlMOFCVTCRpcqY3MRBgZ3FyW_Ce7zUrGJ6IoEDBUDiB1EMToHq4yMOE05Zt5MMAyvufb5IKU71x7I6k7YxfKXUgKVptmaqR3NHuIlc1PGik"/></div>
+</div>
+</div>
+</aside>
+<!-- END: Left Panel -->
+<!-- BEGIN: Right Panel (Sign Up Form) -->
+<main class="w-full md:w-1/2 bg-white min-h-screen relative flex flex-col pt-6 px-6 pb-12 md:p-8 lg:p-12 overflow-y-auto">
+<!-- Top Nav elements -->
+<div class="flex justify-between items-center w-full mb-16 md:mb-24">
+<!-- Language Selector -->
+<button class="flex items-center space-x-2 text-sm text-gray-700 border border-gray-200 rounded-md px-3 py-1.5 hover:bg-gray-50 transition-colors">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16">
+<circle cx="12" cy="12" r="10"></circle>
+<line x1="2" x2="22" y1="12" y2="12"></line>
+<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+</svg>
+<span class="">English</span>
+<svg fill="none" height="12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="12">
+<polyline points="6 9 12 15 18 9"></polyline>
+</svg>
+</button>
+<!-- Login Link -->
+<div class="text-sm">
+<span class="text-gray-600 hidden sm:inline mr-2">Already have an account?</span>
+<a class="font-medium text-tf-primary border border-gray-200 rounded px-3 py-1.5 hover:bg-gray-50 transition-colors" href="#">Log in</a>
+</div>
+</div>
+<!-- Main Content Area -->
+<div class="flex-grow flex flex-col justify-center items-center max-w-md mx-auto w-full">
+<!-- Logo -->
+<div class="flex items-center space-x-2 mb-8">
+<svg fill="none" height="32" viewbox="0 0 32 32" width="32" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#261c23" height="16" rx="3" width="6" x="4" y="8"></rect>
+<rect fill="#261c23" height="16" rx="5" width="16" x="12" y="8"></rect>
+</svg>
+<span class="font-sans font-bold text-2xl tracking-tight text-tf-primary">Typeform</span>
+</div>
+<!-- Headline -->
+<h1 class="text-[28px] md:text-[32px] leading-tight font-serif text-center text-tf-primary mb-12">
+        Get better data with conversational forms, surveys, quizzes and more.
+      </h1>
+<!-- Buttons -->
+<div class="w-full space-y-4">
+<!-- Google Sign up -->
+<button class="w-full flex items-center justify-center space-x-3 border border-gray-300 rounded-lg py-3 px-4 hover:bg-gray-50 transition-colors font-medium text-gray-700 bg-white shadow-sm">
+<svg fill="none" height="20" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+</svg>
+<span class="">Sign up with Google</span>
+</button>
+<!-- Microsoft Sign up -->
+<button class="w-full flex items-center justify-center space-x-3 border border-gray-300 rounded-lg py-3 px-4 hover:bg-gray-50 transition-colors font-medium text-gray-700 bg-white shadow-sm">
+<svg fill="none" height="20" viewbox="0 0 21 21" width="20" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#F25022" height="9" width="9" x="1" y="1"></rect>
+<rect fill="#7FBA00" height="9" width="9" x="11" y="1"></rect>
+<rect fill="#00A4EF" height="9" width="9" x="1" y="11"></rect>
+<rect fill="#FFB900" height="9" width="9" x="11" y="11"></rect>
+</svg>
+<span class="">Sign up with Microsoft</span>
+</button>
+<!-- Divider -->
+<div class="relative py-4">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-gray-200"></div>
+</div>
+<div class="relative flex justify-center text-xs">
+<span class="bg-white px-4 text-gray-500 uppercase">Or</span>
+</div>
+</div>
+<!-- Email Sign up -->
+<button class="w-full flex items-center justify-center space-x-3 bg-tf-dark hover:bg-[#2c232a] text-white rounded-lg py-3 px-4 transition-colors font-medium">
+<span class="">Sign up with email</span>
+</button>
+</div>
+</div>
+</main>
+<!-- END: Right Panel -->
+<!-- Overlapping Carousel Script -->
+<script data-purpose="carousel-logic">
+    document.addEventListener('DOMContentLoaded', () => {
+      const slides = Array.from(document.querySelectorAll('.carousel-slide'));
+      const nextBtn = document.getElementById('nextBtn');
+      const prevBtn = document.getElementById('prevBtn');
+      const dots = Array.from(document.querySelectorAll('.carousel-dot'));
+      let currentIndex = 0;
+
+      const updateCarousel = (index) => {
+        slides.forEach((slide, i) => {
+          slide.className = 'carousel-slide'; // reset classes
+          if (i === index) {
+            slide.classList.add('active');
+          } else if (i === index - 1 || (index === 0 && i === slides.length - 1 && slides.length > 2)) {
+             // Optional: looping logic for prev if you want continuous, but sticking to disabled ends for now
+             if(i === index - 1) slide.classList.add('prev');
+          } else if (i === index + 1) {
+            slide.classList.add('next');
+          }
+        });
+        
+        // Update dots
+        dots.forEach((dot, i) => {
+            if (i === index) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+
+        // Update buttons
+        if (index === 0) {
+          prevBtn.classList.add('disabled');
+        } else {
+          prevBtn.classList.remove('disabled');
+        }
+
+        if (index === slides.length - 1) {
+          nextBtn.classList.add('disabled');
+        } else {
+          nextBtn.classList.remove('disabled');
+        }
+      };
+
+      nextBtn.addEventListener('click', () => {
+        if (currentIndex < slides.length - 1) {
+          currentIndex++;
+          updateCarousel(currentIndex);
+        }
+      });
+
+      prevBtn.addEventListener('click', () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          updateCarousel(currentIndex);
+        }
+      });
+
+      dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+          currentIndex = index;
+          updateCarousel(currentIndex);
+        });
+      });
+      
+      // Initialize state
+      updateCarousel(currentIndex);
+    });
+  </script>
+</body></html>

@@ -75,17 +75,34 @@ export function QuestionField({
         />
       );
 
-    case "multiple_choice":
+    case "multiple_choice": {
+      const isMultiple = !!question.settings?.multiple;
+      const selectedList = Array.isArray(value)
+        ? (value as string[])
+        : value
+        ? [value as string]
+        : [];
+
       return (
         <div className="space-y-2.5">
+          {isMultiple && (
+            <p className="text-xs text-ink-soft mb-2 font-medium">Choose all that apply</p>
+          )}
           {(question.options ?? []).map((opt, i) => {
-            const selected = value === opt.id;
+            const selected = selectedList.includes(opt.id);
             return (
               <button
                 key={opt.id}
                 type="button"
                 onClick={() => {
-                  onChange(opt.id);
+                  if (isMultiple) {
+                    const next = selected
+                      ? selectedList.filter((id) => id !== opt.id)
+                      : [...selectedList, opt.id];
+                    onChange(next);
+                  } else {
+                    onChange(opt.id);
+                  }
                 }}
                 className={clsx(
                   "w-full flex items-center gap-3 border rounded-xl px-4 py-3 text-left transition-colors cursor-pointer",
@@ -96,26 +113,35 @@ export function QuestionField({
               >
                 <span
                   className={clsx(
-                    "w-7 h-7 shrink-0 rounded-md border flex items-center justify-center text-xs font-semibold",
+                    "w-7 h-7 shrink-0 rounded-md border flex items-center justify-center text-xs font-semibold transition-colors",
                     selected
                       ? "border-[var(--tf-accent,#0d0d0d)] bg-[var(--tf-accent,#0d0d0d)] text-white"
-                      : "border-border text-ink-soft"
+                      : "border-border text-ink-soft",
+                    isMultiple ? "rounded-lg" : "rounded-md"
                   )}
                 >
                   {String.fromCharCode(65 + i)}
                 </span>
-                <span className="text-base text-ink">{opt.label}</span>
+                <span className="text-base text-ink flex-1">{opt.label}</span>
+                {isMultiple && selected && (
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[var(--tf-accent,#0d0d0d)] text-white">
+                    Selected
+                  </span>
+                )}
               </button>
             );
           })}
         </div>
       );
+    }
 
     case "dropdown":
       return (
         <select
+          ref={inputRef as unknown as React.RefObject<HTMLSelectElement>}
           value={(value as string) ?? ""}
           onChange={(e) => onChange(e.target.value)}
+          onKeyDown={handleEnter}
           className="tf-underline-input bg-transparent cursor-pointer"
         >
           <option value="" disabled>

@@ -76,6 +76,59 @@ def update_form(form_id: int, payload: schemas.FormPatch, db: Session = Depends(
     return form
 
 
+@router.put("/{form_id}", response_model=schemas.FormDetailOut)
+def update_form_full(form_id: int, payload: schemas.FormFullUpdate, db: Session = Depends(get_db)):
+    """Atomic update: updates form metadata and replaces the ordered question list in a single transaction."""
+    form = _get_form_or_404(db, form_id)
+
+    # Update metadata fields if provided
+    meta_fields = ["title", "description", "welcome_title", "welcome_description", "thank_you_message", "theme_color", "theme_background"]
+    dumped = payload.model_dump(exclude_unset=True)
+    for field in meta_fields:
+        if field in dumped:
+            setattr(form, field, dumped[field])
+
+    # If all questions are removed on a published form, auto-revert to draft
+    if len(payload.questions) == 0 and form.status == models.FormStatus.published.value:
+        form.status = models.FormStatus.draft.value
+
+    # Update/reconcile questions
+    existing_by_id = {q.id: q for q in form.questions}
+    incoming_ids = {q.id for q in payload.questions if q.id is not None}
+
+    for qid, question in existing_by_id.items():
+        if qid not in incoming_ids:
+            db.delete(question)
+
+    for index, q in enumerate(payload.questions):
+        options = [o.model_dump() for o in q.options] if q.options else None
+        if q.id is not None and q.id in existing_by_id:
+            existing = existing_by_id[q.id]
+            existing.type = q.type.value
+            existing.title = q.title
+            existing.description = q.description
+            existing.required = q.required
+            existing.options = options
+            existing.settings = q.settings
+            existing.order_index = index
+        else:
+            db.add(
+                models.Question(
+                    form_id=form.id,
+                    type=q.type.value,
+                    title=q.title,
+                    description=q.description,
+                    required=q.required,
+                    options=options,
+                    settings=q.settings,
+                    order_index=index,
+                )
+            )
+
+    db.commit()
+    return _get_form_or_404(db, form_id)
+
+
 @router.put("/{form_id}/questions", response_model=schemas.FormDetailOut)
 def replace_questions(form_id: int, payload: schemas.FormQuestionsPatch, db: Session = Depends(get_db)):
     """Full-replace strategy: the builder always sends the complete ordered question list.
@@ -83,6 +136,9 @@ def replace_questions(form_id: int, payload: schemas.FormQuestionsPatch, db: Ses
     anything no longer present is deleted; anything without an id is inserted.
     """
     form = _get_form_or_404(db, form_id)
+    if len(payload.questions) == 0 and form.status == models.FormStatus.published.value:
+        form.status = models.FormStatus.draft.value
+
     existing_by_id = {q.id: q for q in form.questions}
     incoming_ids = {q.id for q in payload.questions if q.id is not None}
 
@@ -203,6 +259,15 @@ def list_responses(form_id: int, db: Session = Depends(get_db)):
     return out
 
 
+def _sanitize_csv_cell(value) -> str:
+    if value is None:
+        return ""
+    text = str(value)
+    if text and text[0] in ("=", "+", "-", "@", "\t", "\r"):
+        return f"'{text}"
+    return text
+
+
 @router.get("/{form_id}/responses/export.csv")
 def export_responses_csv(form_id: int, db: Session = Depends(get_db)):
     form = _get_form_or_404(db, form_id)
@@ -216,15 +281,22 @@ def export_responses_csv(form_id: int, db: Session = Depends(get_db)):
 
     buffer = io.StringIO()
     writer = csv.writer(buffer)
-    header = ["response_id", "started_at", "submitted_at", "completed"] + [q.title for q in form.questions]
+    header = ["response_id", "started_at", "submitted_at", "completed"] + [
+        _sanitize_csv_cell(q.title or f"Question {i+1}") for i, q in enumerate(form.questions)
+    ]
     writer.writerow(header)
 
     for r in responses:
         answers_by_q = {a.question_id: a for a in r.answers}
-        row = [r.id, r.started_at.isoformat(), r.submitted_at.isoformat() if r.submitted_at else "", r.completed]
+        row = [
+            r.id,
+            r.started_at.isoformat(),
+            r.submitted_at.isoformat() if r.submitted_at else "",
+            r.completed,
+        ]
         for q in form.questions:
             a = answers_by_q.get(q.id)
-            row.append(a.value_text if a else "")
+            row.append(_sanitize_csv_cell(a.value_text if a else ""))
         writer.writerow(row)
 
     buffer.seek(0)

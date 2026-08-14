@@ -56,6 +56,22 @@ export const api = {
   getForm: (id: number) => request<FormDetail>(`/api/forms/${id}`),
   patchForm: (id: number, data: Partial<FormDetail>) =>
     request<FormDetail>(`/api/forms/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+  saveFormFull: (id: number, data: { meta: Partial<FormDetail>; questions: Question[] }) =>
+    request<FormDetail>(`/api/forms/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        ...data.meta,
+        questions: data.questions.map((q) => ({
+          id: q.id < 0 ? undefined : q.id,
+          type: q.type,
+          title: q.title,
+          description: q.description,
+          required: q.required,
+          options: q.options,
+          settings: q.settings,
+        })),
+      }),
+    }),
   saveQuestions: (id: number, questions: Question[]) =>
     request<FormDetail>(`/api/forms/${id}/questions`, {
       method: "PUT",
@@ -82,9 +98,22 @@ export const api = {
   exportCsvUrl: (id: number) => `${API_URL}/api/forms/${id}/responses/export.csv`,
 
   getPublicForm: (slug: string) => request<PublicForm>(`/api/public/forms/${slug}`),
-  submitResponse: (slug: string, answers: { question_id: number; value: unknown }[], completed = true) =>
+  saveResponseProgress: (
+    slug: string,
+    payload: { response_id?: number | null; answers: { question_id: number; value: unknown }[] }
+  ) =>
+    request<ResponseDetail>(`/api/public/forms/${slug}/responses/progress`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+  submitResponse: (
+    slug: string,
+    answers: { question_id: number; value: unknown }[],
+    completed = true,
+    responseId?: number | null
+  ) =>
     request<ResponseDetail>(`/api/public/forms/${slug}/responses`, {
       method: "POST",
-      body: JSON.stringify({ answers, completed }),
+      body: JSON.stringify({ answers, completed, response_id: responseId ?? undefined }),
     }),
 };

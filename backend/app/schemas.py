@@ -55,6 +55,17 @@ class FormQuestionsPatch(BaseModel):
     questions: list[QuestionCreate]
 
 
+class FormFullUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    welcome_title: Optional[str] = None
+    welcome_description: Optional[str] = None
+    thank_you_message: Optional[str] = None
+    theme_color: Optional[str] = None
+    theme_background: Optional[str] = None
+    questions: list[QuestionCreate] = []
+
+
 class FormOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -115,7 +126,14 @@ class AnswerIn(BaseModel):
     value: Any = None
 
 
+class ProgressResponseIn(BaseModel):
+    response_id: Optional[int] = None
+    answers: list[AnswerIn] = []
+    completed: bool = False
+
+
 class ResponseCreate(BaseModel):
+    response_id: Optional[int] = None
     answers: list[AnswerIn]
     completed: bool = True
 

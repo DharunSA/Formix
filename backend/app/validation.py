@@ -13,7 +13,13 @@ class AnswerValidationError(Exception):
 
 
 def is_empty(value) -> bool:
-    return value is None or (isinstance(value, str) and value.strip() == "")
+    if value is None:
+        return True
+    if isinstance(value, str) and value.strip() == "":
+        return True
+    if isinstance(value, (list, tuple)) and len(value) == 0:
+        return True
+    return False
 
 
 def render_value_text(question: Question, value) -> str:

@@ -19,6 +19,7 @@ export interface QuestionSettings {
   placeholder?: string;
   min?: number;
   max?: number;
+  multiple?: boolean;
   [key: string]: unknown;
 }
 

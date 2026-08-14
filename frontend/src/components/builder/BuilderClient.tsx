@@ -19,6 +19,8 @@ import { useTheme } from "@/lib/theme";
 import clsx from "clsx";
 import { ArrowRightIcon, CheckIcon, EyeIcon, LinkIcon, LoaderIcon, SettingsIcon } from "@/components/ui/icons";
 
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+
 type FormMeta = Pick<
   FormDetail,
   | "title"
@@ -46,6 +48,8 @@ export function BuilderClient({ formId }: { formId: number }) {
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
   const [publishing, setPublishing] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [questionToDelete, setQuestionToDelete] = useState<Question | null>(null);
+  const [mobileTab, setMobileTab] = useState<"questions" | "editor" | "preview">("editor");
   const loadedRef = useRef(false);
   // Serialized snapshot of what's currently persisted on the server. Used to tell
   // "the user changed something" apart from "our own save just echoed state back",
@@ -76,8 +80,10 @@ export function BuilderClient({ formId }: { formId: number }) {
     () => async (currentMeta: FormMeta, currentQuestions: Question[]) => {
       setSaveState("saving");
       try {
-        await api.patchForm(formId, currentMeta);
-        const saved = await api.saveQuestions(formId, currentQuestions);
+        const saved = await api.saveFormFull(formId, {
+          meta: currentMeta,
+          questions: currentQuestions,
+        });
 
         // Map temp (negative) client-side ids to the real ids the server just assigned,
         // positionally against what we sent. We only ever patch the `id` field on top of
@@ -138,6 +144,7 @@ export function BuilderClient({ formId }: { formId: number }) {
     };
     setQuestions((prev) => [...(prev ?? []), newQuestion]);
     setSelectedId(id);
+    setMobileTab("editor");
   };
 
   const duplicateQuestion = (id: number) => {
@@ -160,16 +167,33 @@ export function BuilderClient({ formId }: { formId: number }) {
     });
   };
 
-  const deleteQuestion = (id: number) => {
+  const handleDeleteRequest = (id: number) => {
+    const q = questions?.find((item) => item.id === id);
+    if (!q) return;
+    if (q.id < 0) {
+      // Unsaved draft question - delete immediately
+      performDeleteQuestion(id);
+    } else {
+      // Existing server question - request confirmation to prevent losing historical answers
+      setQuestionToDelete(q);
+    }
+  };
+
+  const performDeleteQuestion = (id: number) => {
     setQuestions((prev) => {
       const next = prev?.filter((q) => q.id !== id) ?? [];
       if (selectedId === id) setSelectedId(next[0]?.id ?? null);
       return next;
     });
+    setQuestionToDelete(null);
   };
 
   const handlePublishToggle = async () => {
     if (!meta || !questions) return;
+    if (status !== "published" && questions.length === 0) {
+      toast.error("Add at least one question before publishing.");
+      return;
+    }
     setPublishing(true);
     try {
       if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -204,7 +228,7 @@ export function BuilderClient({ formId }: { formId: number }) {
 
   return (
     <div className={clsx("h-screen flex flex-col bg-page tf-theme-transition", theme === "dark" && "dark")}>
-      <header className="border-b border-border bg-card px-5 py-3 flex items-center justify-between gap-4 shrink-0">
+      <header className="border-b border-border bg-card px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => router.push("/")}
@@ -215,15 +239,15 @@ export function BuilderClient({ formId }: { formId: number }) {
           <input
             value={meta.title}
             onChange={(e) => setMeta({ ...meta, title: e.target.value })}
-            className="text-base font-semibold text-ink bg-transparent focus:outline-none focus:bg-surface rounded px-1.5 py-1 min-w-0 w-64"
+            className="text-base font-semibold text-ink bg-transparent focus:outline-none focus:bg-surface rounded px-1.5 py-1 min-w-0 w-44 sm:w-64"
           />
           <Badge tone={status === "published" ? "success" : "draft"}>
             {status === "published" ? "Published" : "Draft"}
           </Badge>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-xs text-ink-soft flex items-center gap-1 mr-2 w-16">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <span className="text-xs text-ink-soft flex items-center gap-1 mr-1 sm:mr-2 w-14 sm:w-16">
             {saveState === "saving" && (
               <>
                 <LoaderIcon width={12} height={12} /> Saving
@@ -237,7 +261,7 @@ export function BuilderClient({ formId }: { formId: number }) {
           </span>
           <Button variant="secondary" size="sm" onClick={() => setSettingsOpen(true)}>
             <SettingsIcon width={14} height={14} />
-            Settings
+            <span className="hidden sm:inline">Settings</span>
           </Button>
           <Link href={`/forms/${formId}/results`}>
             <Button variant="secondary" size="sm">
@@ -247,7 +271,7 @@ export function BuilderClient({ formId }: { formId: number }) {
           <Link href={`/forms/${formId}/preview`} target="_blank">
             <Button variant="secondary" size="sm">
               <EyeIcon width={14} height={14} />
-              Preview
+              <span className="hidden sm:inline">Preview</span>
             </Button>
           </Link>
           {status === "published" && (
@@ -260,7 +284,7 @@ export function BuilderClient({ formId }: { formId: number }) {
               }}
             >
               <LinkIcon width={14} height={14} />
-              Copy link
+              <span className="hidden sm:inline">Copy link</span>
             </Button>
           )}
           <Button size="sm" onClick={handlePublishToggle} disabled={publishing}>
@@ -271,20 +295,65 @@ export function BuilderClient({ formId }: { formId: number }) {
         </div>
       </header>
 
-      <div className="flex-1 grid grid-cols-[260px_1fr_400px] min-h-0">
-        <aside className="border-r border-border bg-panel min-h-0">
+      {/* Mobile / Tablet Tab Switcher */}
+      <div className="lg:hidden flex border-b border-border bg-card px-3 py-1.5 gap-2">
+        <button
+          onClick={() => setMobileTab("questions")}
+          className={clsx(
+            "flex-1 py-1.5 text-xs font-medium rounded-md transition-colors cursor-pointer",
+            mobileTab === "questions" ? "bg-surface text-ink font-semibold" : "text-ink-soft hover:text-ink"
+          )}
+        >
+          Questions ({questions.length})
+        </button>
+        <button
+          onClick={() => setMobileTab("editor")}
+          className={clsx(
+            "flex-1 py-1.5 text-xs font-medium rounded-md transition-colors cursor-pointer",
+            mobileTab === "editor" ? "bg-surface text-ink font-semibold" : "text-ink-soft hover:text-ink"
+          )}
+        >
+          Editor
+        </button>
+        <button
+          onClick={() => setMobileTab("preview")}
+          className={clsx(
+            "flex-1 py-1.5 text-xs font-medium rounded-md transition-colors cursor-pointer",
+            mobileTab === "preview" ? "bg-surface text-ink font-semibold" : "text-ink-soft hover:text-ink"
+          )}
+        >
+          Preview
+        </button>
+      </div>
+
+      {/* Responsive Workspace */}
+      <div className="flex-1 lg:grid lg:grid-cols-[260px_1fr_400px] min-h-0 flex flex-col">
+        <aside
+          className={clsx(
+            "border-r border-border bg-panel min-h-0",
+            mobileTab === "questions" ? "flex-1 flex flex-col" : "hidden lg:flex lg:flex-col"
+          )}
+        >
           <QuestionList
             questions={questions}
             selectedId={selectedId}
-            onSelect={setSelectedId}
+            onSelect={(id) => {
+              setSelectedId(id);
+              setMobileTab("editor");
+            }}
             onReorder={setQuestions}
-            onDelete={deleteQuestion}
+            onDelete={handleDeleteRequest}
             onDuplicate={duplicateQuestion}
             onAdd={addQuestion}
           />
         </aside>
 
-        <main className="overflow-y-auto tf-scrollbar min-h-0">
+        <main
+          className={clsx(
+            "overflow-y-auto tf-scrollbar min-h-0",
+            mobileTab === "editor" ? "flex-1 block" : "hidden lg:block"
+          )}
+        >
           {selectedQuestion ? (
             <QuestionEditor
               key={selectedQuestion.id}
@@ -292,13 +361,18 @@ export function BuilderClient({ formId }: { formId: number }) {
               onChange={(patch) => updateQuestion(selectedQuestion.id, patch)}
             />
           ) : (
-            <div className="h-full flex items-center justify-center text-ink-soft text-sm">
+            <div className="h-full flex items-center justify-center text-ink-soft text-sm p-6 text-center">
               Add a question to get started
             </div>
           )}
         </main>
 
-        <aside className="border-l border-border p-4 bg-panel min-h-0">
+        <aside
+          className={clsx(
+            "border-l border-border p-4 bg-panel min-h-0",
+            mobileTab === "preview" ? "flex-1 block" : "hidden lg:block"
+          )}
+        >
           <LivePreviewPanel
             question={selectedQuestion}
             index={Math.max(selectedIndex, 0)}
@@ -315,6 +389,16 @@ export function BuilderClient({ formId }: { formId: number }) {
         formTitle={meta.title}
         settings={meta}
         onChange={(patch) => setMeta((m) => (m ? { ...m, ...patch } : m))}
+      />
+
+      <ConfirmDialog
+        open={!!questionToDelete}
+        onClose={() => setQuestionToDelete(null)}
+        onConfirm={() => questionToDelete && performDeleteQuestion(questionToDelete.id)}
+        title="Delete Question"
+        description={`Are you sure you want to delete "${questionToDelete?.title || "this question"}"? Any historical answers submitted for this question will also be removed.`}
+        confirmLabel="Delete Question"
+        danger
       />
     </div>
   );
