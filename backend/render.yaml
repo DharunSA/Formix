@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: typeform-builder-api
+    name: formix-api
     runtime: python
     plan: free
     rootDir: backend
@@ -9,3 +9,11 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.9
+      - key: ALLOWED_ORIGINS
+        # Set this to your Vercel frontend URL after deployment
+        # e.g. https://formix.vercel.app,https://your-custom-domain.com
+        value: https://formix.vercel.app
+      - key: DATABASE_URL
+        # Set this to your Supabase / Render Postgres connection string
+        # e.g. postgresql://user:password@db.xyz.supabase.co:5432/postgres
+        sync: false
