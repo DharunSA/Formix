@@ -125,13 +125,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+function getAppOrigin(): string {
+  if (typeof window !== "undefined" && window.location?.origin && !window.location.origin.includes("localhost") && !window.location.origin.includes("127.0.0.1")) {
+    return window.location.origin;
+  }
+  return process.env.NEXT_PUBLIC_APP_URL || "https://formix-delta.vercel.app";
+}
+
   const signUpWithEmail = async (email: string, password = "DefaultPassword123!") => {
     try {
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: `${getAppOrigin()}/dashboard`,
         },
       });
       if (error) {
@@ -150,7 +157,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/dashboard`,
+          redirectTo: `${getAppOrigin()}/dashboard`,
         },
       });
       if (error) {
