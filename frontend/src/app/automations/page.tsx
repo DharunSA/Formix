@@ -10,9 +10,19 @@ import { WorkspaceShell } from "@/components/workspace/WorkspaceShell";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { PlusIcon, XIcon, SparkleIcon, TrashIcon } from "@/components/ui/icons";
 
+import { AuthGuard } from "@/components/auth/AuthGuard";
+
 type AutomationCategory = "all" | "form_submission" | "contact_activity" | "scheduled";
 
 export default function AutomationsPage() {
+  return (
+    <AuthGuard>
+      <AutomationsContent />
+    </AuthGuard>
+  );
+}
+
+function AutomationsContent() {
   const qc = useQueryClient();
   const [category, setCategory] = useState<AutomationCategory>("all");
   const [createModalOpen, setCreateModalOpen] = useState(false);

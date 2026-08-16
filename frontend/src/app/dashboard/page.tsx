@@ -15,14 +15,61 @@ import { PromptModal } from "@/components/ui/PromptModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { SparkleIcon, PlusIcon, XIcon, MoreIcon, CheckIcon } from "@/components/ui/icons";
 
+import { AuthGuard } from "@/components/auth/AuthGuard";
+
 type SortKey = "updated" | "responses" | "title";
 type StatusFilter = "all" | FormStatus;
 type ViewMode = "list" | "grid";
 
 export default function DashboardPage() {
+  return (
+    <AuthGuard>
+      <DashboardContent />
+    </AuthGuard>
+  );
+}
+
+import { useEffect } from "react";
+
+function DashboardContent() {
   const router = useRouter();
   const qc = useQueryClient();
-  const { data: forms, isLoading } = useQuery({ queryKey: ["forms"], queryFn: api.listForms });
+  const [activeWorkspaceId, setActiveWorkspaceId] = useState<string>("ws-default");
+  const [activeWorkspaceName, setActiveWorkspaceName] = useState<string>("My workspace");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedId = localStorage.getItem("formix_active_workspace") || "ws-default";
+      setActiveWorkspaceId(storedId);
+
+      const storedWorkspaces = localStorage.getItem("formix_user_workspaces");
+      if (storedWorkspaces) {
+        try {
+          const parsed = JSON.parse(storedWorkspaces);
+          const matched = parsed.find((w: { id: string; name: string }) => w.id === storedId);
+          if (matched) setActiveWorkspaceName(matched.name);
+        } catch {
+          // ignore
+        }
+      }
+
+      const handleWorkspaceChange = (e: Event) => {
+        const customEvt = e as CustomEvent<{ id: string; name: string }>;
+        if (customEvt.detail?.id) {
+          setActiveWorkspaceId(customEvt.detail.id);
+          if (customEvt.detail.name) setActiveWorkspaceName(customEvt.detail.name);
+        }
+      };
+
+      window.addEventListener("formix_workspace_change", handleWorkspaceChange);
+      return () => window.removeEventListener("formix_workspace_change", handleWorkspaceChange);
+    }
+  }, []);
+
+  const { data: forms, isLoading } = useQuery({
+    queryKey: ["forms", activeWorkspaceId],
+    queryFn: () => api.listForms(activeWorkspaceId),
+  });
 
   const [renameTarget, setRenameTarget] = useState<FormListItem | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<FormListItem | null>(null);
@@ -33,7 +80,10 @@ export default function DashboardPage() {
   const [showBanner, setShowBanner] = useState(true);
   const [menuOpenId, setMenuOpenId] = useState<number | null>(null);
 
-  const invalidate = () => qc.invalidateQueries({ queryKey: ["forms"] });
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: ["forms"] });
+    qc.invalidateQueries({ queryKey: ["all_forms_workspace"] });
+  };
 
   const renameMutation = useMutation({
     mutationFn: ({ id, title }: { id: number; title: string }) => api.patchForm(id, { title }),
@@ -48,6 +98,7 @@ export default function DashboardPage() {
     mutationFn: (id: number) => api.duplicateForm(id),
     onSuccess: (dup) => {
       toast.success("Form duplicated");
+      qc.setQueryData(["form", dup.id], dup);
       invalidate();
       router.push(`/forms/${dup.id}/edit`);
     },
@@ -109,7 +160,7 @@ export default function DashboardPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-border pb-5">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl sm:text-3xl font-serif text-ink tracking-tight">
-              My workspace
+              {activeWorkspaceName}
             </h1>
             <span className="text-xs bg-surface border border-border text-ink-soft px-2.5 py-0.5 rounded-full font-bold">
               {forms?.length ?? 0}

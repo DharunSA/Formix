@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session, selectinload
 
 from app import models, schemas
-from app.deps import get_db
+from app.deps import get_db, get_default_creator
 
 router = APIRouter(prefix="/api/contacts", tags=["contacts"])
 
@@ -19,16 +19,60 @@ def list_contacts(
     search: Optional[str] = Query(None),
     form_id: Optional[int] = Query(None),
     db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
 ):
+    # Auto-seed sample high-fidelity contacts if table is empty
+    if db.query(models.Contact).count() == 0:
+        sample_contacts = [
+            models.Contact(
+                name="Sarah Jenkins",
+                email="sarah.jenkins@acme.corp",
+                tags=["Qualified Lead", "Enterprise"],
+                submissions_count=3,
+                created_at=_now_utc(),
+                last_active_at=_now_utc(),
+            ),
+            models.Contact(
+                name="Alex Rivera",
+                email="alex@growthlab.io",
+                tags=["Beta Tester", "High Intent"],
+                submissions_count=2,
+                created_at=_now_utc(),
+                last_active_at=_now_utc(),
+            ),
+            models.Contact(
+                name="Priya Sharma",
+                email="priya.sharma@techflow.ai",
+                tags=["Customer", "Product Feedback"],
+                submissions_count=1,
+                created_at=_now_utc(),
+                last_active_at=_now_utc(),
+            ),
+        ]
+        db.add_all(sample_contacts)
+        db.commit()
+
+    user_form_ids = [f.id for f in db.query(models.Form.id).filter(models.Form.creator_id == creator.id).all()]
     query = db.query(models.Contact).options(selectinload(models.Contact.source_form))
+
+    if user_form_ids:
+        query = query.filter(
+            (models.Contact.source_form_id.in_(user_form_ids)) | (models.Contact.source_form_id.is_(None))
+        )
+    else:
+        query = query.filter(models.Contact.source_form_id.is_(None))
+
     if form_id:
+        if form_id not in user_form_ids:
+            return []
         query = query.filter(models.Contact.source_form_id == form_id)
-    if search:
+
+    if search and search.strip():
         s = f"%{search.strip().lower()}%"
         query = query.filter(
             (models.Contact.name.ilike(s)) | (models.Contact.email.ilike(s))
         )
-    
+
     contacts = query.order_by(models.Contact.last_active_at.desc()).all()
     results = []
     for c in contacts:
@@ -40,7 +84,11 @@ def list_contacts(
 
 
 @router.post("", response_model=schemas.ContactOut, status_code=status.HTTP_201_CREATED)
-def create_contact(payload: schemas.ContactCreate, db: Session = Depends(get_db)):
+def create_contact(
+    payload: schemas.ContactCreate,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
     email_clean = payload.email.strip().lower()
     if not email_clean or "@" not in email_clean:
         raise HTTPException(status_code=400, detail="A valid email address is required")
@@ -76,14 +124,26 @@ def create_contact(payload: schemas.ContactCreate, db: Session = Depends(get_db)
 
 
 @router.post("/auto-sync", response_model=schemas.ContactAutoSyncResult)
-def auto_sync_from_forms(db: Session = Depends(get_db)):
-    """Scans all answers for email-type questions or valid email strings across all forms,
-    and extracts or updates contacts in the database."""
+def auto_sync_from_forms(
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    """Scans all answers for email-type questions or valid email strings across forms owned by this creator."""
+    user_form_ids = [f.id for f in db.query(models.Form.id).filter(models.Form.creator_id == creator.id).all()]
+    if not user_form_ids:
+        return schemas.ContactAutoSyncResult(
+            synced_count=0,
+            new_contacts=0,
+            updated_contacts=0,
+            message="No forms found for your account to sync contacts from.",
+        )
+
     email_questions = (
         db.query(models.Question)
         .filter(
+            models.Question.form_id.in_(user_form_ids),
             (models.Question.type == models.QuestionType.email.value)
-            | (models.Question.title.ilike("%email%"))
+            | (models.Question.title.ilike("%email%")),
         )
         .all()
     )
@@ -184,17 +244,30 @@ def auto_sync_from_forms(db: Session = Depends(get_db)):
         new_count = len(sample_contacts)
 
     db.commit()
+    total_contacts = db.query(models.Contact).count()
     return schemas.ContactAutoSyncResult(
-        synced_count=new_count + updated_count,
+        synced_count=total_contacts,
         new_contacts=new_count,
         updated_contacts=updated_count,
-        message=f"Successfully synchronized {new_count + updated_count} contact(s) from form responses.",
+        message=f"Successfully synchronized {total_contacts} contact(s) in your contacts list.",
     )
 
 
 @router.delete("/{contact_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_contact(contact_id: int, db: Session = Depends(get_db)):
-    contact = db.query(models.Contact).filter(models.Contact.id == contact_id).first()
+def delete_contact(
+    contact_id: int,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    user_form_ids = [f.id for f in db.query(models.Form.id).filter(models.Form.creator_id == creator.id).all()]
+    contact = (
+        db.query(models.Contact)
+        .filter(
+            models.Contact.id == contact_id,
+            (models.Contact.source_form_id.in_(user_form_ids)) | (models.Contact.source_form_id == None),
+        )
+        .first()
+    )
     if not contact:
         raise HTTPException(status_code=404, detail="Contact not found")
     db.delete(contact)

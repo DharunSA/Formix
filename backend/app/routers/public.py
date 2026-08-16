@@ -86,6 +86,12 @@ def save_response_progress(share_slug: str, payload: schemas.ProgressResponseIn,
 @router.post("/forms/{share_slug}/responses", response_model=schemas.ResponseDetailOut, status_code=201)
 def submit_response(share_slug: str, payload: schemas.ResponseCreate, db: Session = Depends(get_db)):
     form = _get_published_form_or_404(db, share_slug)
+
+    if form.response_limit is not None and form.response_limit > 0:
+        completed_count = db.query(models.Response).filter(models.Response.form_id == form.id, models.Response.completed == True).count()
+        if completed_count >= form.response_limit:
+            raise HTTPException(status_code=400, detail="This form has reached its maximum response limit.")
+
     questions_by_id = {q.id: q for q in form.questions}
     answers_by_qid = {a.question_id: a.value for a in payload.answers if a.question_id in questions_by_id}
 

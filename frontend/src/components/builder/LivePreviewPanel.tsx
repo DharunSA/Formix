@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import type { Question } from "@/lib/types";
 import { QuestionField } from "@/components/respondent/QuestionField";
 import { ArrowRightIcon } from "@/components/ui/icons";
+import { getIosEmojiById } from "@/lib/ios-emojis";
 
 export function LivePreviewPanel({
   question,
@@ -42,6 +44,9 @@ export function LivePreviewPanel({
     );
   }
 
+  const activeToon = getIosEmojiById(question.settings?.toon_id as string | undefined);
+  const activeMediaUrl = question.settings?.media_url as string | undefined;
+
   return (
     <div
       className="h-full flex flex-col rounded-2xl border border-border overflow-hidden"
@@ -60,6 +65,47 @@ export function LivePreviewPanel({
         <div className="text-xs font-medium text-ink-soft mb-3">
           {index + 1} <ArrowRightIcon width={10} height={10} className="inline -mt-0.5" /> {total}
         </div>
+
+        {/* Render 3D iOS Emoji or Custom Image attachment */}
+        {activeToon && (
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="mb-4"
+          >
+            <img
+              src={activeToon.url}
+              alt={activeToon.name}
+              className="w-16 h-16 object-contain drop-shadow-md"
+              onError={(e) => {
+                const target = e.target as HTMLElement;
+                target.style.display = "none";
+                const fallback = target.nextElementSibling as HTMLElement;
+                if (fallback) fallback.style.display = "flex";
+              }}
+            />
+            <div className="w-16 h-16 rounded-2xl bg-surface border border-border flex items-center justify-center text-4xl shadow-sm select-none hidden">
+              {activeToon.symbol}
+            </div>
+          </motion.div>
+        )}
+
+        {activeMediaUrl && (
+          <motion.div
+            initial={{ y: 8, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.35 }}
+            className="mb-4"
+          >
+            <img
+              src={activeMediaUrl}
+              alt="Question attachment"
+              className="max-h-48 max-w-full rounded-2xl object-cover shadow-sm border border-border"
+            />
+          </motion.div>
+        )}
+
         <h3 className="text-xl font-semibold text-ink mb-1 flex items-start gap-1">
           {question.title || "Untitled question"}
           {question.required && <span className="text-danger">*</span>}

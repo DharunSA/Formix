@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
+import { toast } from "sonner";
 
 const slides = [
   {
@@ -25,10 +27,6 @@ const slides = [
 export default function LoginPage() {
   const router = useRouter();
 
-  // Instant zero-barrier access: redirect login directly to dashboard
-  useEffect(() => {
-    router.replace("/dashboard");
-  }, [router]);
 
   const [current, setCurrent] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -44,10 +42,48 @@ export default function LoginPage() {
     return () => clearInterval(interval);
   }, [isPlaying, next]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const { signInWithEmail, signUpWithEmail, signInWithProvider } = useAuth();
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleOAuth = async (provider: "google" | "azure") => {
+    if (provider === "azure") {
+      toast.info("Microsoft Sign-In is not configured yet. Please use Google or Email to log in.");
+      return;
+    }
+    try {
+      const { error } = await signInWithProvider(provider);
+      if (error) {
+        toast.error(error.message);
+      }
+    } catch {
+      toast.error("Failed to authenticate with " + provider);
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // No real auth — redirect to dashboard
-    router.push("/dashboard");
+    if (!email) return;
+    setSubmitting(true);
+    try {
+      const { error } = await signInWithEmail(email);
+      if (error) {
+        // If user doesn't exist, attempt sign up or notify user
+        const { error: signUpErr } = await signUpWithEmail(email);
+        if (signUpErr) {
+          toast.error(error.message);
+        } else {
+          toast.success("Account created! Redirecting...");
+          router.push("/dashboard");
+        }
+      } else {
+        toast.success("Logged in successfully!");
+        router.push("/dashboard");
+      }
+    } catch {
+      toast.error("An error occurred during login.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -90,8 +126,8 @@ export default function LoginPage() {
             {/* OAuth buttons */}
             <div className="flex flex-col gap-3">
               <button
-                onClick={() => router.push("/dashboard")}
-                className="flex items-center justify-center gap-3 w-full py-3 px-4 border border-[#cec4c8] rounded-xl bg-white hover:bg-[#f4f3f1] transition-colors text-[#1a1c1b] font-medium shadow-sm"
+                onClick={() => handleOAuth("google")}
+                className="flex items-center justify-center gap-3 w-full py-3 px-4 border border-[#cec4c8] rounded-xl bg-white hover:bg-[#f4f3f1] transition-colors text-[#1a1c1b] font-medium shadow-sm cursor-pointer"
                 style={{ fontFamily: "var(--font-jakarta)" }}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -104,8 +140,8 @@ export default function LoginPage() {
               </button>
 
               <button
-                onClick={() => router.push("/dashboard")}
-                className="flex items-center justify-center gap-3 w-full py-3 px-4 border border-[#cec4c8] rounded-xl bg-white hover:bg-[#f4f3f1] transition-colors text-[#1a1c1b] font-medium shadow-sm"
+                onClick={() => handleOAuth("azure")}
+                className="flex items-center justify-center gap-3 w-full py-3 px-4 border border-[#cec4c8] rounded-xl bg-white hover:bg-[#f4f3f1] transition-colors text-[#1a1c1b] font-medium shadow-sm cursor-pointer"
                 style={{ fontFamily: "var(--font-jakarta)" }}
               >
                 <svg width="20" height="20" viewBox="0 0 21 21" fill="none">

@@ -89,11 +89,23 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1), color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Smooth global theme transition when switching between light and dark mode */
+html,
+body,
+.bg-page,
+.bg-card,
+.bg-surface,
+.bg-panel,
 .tf-theme-transition,
 .tf-theme-transition * {
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              fill 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 ::selection {
@@ -167,26 +179,46 @@ body {
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── Tokens ──────────────────────────────────────────────────── */
-.lp {
-  --lp-bg:               #faf9f7;
-  --lp-surface:          #ffffff;
-  --lp-surface-low:      #f4f3f1;
-  --lp-surface-container: #efeeec;
-  --lp-primary:          #261c23;
-  --lp-primary-dark:     #0b0409;
-  --lp-secondary:        #e7dff1;
-  --lp-tertiary:         #f0e3a6;
-  --lp-muted:            #4c4549;
-  --lp-outline:          #cec4c8;
-  --lp-outline-strong:   #7d7579;
-  --lp-accent-purple:    #7c3aed;
-  --lp-shadow:           0 40px 40px -10px rgba(38, 28, 35, 0.08);
+.lp,
+.dark .lp,
+.dark.lp {
+  --background:          #faf9f7 !important;
+  --foreground:          #261c23 !important;
+  --ink:                 #261c23 !important;
+  --ink-soft:            #4c4549 !important;
+  --border:              #cec4c8 !important;
+  --surface:             #ffffff !important;
+  --page:                #faf9f7 !important;
+  --panel:               #f4f3f1 !important;
+  --card:                #ffffff !important;
+  --accent:              #261c23 !important;
+  --lp-bg:               #faf9f7 !important;
+  --lp-surface:          #ffffff !important;
+  --lp-surface-low:      #f4f3f1 !important;
+  --lp-surface-container: #efeeec !important;
+  --lp-primary:          #261c23 !important;
+  --lp-primary-dark:     #0b0409 !important;
+  --lp-secondary:        #e7dff1 !important;
+  --lp-tertiary:         #f0e3a6 !important;
+  --lp-muted:            #4c4549 !important;
+  --lp-outline:          #cec4c8 !important;
+  --lp-outline-strong:   #7d7579 !important;
+  --lp-accent-purple:    #7c3aed !important;
+  --lp-shadow:           0 40px 40px -10px rgba(38, 28, 35, 0.08) !important;
+  background-color: #faf9f7 !important;
+  color: #261c23 !important;
+}
+
+.lp section,
+.lp header,
+.lp main,
+.lp footer,
+.lp div {
+  background-color: transparent;
 }
 
 /* ── Base reset for landing ──────────────────────────────────── */
 .lp {
-  background-color: #faf9f7;
-  color: #0b0409;
   font-family: var(--font-jakarta), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -253,10 +285,10 @@ body {
 
 /* ── Nav ─────────────────────────────────────────────────────── */
 .lp-nav {
-  background-color: rgba(250, 249, 247, 0.88);
+  background-color: rgba(250, 249, 247, 0.92) !important;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(206, 196, 200, 0.3);
+  border-bottom: 1px solid rgba(206, 196, 200, 0.4) !important;
 }
 
 /* ── Buttons ─────────────────────────────────────────────────── */
@@ -264,8 +296,8 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: #261c23;
-  color: #ffffff;
+  background-color: #261c23 !important;
+  color: #ffffff !important;
   border-radius: 9999px;
   padding: 0.65rem 1.5rem;
   font-family: var(--font-jakarta), "Plus Jakarta Sans", sans-serif;
@@ -285,9 +317,9 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: transparent;
-  color: #261c23;
-  border: 1.5px solid #261c23;
+  background-color: transparent !important;
+  color: #261c23 !important;
+  border: 1.5px solid #261c23 !important;
   border-radius: 9999px;
   padding: 0.65rem 1.5rem;
   font-family: var(--font-jakarta), "Plus Jakarta Sans", sans-serif;
@@ -299,18 +331,20 @@ body {
   cursor: pointer;
 }
 .lp-btn-secondary:hover {
-  background-color: rgba(38, 28, 35, 0.06);
+  background-color: rgba(38, 28, 35, 0.06) !important;
   transform: translateY(-1px);
 }
 
 /* ── Integration card ────────────────────────────────────────── */
 .lp-integrations-card {
-  background-color: #efeeec;
+  background-color: var(--lp-surface-container);
   border-radius: 2rem;
   padding: clamp(2rem, 5vw, 4rem);
-  box-shadow: 0 40px 40px -10px rgba(38, 28, 35, 0.08);
+  box-shadow: var(--lp-shadow);
   overflow: hidden;
   position: relative;
+  border: 1px solid var(--lp-outline);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* ── Ticker animations ───────────────────────────────────────── */

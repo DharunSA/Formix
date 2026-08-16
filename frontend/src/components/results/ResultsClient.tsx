@@ -47,10 +47,10 @@ export function ResultsClient({ formId }: { formId: number }) {
   const partial = summary.total_responses - summary.completed_responses;
 
   return (
-    <div className={clsx("min-h-screen bg-page tf-theme-transition", theme === "dark" && "dark")}>
-      <header className="border-b border-border bg-card px-5 py-3 flex items-center justify-between gap-4">
+    <div className={clsx("min-h-screen bg-page tf-theme-transition pb-20 overflow-y-auto", theme === "dark" && "dark")}>
+      <header className="border-b border-border bg-card px-5 py-3 flex items-center justify-between gap-4 sticky top-0 z-30">
         <div className="flex items-center gap-3 min-w-0">
-          <Link href="/" className="text-ink-soft hover:text-ink text-sm shrink-0">
+          <Link href="/dashboard" className="text-ink-soft hover:text-ink text-sm shrink-0">
             ← Forms
           </Link>
           <h1 className="text-base font-semibold text-ink truncate">{form.title}</h1>
@@ -102,7 +102,7 @@ export function ResultsClient({ formId }: { formId: number }) {
         onClose={() => setAiInsightsOpen(false)}
       />
 
-      <main className="max-w-5xl mx-auto px-6 py-8">
+      <main className="max-w-5xl mx-auto px-6 py-8 pb-24">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <StatTile icon={BarChartIcon} label="Total responses" value={summary.total_responses} />
           <StatTile icon={CheckIcon} label="Completed" value={summary.completed_responses} />

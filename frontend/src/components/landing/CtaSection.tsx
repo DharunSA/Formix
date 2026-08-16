@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+import { useAuth } from "@/lib/auth-context";
+
 export function CtaSection() {
+  const { user } = useAuth();
   return (
     <motion.section
       className="lp-section text-center"
@@ -24,10 +27,10 @@ export function CtaSection() {
           conversational experiences that people actually enjoy filling out.
         </p>
         <Link
-          href="/dashboard"
+          href={user ? "/dashboard" : "/signup"}
           className="lp-btn-primary lp-font-btn px-10 py-5 text-lg shadow-2xl hover:shadow-lp-primary/20 transition-all"
         >
-          Open App — Instant Access
+          {user ? "Go to Dashboard" : "Get started free"}
         </Link>
         <p className="lp-font-label text-lp-muted">
           No credit card required · Free plan available

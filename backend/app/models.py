@@ -63,6 +63,7 @@ class Form(Base):
     description = Column(Text, nullable=True)
     status = Column(String, nullable=False, default=FormStatus.draft.value)
     share_slug = Column(String, unique=True, nullable=False, default=short_uuid)
+    workspace_id = Column(String, nullable=False, default="ws-default")
 
     welcome_title = Column(String, nullable=True)
     welcome_description = Column(Text, nullable=True)
@@ -70,6 +71,7 @@ class Form(Base):
 
     theme_color = Column(String, nullable=True, default="#0d0d0d")
     theme_background = Column(String, nullable=True, default="#ffffff")
+    response_limit = Column(Integer, nullable=True)
 
     created_at = Column(DateTime(timezone=True), default=now_utc)
     updated_at = Column(DateTime(timezone=True), default=now_utc, onupdate=now_utc)

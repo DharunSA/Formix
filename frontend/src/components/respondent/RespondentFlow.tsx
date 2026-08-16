@@ -8,6 +8,7 @@ import { WelcomeScreen } from "./WelcomeScreen";
 import { ThankYouScreen } from "./ThankYouScreen";
 import { ProgressBar } from "./ProgressBar";
 import { QuestionField } from "./QuestionField";
+import { getIosEmojiById } from "@/lib/ios-emojis";
 import { ArrowRightIcon, ArrowUpIcon } from "@/components/ui/icons";
 
 export interface RespondentFormShape {
@@ -197,6 +198,58 @@ export function RespondentFlow({
                   {index + 1} <ArrowRightIcon width={11} height={11} className="inline -mt-0.5" />{" "}
                   <span className="text-ink-soft">{questions.length}</span>
                 </div>
+
+                {/* Render 3D iOS Emoji or Custom Image attachment */}
+                {(() => {
+                  const activeToon = getIosEmojiById(current.settings?.toon_id as string | undefined);
+                  const activeMediaUrl = current.settings?.media_url as string | undefined;
+
+                  if (activeToon) {
+                    return (
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                        className="mb-4"
+                      >
+                        <img
+                          src={activeToon.url}
+                          alt={activeToon.name}
+                          className="w-20 h-20 object-contain drop-shadow-lg"
+                          onError={(e) => {
+                            const target = e.target as HTMLElement;
+                            target.style.display = "none";
+                            const fallback = target.nextElementSibling as HTMLElement;
+                            if (fallback) fallback.style.display = "flex";
+                          }}
+                        />
+                        <div className="w-20 h-20 rounded-3xl bg-surface/80 border border-border flex items-center justify-center text-5xl shadow-md select-none hidden">
+                          {activeToon.symbol}
+                        </div>
+                      </motion.div>
+                    );
+                  }
+
+                  if (activeMediaUrl) {
+                    return (
+                      <motion.div
+                        initial={{ y: 10, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ duration: 0.35 }}
+                        className="mb-4"
+                      >
+                        <img
+                          src={activeMediaUrl}
+                          alt="Question attachment"
+                          className="max-h-56 max-w-full rounded-2xl object-cover shadow-md border border-border"
+                        />
+                      </motion.div>
+                    );
+                  }
+
+                  return null;
+                })()}
+
                 <h2 className="text-2xl sm:text-3xl font-semibold text-ink mb-1 flex items-start gap-1.5">
                   {current.title}
                   {current.required && <span className="text-danger">*</span>}

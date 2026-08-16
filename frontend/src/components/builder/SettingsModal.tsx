@@ -22,6 +22,7 @@ export interface SettingsFields {
   thank_you_message?: string | null;
   theme_color?: string | null;
   theme_background?: string | null;
+  response_limit?: number | null;
 }
 
 export function SettingsModal({
@@ -69,6 +70,33 @@ export function SettingsModal({
             rows={2}
             className="w-full border border-border rounded-lg px-3.5 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ink/20 focus:border-ink"
           />
+        </section>
+
+        <section>
+          <h3 className="text-xs font-semibold text-ink-soft uppercase tracking-wide mb-3">Response Limit</h3>
+          <div className="flex items-center gap-3">
+            <input
+              type="number"
+              min="1"
+              value={settings.response_limit ?? ""}
+              onChange={(e) => {
+                const val = e.target.value ? parseInt(e.target.value, 10) : null;
+                onChange({ response_limit: val });
+              }}
+              placeholder="Unlimited responses (e.g. 100)"
+              className="flex-1 border border-border rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ink/20 focus:border-ink"
+            />
+            {settings.response_limit !== null && settings.response_limit !== undefined && (
+              <button
+                type="button"
+                onClick={() => onChange({ response_limit: null })}
+                className="text-xs text-red-500 hover:underline cursor-pointer"
+              >
+                Clear limit
+              </button>
+            )}
+          </div>
+          <p className="text-[11px] text-ink-soft mt-1">Leave empty to accept unlimited form responses.</p>
         </section>
 
         <section>

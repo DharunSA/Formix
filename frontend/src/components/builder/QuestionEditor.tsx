@@ -1,9 +1,10 @@
-"use client";
-
+import { useState } from "react";
 import type { Question, QuestionType } from "@/lib/types";
 import { QUESTION_TYPES, emptyQuestionDefaults, questionTypeMeta } from "@/lib/question-types";
 import { OptionsEditor } from "./OptionsEditor";
 import { Toggle } from "@/components/ui/Toggle";
+import { ToonPickerModal } from "./ToonPickerModal";
+import { getIosEmojiById } from "@/lib/ios-emojis";
 
 export function QuestionEditor({
   question,
@@ -13,6 +14,10 @@ export function QuestionEditor({
   onChange: (patch: Partial<Question>) => void;
 }) {
   const meta = questionTypeMeta(question.type);
+  const [pickerOpen, setPickerOpen] = useState(false);
+
+  const activeToon = getIosEmojiById(question.settings?.toon_id as string | undefined);
+  const activeMediaUrl = question.settings?.media_url as string | undefined;
 
   const changeType = (type: QuestionType) => {
     onChange({ type, ...emptyQuestionDefaults(type) });
@@ -20,6 +25,56 @@ export function QuestionEditor({
 
   return (
     <div className="max-w-xl mx-auto py-10 px-6 tf-fade-in">
+      {/* Media & iOS 3D Emoji Section */}
+      <div className="mb-6 bg-surface/60 border border-border p-3.5 rounded-2xl flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {activeToon ? (
+            <img src={activeToon.url} alt={activeToon.name} className="w-10 h-10 object-contain drop-shadow-sm" />
+          ) : activeMediaUrl ? (
+            <img src={activeMediaUrl} alt="Custom" className="w-10 h-10 object-cover rounded-lg border border-border" />
+          ) : (
+            <div className="w-10 h-10 rounded-xl bg-card border border-border flex items-center justify-center text-lg">
+              ✨
+            </div>
+          )}
+          <div>
+            <span className="text-xs font-semibold text-ink block">Question Sticker / Image</span>
+            <span className="text-[11px] text-ink-soft block">
+              {activeToon ? activeToon.name : activeMediaUrl ? "Custom Image URL" : "No sticker attached"}
+            </span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setPickerOpen(true)}
+          className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-card border border-border text-ink hover:bg-surface transition-colors shadow-xs"
+        >
+          {activeToon || activeMediaUrl ? "Change Sticker" : "Add iOS 3D Emoji"}
+        </button>
+      </div>
+
+      <ToonPickerModal
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        selectedToonId={question.settings?.toon_id as string | undefined}
+        selectedImageUrl={question.settings?.media_url as string | undefined}
+        onSelect={({ toon_id, media_url }) => {
+          const nextSettings = { ...question.settings };
+          if (toon_id) {
+            nextSettings.toon_id = toon_id;
+            delete nextSettings.media_url;
+          } else if (media_url) {
+            nextSettings.media_url = media_url;
+            delete nextSettings.toon_id;
+          } else {
+            delete nextSettings.toon_id;
+            delete nextSettings.media_url;
+          }
+          onChange({ settings: nextSettings });
+        }}
+      />
+
       <div className="mb-6">
         <label className="text-xs font-medium text-ink-soft uppercase tracking-wide">Question type</label>
         <div className="relative mt-1.5">

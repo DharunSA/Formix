@@ -1,6 +1,7 @@
 import csv
 import io
 from collections import Counter
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
@@ -15,27 +16,29 @@ from app.validation import render_value_text
 router = APIRouter(prefix="/api/forms", tags=["forms"])
 
 
-def _get_form_or_404(db: Session, form_id: int) -> models.Form:
+def _get_form_or_404(db: Session, form_id: int, creator_id: Optional[int] = None) -> models.Form:
     form = (
         db.query(models.Form)
         .options(selectinload(models.Form.questions))
         .filter(models.Form.id == form_id)
         .first()
     )
-    if not form:
+    if not form or (creator_id is not None and form.creator_id != creator_id):
         raise HTTPException(status_code=404, detail="Form not found")
     return form
 
 
 @router.get("", response_model=list[schemas.FormListItemOut])
-def list_forms(db: Session = Depends(get_db)):
-    creator = get_default_creator(db)
-    forms = (
-        db.query(models.Form)
-        .filter(models.Form.creator_id == creator.id)
-        .order_by(models.Form.updated_at.desc())
-        .all()
-    )
+def list_forms(
+    workspace_id: Optional[str] = None,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    query = db.query(models.Form).filter(models.Form.creator_id == creator.id)
+    if workspace_id:
+        query = query.filter(models.Form.workspace_id == workspace_id)
+
+    forms = query.order_by(models.Form.updated_at.desc()).all()
     response_counts = dict(
         db.query(models.Response.form_id, func.count(models.Response.id))
         .filter(models.Response.form_id.in_([f.id for f in forms]) if forms else False)
@@ -52,23 +55,63 @@ def list_forms(db: Session = Depends(get_db)):
 
 
 @router.post("", response_model=schemas.FormDetailOut, status_code=201)
-def create_form(payload: schemas.FormCreate, db: Session = Depends(get_db)):
-    creator = get_default_creator(db)
-    form = models.Form(creator_id=creator.id, title=payload.title, description=payload.description)
+def create_form(
+    payload: schemas.FormCreate,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    form = models.Form(
+        creator_id=creator.id,
+        title=payload.title,
+        description=payload.description,
+        workspace_id=payload.workspace_id or "ws-default",
+    )
     db.add(form)
     db.commit()
     db.refresh(form)
-    return form
+
+    # Seed sample questions with iOS 3D emoji stickers
+    sample_q1 = models.Question(
+        form_id=form.id,
+        type="short_text",
+        title="What is your name?",
+        description="Let's get introduced!",
+        required=True,
+        order_index=0,
+        settings={"toon_id": "fox"},
+    )
+    sample_q2 = models.Question(
+        form_id=form.id,
+        type="rating",
+        title="How excited are you to start?",
+        description="Rate your experience on a scale of 1 to 5",
+        required=True,
+        order_index=1,
+        settings={"toon_id": "rocket", "max": 5},
+    )
+    db.add_all([sample_q1, sample_q2])
+    db.commit()
+    db.refresh(form)
+    return _get_form_or_404(db, form.id, creator.id)
 
 
 @router.get("/{form_id}", response_model=schemas.FormDetailOut)
-def get_form(form_id: int, db: Session = Depends(get_db)):
-    return _get_form_or_404(db, form_id)
+def get_form(
+    form_id: int,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    return _get_form_or_404(db, form_id, creator.id)
 
 
 @router.patch("/{form_id}", response_model=schemas.FormDetailOut)
-def update_form(form_id: int, payload: schemas.FormPatch, db: Session = Depends(get_db)):
-    form = _get_form_or_404(db, form_id)
+def update_form(
+    form_id: int,
+    payload: schemas.FormPatch,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    form = _get_form_or_404(db, form_id, creator.id)
     for field, value in payload.model_dump(exclude_unset=True).items():
         setattr(form, field, value)
     db.commit()
@@ -77,12 +120,17 @@ def update_form(form_id: int, payload: schemas.FormPatch, db: Session = Depends(
 
 
 @router.put("/{form_id}", response_model=schemas.FormDetailOut)
-def update_form_full(form_id: int, payload: schemas.FormFullUpdate, db: Session = Depends(get_db)):
+def update_form_full(
+    form_id: int,
+    payload: schemas.FormFullUpdate,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
     """Atomic update: updates form metadata and replaces the ordered question list in a single transaction."""
-    form = _get_form_or_404(db, form_id)
+    form = _get_form_or_404(db, form_id, creator.id)
 
     # Update metadata fields if provided
-    meta_fields = ["title", "description", "welcome_title", "welcome_description", "thank_you_message", "theme_color", "theme_background"]
+    meta_fields = ["title", "description", "welcome_title", "welcome_description", "thank_you_message", "theme_color", "theme_background", "response_limit", "workspace_id"]
     dumped = payload.model_dump(exclude_unset=True)
     for field in meta_fields:
         if field in dumped:
@@ -126,16 +174,17 @@ def update_form_full(form_id: int, payload: schemas.FormFullUpdate, db: Session 
             )
 
     db.commit()
-    return _get_form_or_404(db, form_id)
+    return _get_form_or_404(db, form_id, creator.id)
 
 
 @router.put("/{form_id}/questions", response_model=schemas.FormDetailOut)
-def replace_questions(form_id: int, payload: schemas.FormQuestionsPatch, db: Session = Depends(get_db)):
-    """Full-replace strategy: the builder always sends the complete ordered question list.
-    Existing questions (matched by id) are updated in place so response history stays linked;
-    anything no longer present is deleted; anything without an id is inserted.
-    """
-    form = _get_form_or_404(db, form_id)
+def replace_questions(
+    form_id: int,
+    payload: schemas.FormQuestionsPatch,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    form = _get_form_or_404(db, form_id, creator.id)
     if len(payload.questions) == 0 and form.status == models.FormStatus.published.value:
         form.status = models.FormStatus.draft.value
 
@@ -172,22 +221,30 @@ def replace_questions(form_id: int, payload: schemas.FormQuestionsPatch, db: Ses
             )
 
     db.commit()
-    return _get_form_or_404(db, form_id)
+    return _get_form_or_404(db, form_id, creator.id)
 
 
 @router.delete("/{form_id}", status_code=204)
-def delete_form(form_id: int, db: Session = Depends(get_db)):
-    form = _get_form_or_404(db, form_id)
+def delete_form(
+    form_id: int,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    form = _get_form_or_404(db, form_id, creator.id)
     db.delete(form)
     db.commit()
     return None
 
 
 @router.post("/{form_id}/duplicate", response_model=schemas.FormDetailOut, status_code=201)
-def duplicate_form(form_id: int, db: Session = Depends(get_db)):
-    original = _get_form_or_404(db, form_id)
+def duplicate_form(
+    form_id: int,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    original = _get_form_or_404(db, form_id, creator.id)
     copy = models.Form(
-        creator_id=original.creator_id,
+        creator_id=creator.id,
         title=f"{original.title} (copy)",
         description=original.description,
         status=models.FormStatus.draft.value,
@@ -214,12 +271,16 @@ def duplicate_form(form_id: int, db: Session = Depends(get_db)):
         )
     db.commit()
     db.refresh(copy)
-    return copy
+    return _get_form_or_404(db, copy.id, creator.id)
 
 
 @router.post("/{form_id}/publish", response_model=schemas.FormDetailOut)
-def publish_form(form_id: int, db: Session = Depends(get_db)):
-    form = _get_form_or_404(db, form_id)
+def publish_form(
+    form_id: int,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    form = _get_form_or_404(db, form_id, creator.id)
     if not form.questions:
         raise HTTPException(status_code=400, detail="Add at least one question before publishing.")
     from app.models import now_utc
@@ -233,8 +294,12 @@ def publish_form(form_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/{form_id}/unpublish", response_model=schemas.FormDetailOut)
-def unpublish_form(form_id: int, db: Session = Depends(get_db)):
-    form = _get_form_or_404(db, form_id)
+def unpublish_form(
+    form_id: int,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    form = _get_form_or_404(db, form_id, creator.id)
     form.status = models.FormStatus.draft.value
     db.commit()
     db.refresh(form)
@@ -242,8 +307,12 @@ def unpublish_form(form_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/{form_id}/responses", response_model=list[schemas.ResponseListItemOut])
-def list_responses(form_id: int, db: Session = Depends(get_db)):
-    _get_form_or_404(db, form_id)
+def list_responses(
+    form_id: int,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    _get_form_or_404(db, form_id, creator.id)
     responses = (
         db.query(models.Response)
         .options(selectinload(models.Response.answers))
@@ -269,8 +338,12 @@ def _sanitize_csv_cell(value) -> str:
 
 
 @router.get("/{form_id}/responses/export.csv")
-def export_responses_csv(form_id: int, db: Session = Depends(get_db)):
-    form = _get_form_or_404(db, form_id)
+def export_responses_csv(
+    form_id: int,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    form = _get_form_or_404(db, form_id, creator.id)
     responses = (
         db.query(models.Response)
         .options(selectinload(models.Response.answers))
@@ -309,8 +382,13 @@ def export_responses_csv(form_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/{form_id}/responses/{response_id}", response_model=schemas.ResponseDetailOut)
-def get_response(form_id: int, response_id: int, db: Session = Depends(get_db)):
-    _get_form_or_404(db, form_id)
+def get_response(
+    form_id: int,
+    response_id: int,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    _get_form_or_404(db, form_id, creator.id)
     response = (
         db.query(models.Response)
         .options(selectinload(models.Response.answers))
@@ -323,8 +401,12 @@ def get_response(form_id: int, response_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/{form_id}/summary", response_model=schemas.FormSummaryOut)
-def form_summary(form_id: int, db: Session = Depends(get_db)):
-    form = _get_form_or_404(db, form_id)
+def form_summary(
+    form_id: int,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    form = _get_form_or_404(db, form_id, creator.id)
     responses = db.query(models.Response).filter(models.Response.form_id == form_id).all()
     total = len(responses)
     completed = sum(1 for r in responses if r.completed)

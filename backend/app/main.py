@@ -1,11 +1,32 @@
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import os
 
 from app.database import Base, SessionLocal, engine
 from app.routers import ai, automations, contacts, forms, public
 
+from sqlalchemy import text
+
 Base.metadata.create_all(bind=engine)
+
+# Auto-migrate response_limit column if missing
+try:
+    with engine.begin() as conn:
+        conn.execute(text("ALTER TABLE forms ADD COLUMN response_limit INTEGER"))
+except Exception:
+    pass  # Column already exists
+
+# Auto-migrate workspace_id column if missing
+try:
+    with engine.begin() as conn:
+        conn.execute(text("ALTER TABLE forms ADD COLUMN workspace_id VARCHAR DEFAULT 'ws-default'"))
+except Exception:
+    pass  # Column already exists
 
 app = FastAPI(title="Formix API", version="1.0.0")
 

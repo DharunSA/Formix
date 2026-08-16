@@ -7,6 +7,8 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useTheme } from "@/lib/theme";
 import { ProfileDropdown } from "./ProfileDropdown";
 
+import { useAuth } from "@/lib/auth-context";
+
 interface WorkspaceTopNavProps {
   onOpenIntegrations: () => void;
   onOpenBrandKit: () => void;
@@ -14,6 +16,8 @@ interface WorkspaceTopNavProps {
   onOpenHelp: () => void;
   onOpenResearchFlow: () => void;
 }
+
+import { AccountSettingsModal } from "./AccountSettingsModal";
 
 export function WorkspaceTopNav({
   onOpenIntegrations,
@@ -25,6 +29,16 @@ export function WorkspaceTopNav({
   const pathname = usePathname();
   const { theme, toggle, mounted } = useTheme();
   const [profileOpen, setProfileOpen] = useState(false);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const { user } = useAuth();
+
+  const userEmail = user?.email || "creator@typeform-clone.local";
+  const displayUsername = user?.user_metadata?.full_name || userEmail.split("@")[0] || "dharun.s23";
+  const initials = displayUsername
+    .split(/[\s._-]+/)
+    .slice(0, 2)
+    .map((s: string) => s[0]?.toUpperCase() || "")
+    .join("") || "DS";
 
   const tabs = [
     { label: "Forms", href: "/dashboard", icon: "description" },
@@ -40,10 +54,10 @@ export function WorkspaceTopNav({
         <div className="flex items-center gap-3">
           <Link href="/dashboard" className="flex items-center gap-2 text-ink hover:opacity-90">
             <div className="w-7 h-7 rounded-lg bg-[#261c23] text-white flex items-center justify-center font-bold text-xs shadow-sm">
-              D
+              {initials[0] || "D"}
             </div>
             <div className="flex items-center gap-1 font-bold text-sm tracking-tight text-ink">
-              dharun.s23
+              {displayUsername}
               <span className="material-symbols-outlined text-xs text-ink-soft">expand_more</span>
             </div>
           </Link>
@@ -93,12 +107,21 @@ export function WorkspaceTopNav({
               className="w-8 h-8 rounded-full bg-[#e7dff1] dark:bg-[#382d35] text-[#261c23] dark:text-[#f0dee7] flex items-center justify-center font-bold text-xs cursor-pointer hover:opacity-90 transition-opacity border border-border"
               aria-label="User Profile"
             >
-              DS
+              {initials}
             </button>
-            <ProfileDropdown open={profileOpen} onClose={() => setProfileOpen(false)} />
+            <ProfileDropdown
+              open={profileOpen}
+              onClose={() => setProfileOpen(false)}
+              onOpenSettings={() => setSettingsModalOpen(true)}
+            />
           </div>
         </div>
       </div>
+
+      <AccountSettingsModal
+        open={settingsModalOpen}
+        onClose={() => setSettingsModalOpen(false)}
+      />
 
       {/* Secondary Navigation Tabs */}
       <div className="flex px-6 items-center gap-6 h-11 border-t border-border/50 overflow-x-auto">

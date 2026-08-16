@@ -40,13 +40,18 @@ export function WorkspaceShell({
   const [researchFlowOpen, setResearchFlowOpen] = useState(false);
 
   const createMutation = useMutation({
-    mutationFn: (title: string) => api.createForm(title),
+    mutationFn: (title: string) => {
+      const activeWs = typeof window !== "undefined" ? localStorage.getItem("formix_active_workspace") || "ws-default" : "ws-default";
+      return api.createForm(title, activeWs);
+    },
     onSuccess: (form) => {
       toast.success("Form created");
+      qc.setQueryData(["form", form.id], form);
       qc.invalidateQueries({ queryKey: ["forms"] });
+      qc.invalidateQueries({ queryKey: ["all_forms_workspace"] });
       router.push(`/forms/${form.id}/edit`);
     },
-    onError: () => toast.error("Couldn't create the form"),
+    onError: (err: Error) => toast.error(err.message || "Couldn't create the form"),
   });
 
   return (
@@ -61,7 +66,7 @@ export function WorkspaceShell({
       />
 
       {/* Main Layout Area */}
-      <div className="flex flex-1 overflow-hidden h-[calc(100vh-100px)]">
+      <div className="flex flex-1 min-h-0 overflow-hidden">
         {showSidebar && (
           <WorkspaceSidebar
             onCreateForm={() => setCreateFormOpen(true)}

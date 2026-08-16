@@ -30,6 +30,7 @@ type FormMeta = Pick<
   | "thank_you_message"
   | "theme_color"
   | "theme_background"
+  | "response_limit"
 >;
 
 let tempIdCounter = -1;
@@ -51,9 +52,6 @@ export function BuilderClient({ formId }: { formId: number }) {
   const [questionToDelete, setQuestionToDelete] = useState<Question | null>(null);
   const [mobileTab, setMobileTab] = useState<"questions" | "editor" | "preview">("editor");
   const loadedRef = useRef(false);
-  // Serialized snapshot of what's currently persisted on the server. Used to tell
-  // "the user changed something" apart from "our own save just echoed state back",
-  // which previously caused an autosave loop (see saveAll below).
   const lastSavedRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -66,6 +64,7 @@ export function BuilderClient({ formId }: { formId: number }) {
         thank_you_message: data.thank_you_message,
         theme_color: data.theme_color,
         theme_background: data.theme_background,
+        response_limit: data.response_limit,
       };
       setMeta(initialMeta);
       setQuestions(data.questions);
@@ -231,7 +230,7 @@ export function BuilderClient({ formId }: { formId: number }) {
       <header className="border-b border-border bg-card px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-3 min-w-0">
           <button
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/dashboard")}
             className="text-ink-soft hover:text-ink text-sm cursor-pointer shrink-0"
           >
             ← Forms

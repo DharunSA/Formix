@@ -23,11 +23,18 @@ export class ApiError extends Error {
   }
 }
 
+import { supabase } from "./supabase";
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const { data: { session } } = await supabase.auth.getSession();
+  const demoUser = typeof window !== "undefined" ? localStorage.getItem("formix_demo_user") : null;
+  const token = session?.access_token || (demoUser ? "demo-token" : null);
+
   const res = await fetch(`${API_URL}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
     cache: "no-store",
@@ -52,9 +59,17 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 export const api = {
-  listForms: () => request<FormListItem[]>("/api/forms"),
-  createForm: (title: string) =>
-    request<FormDetail>("/api/forms", { method: "POST", body: JSON.stringify({ title }) }),
+  listForms: (workspaceId?: unknown) => {
+    const wsId = typeof workspaceId === "string" ? workspaceId : undefined;
+    return request<FormListItem[]>(wsId ? `/api/forms?workspace_id=${encodeURIComponent(wsId)}` : "/api/forms");
+  },
+  createForm: (title: string, workspaceId?: unknown) => {
+    const wsId = typeof workspaceId === "string" ? workspaceId : "ws-default";
+    return request<FormDetail>("/api/forms", {
+      method: "POST",
+      body: JSON.stringify({ title, workspace_id: wsId }),
+    });
+  },
   getForm: (id: number) => request<FormDetail>(`/api/forms/${id}`),
   patchForm: (id: number, data: Partial<FormDetail>) =>
     request<FormDetail>(`/api/forms/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
@@ -120,10 +135,11 @@ export const api = {
     }),
 
   // Contacts
-  listContacts: (search?: string, formId?: number) => {
+  listContacts: (search?: unknown, formId?: number) => {
     const params = new URLSearchParams();
-    if (search) params.set("search", search);
-    if (formId) params.set("form_id", formId.toString());
+    const s = typeof search === "string" ? search.trim() : undefined;
+    if (s) params.set("search", s);
+    if (typeof formId === "number") params.set("form_id", formId.toString());
     const qs = params.toString();
     return request<import("./types").Contact[]>(`/api/contacts${qs ? `?${qs}` : ""}`);
   },

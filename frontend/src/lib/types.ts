@@ -20,6 +20,8 @@ export interface QuestionSettings {
   min?: number;
   max?: number;
   multiple?: boolean;
+  media_url?: string;
+  toon_id?: string;
   [key: string]: unknown;
 }
 
@@ -47,11 +49,13 @@ export interface FormSummaryFields {
   description?: string | null;
   status: FormStatus;
   share_slug: string;
+  workspace_id?: string;
   welcome_title?: string | null;
   welcome_description?: string | null;
   thank_you_message?: string | null;
   theme_color?: string | null;
   theme_background?: string | null;
+  response_limit?: number | null;
   created_at: string;
   updated_at: string;
   published_at?: string | null;

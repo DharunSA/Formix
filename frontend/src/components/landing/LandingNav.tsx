@@ -4,7 +4,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { useAuth } from "@/lib/auth-context";
+
 export function LandingNav() {
+  const { user } = useAuth();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -49,11 +52,18 @@ export function LandingNav() {
           </AnimatePresence>
         </Link>
 
-        {/* CTA — Direct Instant Access to Dashboard */}
-        <Link href="/dashboard" className="lp-btn-primary lp-font-btn">
-          Open App — Free Access
-        </Link>
-
+        {/* Action Controls */}
+        <div className="flex items-center gap-3">
+          {user ? (
+            <Link href="/dashboard" className="lp-btn-primary lp-font-btn">
+              Go to Dashboard
+            </Link>
+          ) : (
+            <Link href="/login" className="lp-btn-primary lp-font-btn">
+              Log in / Sign up
+            </Link>
+          )}
+        </div>
       </div>
     </header>
   );

@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session, selectinload
 
 from app import models, schemas
-from app.deps import get_db
+from app.deps import get_db, get_default_creator
 
 router = APIRouter(prefix="/api/automations", tags=["automations"])
 
@@ -18,10 +18,17 @@ def _now_utc():
 
 
 @router.get("", response_model=list[schemas.AutomationOut])
-def list_automations(db: Session = Depends(get_db)):
+def list_automations(
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    user_form_ids = [f.id for f in db.query(models.Form.id).filter(models.Form.creator_id == creator.id).all()]
+    if not user_form_ids:
+        return []
     automations = (
         db.query(models.Automation)
         .options(selectinload(models.Automation.form))
+        .filter(models.Automation.form_id.in_(user_form_ids))
         .order_by(models.Automation.created_at.desc())
         .all()
     )
@@ -35,9 +42,13 @@ def list_automations(db: Session = Depends(get_db)):
 
 
 @router.post("", response_model=schemas.AutomationOut, status_code=status.HTTP_201_CREATED)
-def create_automation(payload: schemas.AutomationCreate, db: Session = Depends(get_db)):
+def create_automation(
+    payload: schemas.AutomationCreate,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
     if payload.form_id:
-        form = db.query(models.Form).filter(models.Form.id == payload.form_id).first()
+        form = db.query(models.Form).filter(models.Form.id == payload.form_id, models.Form.creator_id == creator.id).first()
         if not form:
             raise HTTPException(status_code=404, detail="Selected form not found")
 
@@ -65,11 +76,18 @@ def create_automation(payload: schemas.AutomationCreate, db: Session = Depends(g
 
 @router.patch("/{automation_id}", response_model=schemas.AutomationOut)
 def update_automation(
-    automation_id: int, payload: schemas.AutomationUpdate, db: Session = Depends(get_db)
+    automation_id: int,
+    payload: schemas.AutomationUpdate,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
 ):
+    user_form_ids = [f.id for f in db.query(models.Form.id).filter(models.Form.creator_id == creator.id).all()]
     automation = (
         db.query(models.Automation)
-        .filter(models.Automation.id == automation_id)
+        .filter(
+            models.Automation.id == automation_id,
+            (models.Automation.form_id.in_(user_form_ids)) | (models.Automation.form_id == None),
+        )
         .first()
     )
     if not automation:
@@ -87,10 +105,18 @@ def update_automation(
 
 
 @router.delete("/{automation_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_automation(automation_id: int, db: Session = Depends(get_db)):
+def delete_automation(
+    automation_id: int,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
+    user_form_ids = [f.id for f in db.query(models.Form.id).filter(models.Form.creator_id == creator.id).all()]
     automation = (
         db.query(models.Automation)
-        .filter(models.Automation.id == automation_id)
+        .filter(
+            models.Automation.id == automation_id,
+            (models.Automation.form_id.in_(user_form_ids)) | (models.Automation.form_id == None),
+        )
         .first()
     )
     if not automation:
@@ -100,12 +126,20 @@ def delete_automation(automation_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/{automation_id}/test", response_model=schemas.AutomationTestResult)
-def test_automation(automation_id: int, db: Session = Depends(get_db)):
+def test_automation(
+    automation_id: int,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
     """Executes a live test run for the specified automation node."""
+    user_form_ids = [f.id for f in db.query(models.Form.id).filter(models.Form.creator_id == creator.id).all()]
     automation = (
         db.query(models.Automation)
         .options(selectinload(models.Automation.form))
-        .filter(models.Automation.id == automation_id)
+        .filter(
+            models.Automation.id == automation_id,
+            (models.Automation.form_id.in_(user_form_ids)) | (models.Automation.form_id == None),
+        )
         .first()
     )
     if not automation:

@@ -12,7 +12,17 @@ import { PromptModal } from "@/components/ui/PromptModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { SparkleIcon, PlusIcon, XIcon, SearchIcon, TrashIcon } from "@/components/ui/icons";
 
+import { AuthGuard } from "@/components/auth/AuthGuard";
+
 export default function ContactsPage() {
+  return (
+    <AuthGuard>
+      <ContactsContent />
+    </AuthGuard>
+  );
+}
+
+function ContactsContent() {
   const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
@@ -23,12 +33,15 @@ export default function ContactsPage() {
   const [newContactName, setNewContactName] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<Contact | null>(null);
 
-  const { data: contacts, isLoading } = useQuery({
+  const { data: contacts, isLoading, refetch } = useQuery({
     queryKey: ["contacts"],
     queryFn: () => api.listContacts(),
   });
 
-  const invalidate = () => qc.invalidateQueries({ queryKey: ["contacts"] });
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: ["contacts"] });
+    refetch();
+  };
 
   const autoSyncMutation = useMutation({
     mutationFn: api.autoSyncContacts,
@@ -274,7 +287,25 @@ export default function ContactsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {filteredContacts.map((c) => {
+                  {filteredContacts.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="py-8 text-center text-xs text-ink-soft">
+                        No contacts found matching {search ? `"${search}"` : activeFilterTag ? `tag "${activeFilterTag}"` : "your filter"}.
+                        {(search || activeFilterTag) && (
+                          <button
+                            onClick={() => {
+                              setSearch("");
+                              setActiveFilterTag(null);
+                            }}
+                            className="ml-2 font-bold text-ink underline hover:opacity-80"
+                          >
+                            Clear filters
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredContacts.map((c) => {
                     const initials = (c.name || c.email)
                       .split(" ")
                       .map((w) => w[0])
@@ -353,7 +384,7 @@ export default function ContactsPage() {
                         </td>
                       </tr>
                     );
-                  })}
+                  }))}
                 </tbody>
               </table>
             </div>

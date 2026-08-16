@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+import { useAuth } from "@/lib/auth-context";
+
 export function HeroSection() {
+  const { user } = useAuth();
   return (
     <section className="lp-section-hero">
       <div className="lp-container">
@@ -32,8 +35,8 @@ export function HeroSection() {
             </p>
 
             <div className="flex flex-wrap gap-4 mt-2">
-              <Link href="/dashboard" className="lp-btn-primary lp-font-btn px-8 py-4 text-base">
-                Get started — no login needed
+              <Link href={user ? "/dashboard" : "/signup"} className="lp-btn-primary lp-font-btn px-8 py-4 text-base">
+                {user ? "Go to Dashboard" : "Get started free"}
               </Link>
               <Link href="#features" className="lp-btn-secondary lp-font-btn px-8 py-4 text-base">
                 See how it works

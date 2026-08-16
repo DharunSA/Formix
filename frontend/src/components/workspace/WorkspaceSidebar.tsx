@@ -1,8 +1,20 @@
-"use client";
-
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { AskFormixAICapsule } from "@/components/ai/AskFormixAICapsule";
+import { CreateWorkspaceModal } from "./CreateWorkspaceModal";
+
+interface Workspace {
+  id: string;
+  name: string;
+  color: string;
+}
+
+const DEFAULT_WORKSPACES: Workspace[] = [
+  { id: "ws-default", name: "My workspace", color: "#059669" },
+  { id: "ws-marketing", name: "Marketing Campaigns", color: "#7c3aed" },
+];
 
 interface WorkspaceSidebarProps {
   onCreateForm: () => void;
@@ -19,11 +31,60 @@ export function WorkspaceSidebar({
   onSearchChange,
   className = "",
 }: WorkspaceSidebarProps) {
-  const { data: forms } = useQuery({ queryKey: ["forms"], queryFn: api.listForms });
+  const { data: allForms } = useQuery({ queryKey: ["all_forms_workspace"], queryFn: () => api.listForms() });
 
-  const totalFormsCount = forms?.length ?? 0;
-  const totalResponses = forms?.reduce((acc, f) => acc + (f.response_count || 0), 0) ?? 0;
-  const quotaLimit = 10;
+  const [workspaces, setWorkspaces] = useState<Workspace[]>(DEFAULT_WORKSPACES);
+  const [activeWorkspaceId, setActiveWorkspaceId] = useState<string>("ws-default");
+  const [createWorkspaceOpen, setCreateWorkspaceOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("formix_user_workspaces");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setWorkspaces(parsed);
+          }
+        } catch {
+          // ignore
+        }
+      }
+      const storedActive = localStorage.getItem("formix_active_workspace");
+      if (storedActive) setActiveWorkspaceId(storedActive);
+    }
+  }, []);
+
+  const switchWorkspace = (wsId: string, wsName: string) => {
+    setActiveWorkspaceId(wsId);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("formix_active_workspace", wsId);
+      window.dispatchEvent(new CustomEvent("formix_workspace_change", { detail: { id: wsId, name: wsName } }));
+    }
+    toast.info(`Switched to "${wsName}" workspace`);
+  };
+
+  const saveWorkspaces = (newWorkspaces: Workspace[]) => {
+    setWorkspaces(newWorkspaces);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("formix_user_workspaces", JSON.stringify(newWorkspaces));
+    }
+  };
+
+  const handleCreateWorkspace = (name: string, color: string) => {
+    const newWs: Workspace = {
+      id: `ws-${Date.now()}`,
+      name,
+      color,
+    };
+    const next = [...workspaces, newWs];
+    saveWorkspaces(next);
+    switchWorkspace(newWs.id, newWs.name);
+  };
+
+  const activeForms = allForms?.filter((f) => (f.workspace_id || "ws-default") === activeWorkspaceId) ?? [];
+  const totalResponses = activeForms.reduce((acc, f) => acc + (f.response_count || 0), 0);
+  const quotaLimit = 100;
   const quotaPercent = Math.min(100, Math.round((totalResponses / quotaLimit) * 100));
 
   return (
@@ -56,32 +117,58 @@ export function WorkspaceSidebar({
 
       {/* Workspaces Section */}
       <div className="flex flex-col gap-1 mb-6">
-        <div className="flex items-center justify-between text-ink px-2.5 py-2 rounded-lg cursor-pointer hover:bg-surface transition-colors font-bold text-xs">
+        <div className="flex items-center justify-between text-ink px-2.5 py-2 rounded-lg font-bold text-xs">
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-sm text-ink-soft">grid_view</span>
             Workspaces
           </div>
-          <span className="border border-border hover:bg-surface rounded-md w-5 h-5 flex items-center justify-center text-xs text-ink-soft">
+          <button
+            onClick={() => setCreateWorkspaceOpen(true)}
+            className="border border-border hover:bg-surface rounded-md w-5 h-5 flex items-center justify-center text-xs text-ink-soft hover:text-ink cursor-pointer transition-colors"
+            title="Create new workspace"
+          >
             +
-          </span>
+          </button>
         </div>
 
-        <div className="mt-2">
+        <div className="mt-1 space-y-1">
           <div className="flex items-center justify-between text-ink-soft px-2.5 py-1 text-[11px] uppercase tracking-wider font-bold">
-            <span>Private</span>
-            <span className="material-symbols-outlined text-xs">arrow_drop_up</span>
+            <span>Workspaces ({workspaces.length})</span>
           </div>
-          <div className="bg-surface text-ink rounded-lg font-bold px-2.5 py-2 mt-1 flex items-center justify-between cursor-pointer text-xs border border-border/40">
-            <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              My workspace
-            </span>
-            <span className="text-[10px] bg-card border border-border text-ink px-1.5 py-0.5 rounded font-bold">
-              {totalFormsCount}
-            </span>
-          </div>
+          {workspaces.map((ws) => {
+            const isActive = ws.id === activeWorkspaceId;
+            const wsFormCount = allForms?.filter((f) => (f.workspace_id || "ws-default") === ws.id).length ?? 0;
+            return (
+              <div
+                key={ws.id}
+                onClick={() => switchWorkspace(ws.id, ws.name)}
+                className={`rounded-lg font-bold px-2.5 py-2 flex items-center justify-between cursor-pointer text-xs transition-colors border ${
+                  isActive
+                    ? "bg-surface text-ink border-border/80 shadow-xs"
+                    : "text-ink-soft hover:bg-surface/60 hover:text-ink border-transparent"
+                }`}
+              >
+                <span className="flex items-center gap-2 truncate">
+                  <span
+                    className="w-2 h-2 rounded-full shrink-0"
+                    style={{ backgroundColor: ws.color }}
+                  />
+                  <span className="truncate">{ws.name}</span>
+                </span>
+                <span className="text-[10px] bg-card border border-border text-ink-soft px-1.5 py-0.5 rounded font-bold shrink-0">
+                  {wsFormCount}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
+
+      <CreateWorkspaceModal
+        open={createWorkspaceOpen}
+        onClose={() => setCreateWorkspaceOpen(false)}
+        onCreateWorkspace={handleCreateWorkspace}
+      />
 
       {/* Responses Collected Quota */}
       <div className="mt-auto border-t border-border pt-4 mb-4">

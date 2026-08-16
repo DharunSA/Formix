@@ -39,6 +39,7 @@ class QuestionOut(QuestionBase):
 class FormCreate(BaseModel):
     title: str = "Untitled Form"
     description: Optional[str] = None
+    workspace_id: Optional[str] = "ws-default"
 
 
 class FormPatch(BaseModel):
@@ -49,6 +50,8 @@ class FormPatch(BaseModel):
     thank_you_message: Optional[str] = None
     theme_color: Optional[str] = None
     theme_background: Optional[str] = None
+    response_limit: Optional[int] = None
+    workspace_id: Optional[str] = None
 
 
 class FormQuestionsPatch(BaseModel):
@@ -63,6 +66,8 @@ class FormFullUpdate(BaseModel):
     thank_you_message: Optional[str] = None
     theme_color: Optional[str] = None
     theme_background: Optional[str] = None
+    response_limit: Optional[int] = None
+    workspace_id: Optional[str] = None
     questions: list[QuestionCreate] = []
 
 
@@ -74,11 +79,13 @@ class FormOut(BaseModel):
     description: Optional[str] = None
     status: FormStatus
     share_slug: str
+    workspace_id: Optional[str] = "ws-default"
     welcome_title: Optional[str] = None
     welcome_description: Optional[str] = None
     thank_you_message: Optional[str] = None
     theme_color: Optional[str] = None
     theme_background: Optional[str] = None
+    response_limit: Optional[int] = None
     created_at: datetime
     updated_at: datetime
     published_at: Optional[datetime] = None
@@ -116,6 +123,7 @@ class PublicFormOut(BaseModel):
     thank_you_message: Optional[str] = None
     theme_color: Optional[str] = None
     theme_background: Optional[str] = None
+    response_limit: Optional[int] = None
     questions: list[PublicQuestionOut]
 
 

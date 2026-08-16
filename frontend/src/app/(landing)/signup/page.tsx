@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState, useEffect, useReducer } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
+import { toast } from "sonner";
 
 /* ─── Carousel state ───────────────────────────────────── */
 const carouselSlides = [
@@ -47,10 +49,6 @@ function getSlideClass(i: number, current: number): string {
 export default function SignupPage() {
   const router = useRouter();
 
-  // Instant zero-barrier access: redirect signup directly to dashboard
-  useEffect(() => {
-    router.replace("/dashboard");
-  }, [router]);
 
   const [state, dispatch] = useReducer(carouselReducer, { current: 0 });
   const [isPlaying, setIsPlaying] = useState(true);
@@ -62,7 +60,37 @@ export default function SignupPage() {
     return () => clearInterval(id);
   }, [isPlaying]);
 
-  const handleSignup = () => router.push("/dashboard");
+  const { signUpWithEmail, signInWithProvider } = useAuth();
+  const [emailInput, setEmailInput] = useState("");
+
+  const handleOAuth = async (provider: "google" | "azure") => {
+    if (provider === "azure") {
+      toast.info("Microsoft Sign-In is not configured yet. Please use Google or Email to sign up.");
+      return;
+    }
+    try {
+      const { error } = await signInWithProvider(provider);
+      if (error) toast.error(error.message);
+    } catch {
+      toast.error("Failed to authenticate with " + provider);
+    }
+  };
+
+  const handleSignup = async () => {
+    const emailPrompt = emailInput || window.prompt("Enter your email address to sign up:");
+    if (!emailPrompt) return;
+    try {
+      const { error } = await signUpWithEmail(emailPrompt);
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Account created successfully!");
+        router.push("/dashboard");
+      }
+    } catch {
+      toast.error("Error creating account");
+    }
+  };
 
 
   return (
@@ -255,8 +283,8 @@ export default function SignupPage() {
             {/* Buttons */}
             <div className="w-full space-y-4">
               <button
-                onClick={handleSignup}
-                className="w-full flex items-center justify-center gap-3 border border-[#dadad8] rounded-xl py-3.5 px-4 hover:bg-[#faf9f7] transition-colors font-medium text-[#1a1c1b] bg-white shadow-sm"
+                onClick={() => handleOAuth("google")}
+                className="w-full flex items-center justify-center gap-3 border border-[#dadad8] rounded-xl py-3.5 px-4 hover:bg-[#faf9f7] transition-colors font-medium text-[#1a1c1b] bg-white shadow-sm cursor-pointer"
                 style={{ fontFamily: "var(--font-jakarta)" }}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -269,8 +297,8 @@ export default function SignupPage() {
               </button>
 
               <button
-                onClick={handleSignup}
-                className="w-full flex items-center justify-center gap-3 border border-[#dadad8] rounded-xl py-3.5 px-4 hover:bg-[#faf9f7] transition-colors font-medium text-[#1a1c1b] bg-white shadow-sm"
+                onClick={() => handleOAuth("azure")}
+                className="w-full flex items-center justify-center gap-3 border border-[#dadad8] rounded-xl py-3.5 px-4 hover:bg-[#faf9f7] transition-colors font-medium text-[#1a1c1b] bg-white shadow-sm cursor-pointer"
                 style={{ fontFamily: "var(--font-jakarta)" }}
               >
                 <svg width="20" height="20" viewBox="0 0 21 21" fill="none">

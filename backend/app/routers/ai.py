@@ -1,18 +1,216 @@
+import os
+import json
+import urllib.request
 from datetime import datetime, timezone
 import re
 from typing import Optional
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session, selectinload
 
 from app import models, schemas
-from app.deps import get_db
+from app.deps import get_db, get_default_creator
 
 router = APIRouter(prefix="/api/ai", tags=["ai"])
 
 
 def _now_utc():
     return datetime.now(timezone.utc)
+
+
+def _call_llm_for_structured_form(prompt: str) -> Optional[dict]:
+    """Calls Gemini, Groq, or OpenAI API if key is present in environment."""
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    openai_key = os.getenv("OPENAI_API_KEY")
+    groq_key = os.getenv("GROQ_API_KEY")
+
+    system_instruction = (
+        "You are Formix AI, an expert form builder. "
+        "Generate a structured JSON form for the given user prompt. "
+        "Return ONLY a raw JSON object with keys: "
+        "title, description, welcome_title, welcome_description, thank_you_message, "
+        "theme_color (hex string), theme_background (hex string), and questions (array of objects with "
+        "type [one of: short_text, long_text, multiple_choice, dropdown, rating, email, number, date, yes_no], "
+        "title, description, required [bool], order_index [int], options [array of {id, label} if choice], settings [object])."
+    )
+
+    if gemini_key:
+        candidate_models = ["models/gemini-flash-lite-latest", "models/gemini-flash-latest", "models/gemini-2.0-flash", "models/gemma-4-26b-a4b-it"]
+        for m in candidate_models:
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/{m}:generateContent?key={gemini_key}"
+                full_prompt = (
+                    f"{system_instruction}\n\n"
+                    f"User Request: {prompt}\n\n"
+                    "IMPORTANT: Generate form questions SPECIFIC to the topic in the request. "
+                    "Do NOT use generic placeholder questions. "
+                    "If the user specifies a number of questions (e.g. 8 questions), generate EXACTLY that number of questions. Otherwise, generate 5-8 domain-relevant questions. "
+                    "Output must be a single raw JSON object, no markdown, no explanation."
+                )
+                payload = {
+                    "contents": [{"parts": [{"text": full_prompt}]}],
+                }
+                req = urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                    method="POST"
+                )
+                with urllib.request.urlopen(req, timeout=20) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                    text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+                    # Extract JSON from markdown codeblocks if present
+                    if "```" in text:
+                        match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', text, re.DOTALL)
+                        if match:
+                            text = match.group(1)
+                        else:
+                            text = text.split("```")[1].replace("json", "").strip()
+                    # Find first { and last } to extract JSON cleanly
+                    start = text.find("{")
+                    end = text.rfind("}") + 1
+                    if start >= 0 and end > start:
+                        text = text[start:end]
+                    parsed = json.loads(text)
+                    if "questions" in parsed and len(parsed["questions"]) > 0:
+                        print(f"[Formix AI] Gemini {m} SUCCESS: {len(parsed['questions'])} questions")
+                        return parsed
+                    else:
+                        print(f"[Formix AI] Gemini {m} returned no questions, trying next model")
+            except Exception as e:
+                import sys
+                print(f"[Formix AI] Gemini model {m} error: {type(e).__name__}: {e}", flush=True)
+
+    elif groq_key:
+        try:
+            url = "https://api.groq.com/openai/v1/chat/completions"
+            payload = {
+                "model": "llama-3.3-70b-versatile",
+                "response_format": {"type": "json_object"},
+                "messages": [
+                    {"role": "system", "content": system_instruction},
+                    {"role": "user", "content": prompt}
+                ]
+            }
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json", "Authorization": f"Bearer {groq_key}"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=12) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                text = data["choices"][0]["message"]["content"]
+                return json.loads(text)
+        except Exception as e:
+            print("Groq API call error:", e)
+
+    elif openai_key:
+        try:
+            url = "https://api.openai.com/v1/chat/completions"
+            payload = {
+                "model": "gpt-4o-mini",
+                "response_format": {"type": "json_object"},
+                "messages": [
+                    {"role": "system", "content": system_instruction},
+                    {"role": "user", "content": prompt}
+                ]
+            }
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json", "Authorization": f"Bearer {openai_key}"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=12) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                text = data["choices"][0]["message"]["content"]
+                return json.loads(text)
+        except Exception as e:
+            print("OpenAI API call error:", e)
+
+    return None
+
+
+def _call_llm_for_insights(form_title: str, total_responses: int, answers_summary: list[str]) -> Optional[dict]:
+    """Synthesizes AI insights via Gemini, Groq, or OpenAI API."""
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    openai_key = os.getenv("OPENAI_API_KEY")
+    groq_key = os.getenv("GROQ_API_KEY")
+
+    system_instruction = (
+        "You are Formix AI Insights Engine. Analyze the form response text and metrics. "
+        "Return ONLY a raw JSON object with keys: "
+        "sentiment_score (float 0.0-1.0), sentiment_label (string), "
+        "executive_summary (string), key_findings (array of 3 strings), "
+        "top_quotes (array of strings), action_recommendations (array of 3 strings)."
+    )
+
+    user_text = f"Form Title: {form_title}\nTotal Submissions: {total_responses}\nSample Answers: {json.dumps(answers_summary[:15])}"
+
+    if gemini_key:
+        candidate_models = ["models/gemini-flash-lite-latest", "models/gemini-flash-latest", "models/gemini-2.0-flash"]
+        for m in candidate_models:
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/{m}:generateContent?key={gemini_key}"
+                payload = {
+                    "contents": [{"parts": [{"text": f"{system_instruction}\n\n{user_text}\n\nRespond ONLY with a raw JSON object, no markdown."}]}],
+                }
+                req = urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                    method="POST"
+                )
+                with urllib.request.urlopen(req, timeout=20) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                    text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+                    if "```" in text:
+                        match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', text, re.DOTALL)
+                        if match:
+                            text = match.group(1)
+                        else:
+                            text = text.split("```")[1].replace("json", "").strip()
+                    start = text.find("{")
+                    end = text.rfind("}") + 1
+                    if start >= 0 and end > start:
+                        text = text[start:end]
+                    result = json.loads(text)
+                    if "executive_summary" in result:
+                        return result
+            except Exception as e:
+                print(f"Gemini Insights model {m} error:", e)
+
+    elif groq_key or openai_key:
+        try:
+            target_url = "https://api.groq.com/openai/v1/chat/completions" if groq_key else "https://api.openai.com/v1/chat/completions"
+            key = groq_key or openai_key
+            model = "llama-3.3-70b-versatile" if groq_key else "gpt-4o-mini"
+            payload = {
+                "model": model,
+                "response_format": {"type": "json_object"},
+                "messages": [
+                    {"role": "system", "content": system_instruction},
+                    {"role": "user", "content": user_text}
+                ]
+            }
+            req = urllib.request.Request(
+                target_url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json", "Authorization": f"Bearer {key}"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=12) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                text = data["choices"][0]["message"]["content"]
+                return json.loads(text)
+        except Exception as e:
+            print("LLM Insights call error:", e)
+
+    return None
 
 
 def _generate_structured_form_from_prompt(prompt: str) -> dict:
@@ -236,20 +434,18 @@ def _generate_structured_form_from_prompt(prompt: str) -> dict:
 
 
 @router.post("/generate-form", response_model=schemas.FormDetailOut, status_code=status.HTTP_201_CREATED)
-def ai_generate_form(payload: schemas.AIGenerateFormIn, db: Session = Depends(get_db)):
+def ai_generate_form(
+    payload: schemas.AIGenerateFormIn,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
     prompt = payload.prompt.strip()
     if not prompt:
         raise HTTPException(status_code=400, detail="Please provide a descriptive prompt for AI form generation.")
 
-    # Find or create default creator
-    creator = db.query(models.Creator).first()
-    if not creator:
-        creator = models.Creator(name="Dharun S", email="dharun.s23@typeform.demo")
-        db.add(creator)
-        db.commit()
-        db.refresh(creator)
-
-    spec = _generate_structured_form_from_prompt(prompt)
+    spec = _call_llm_for_structured_form(prompt)
+    if not spec or not isinstance(spec, dict) or "questions" not in spec:
+        spec = _generate_structured_form_from_prompt(prompt)
 
     form = models.Form(
         creator_id=creator.id,
@@ -288,21 +484,25 @@ def ai_generate_form(payload: schemas.AIGenerateFormIn, db: Session = Depends(ge
     full_form = (
         db.query(models.Form)
         .options(selectinload(models.Form.questions))
-        .filter(models.Form.id == form.id)
+        .filter(models.Form.id == form.id, models.Form.creator_id == creator.id)
         .first()
     )
     return full_form
 
 
 @router.post("/ask-insights", response_model=schemas.AIInsightsOut)
-def ai_ask_insights(payload: schemas.AIInsightsIn, db: Session = Depends(get_db)):
+def ai_ask_insights(
+    payload: schemas.AIInsightsIn,
+    db: Session = Depends(get_db),
+    creator: models.Creator = Depends(get_default_creator),
+):
     form = (
         db.query(models.Form)
         .options(
             selectinload(models.Form.questions),
             selectinload(models.Form.responses).selectinload(models.Response.answers),
         )
-        .filter(models.Form.id == payload.form_id)
+        .filter(models.Form.id == payload.form_id, models.Form.creator_id == creator.id)
         .first()
     )
     if not form:
@@ -345,6 +545,21 @@ def ai_ask_insights(payload: schemas.AIInsightsIn, db: Session = Depends(get_db)
         "Add a multi-select question for more granular preference segmentation.",
         "Export response data to CSV or connect Webhooks for immediate CRM synchronization.",
     ]
+
+    # Try LLM insights call first
+    llm_insights = _call_llm_for_insights(form.title, total_responses, text_answers)
+    if llm_insights and isinstance(llm_insights, dict):
+        return schemas.AIInsightsOut(
+            form_id=form.id,
+            form_title=form.title,
+            total_responses=total_responses,
+            sentiment_score=float(llm_insights.get("sentiment_score", 0.90)),
+            sentiment_label=str(llm_insights.get("sentiment_label", "Positive")),
+            executive_summary=str(llm_insights.get("executive_summary", "")),
+            key_findings=list(llm_insights.get("key_findings", findings)),
+            top_quotes=list(llm_insights.get("top_quotes", quotes_sample)),
+            action_recommendations=list(llm_insights.get("action_recommendations", recommendations)),
+        )
 
     return schemas.AIInsightsOut(
         form_id=form.id,

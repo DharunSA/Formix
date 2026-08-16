@@ -1,6 +1,4 @@
-"use client";
-
-import { useCallback, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useSyncExternalStore } from "react";
 
 const STORAGE_KEY = "formix-theme";
 
@@ -11,8 +9,8 @@ function getSystemTheme(): Theme {
 }
 
 function getSnapshot(): Theme {
-  const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
-  return stored ?? getSystemTheme();
+  const stored = typeof window !== "undefined" ? (localStorage.getItem(STORAGE_KEY) as Theme | null) : null;
+  return stored ?? (typeof window !== "undefined" ? getSystemTheme() : "light");
 }
 
 function getServerSnapshot(): Theme {
@@ -26,28 +24,31 @@ function subscribe(onChange: () => void) {
 
 const emptySubscribe = () => () => {};
 
-/**
- * Dark mode for the creator-facing app shell (dashboard/builder/results) only.
- * The public respondent flow deliberately never reads this - it renders with
- * each form's own theme_color/theme_background regardless of the creator's
- * app preference.
- *
- * Reads localStorage via useSyncExternalStore (not useState+useEffect) so the
- * client-only read never desyncs from what React thinks was rendered - the
- * first client render intentionally matches getServerSnapshot ("light") to
- * avoid a hydration mismatch; `mounted` tells consumers when the real value
- * has taken over, so a toggle icon can hide itself for that one frame instead
- * of flashing the wrong icon.
- */
 export function useTheme() {
   const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
+  useEffect(() => {
+    const currentTheme = getSnapshot();
+    if (currentTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+  }, [theme, mounted]);
+
   const toggle = useCallback(() => {
     const next: Theme = getSnapshot() === "dark" ? "light" : "dark";
     localStorage.setItem(STORAGE_KEY, next);
-    // The native `storage` event only fires in *other* tabs; dispatch it manually
-    // here so this tab's useSyncExternalStore subscribers re-read immediately.
+    if (next === "dark") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      document.documentElement.setAttribute("data-theme", "light");
+    }
     window.dispatchEvent(new Event("storage"));
   }, []);
 

@@ -31,11 +31,7 @@ def _opts(*labels):
     return [{"id": f"opt_{i}", "label": label} for i, label in enumerate(labels)]
 
 
-def run_seed(db: Session):
-    creator = models.Creator(name="Demo Creator", email="creator@typeform-clone.local")
-    db.add(creator)
-    db.flush()
-
+def seed_forms_for_creator(db: Session, creator: models.Creator):
     # ---------------- Form 1: Customer Feedback Survey ----------------
     feedback = models.Form(
         creator_id=creator.id,
@@ -93,7 +89,6 @@ def run_seed(db: Session):
             (fb_questions[4], random.choice([True, True, True, False])),
             (fb_questions[5], random.choice(feedback_texts)),
         ]
-        # Simulate a couple of partial (in-progress, not completed) responses.
         answers_to_write = answer_defs if completed else answer_defs[: random.randint(1, 3)]
         for question, value in answers_to_write:
             if value in (None, ""):
@@ -155,7 +150,7 @@ def run_seed(db: Session):
             db.add(models.Answer(response_id=response.id, question_id=question.id, value=value,
                                   value_text=render_value_text(question, value)))
 
-    # ---------------- Form 3: Event Registration (draft, unpublished) ----------------
+    # ---------------- Form 3: Event Registration ----------------
     event = models.Form(
         creator_id=creator.id,
         title="Product Launch Event Registration",
@@ -177,3 +172,10 @@ def run_seed(db: Session):
     ])
 
     db.commit()
+
+
+def run_seed(db: Session):
+    creator = models.Creator(name="Demo Creator", email="creator@typeform-clone.local")
+    db.add(creator)
+    db.flush()
+    seed_forms_for_creator(db, creator)
