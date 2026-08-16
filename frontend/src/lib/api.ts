@@ -8,8 +8,19 @@ import type {
   ResponseListItem,
 } from "./types";
 
-const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-const API_URL = rawApiUrl.replace(/\/$/, "");
+export function getApiBaseUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (envUrl && !envUrl.includes("localhost") && !envUrl.includes("127.0.0.1")) {
+    return envUrl.replace(/\/$/, "");
+  }
+
+  // When loaded in any browser on production (e.g. formix-delta.vercel.app or any domain other than localhost)
+  if (typeof window !== "undefined" && !window.location.hostname.includes("localhost") && !window.location.hostname.includes("127.0.0.1")) {
+    return "https://formix-api-7wkc.onrender.com";
+  }
+
+  return (envUrl || "http://localhost:8000").replace(/\/$/, "");
+}
 
 export function getPublicShareUrl(shareSlug: string): string {
   if (typeof window !== "undefined" && window.location?.origin && !window.location.origin.includes("localhost") && !window.location.origin.includes("127.0.0.1")) {
@@ -18,7 +29,6 @@ export function getPublicShareUrl(shareSlug: string): string {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://formix-delta.vercel.app";
   return `${appUrl.replace(/\/$/, "")}/f/${shareSlug}`;
 }
-
 
 export class ApiError extends Error {
   status: number;
@@ -34,11 +44,12 @@ export class ApiError extends Error {
 import { supabase } from "./supabase";
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const baseUrl = getApiBaseUrl();
   const { data: { session } } = await supabase.auth.getSession();
   const demoUser = typeof window !== "undefined" ? localStorage.getItem("formix_demo_user") : null;
   const token = session?.access_token || (demoUser ? "demo-token" : null);
 
-  const res = await fetch(`${API_URL}${path}`, {
+  const res = await fetch(`${baseUrl}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -120,7 +131,7 @@ export const api = {
   getResponse: (id: number, responseId: number) =>
     request<ResponseDetail>(`/api/forms/${id}/responses/${responseId}`),
   getSummary: (id: number) => request<FormSummary>(`/api/forms/${id}/summary`),
-  exportCsvUrl: (id: number) => `${API_URL}/api/forms/${id}/responses/export.csv`,
+  exportCsvUrl: (id: number) => `${getApiBaseUrl()}/api/forms/${id}/responses/export.csv`,
 
   getPublicForm: (slug: string) => request<PublicForm>(`/api/public/forms/${slug}`),
   saveResponseProgress: (
