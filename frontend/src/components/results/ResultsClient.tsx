@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useState } from "react";
 import clsx from "clsx";
-import { api } from "@/lib/api";
+import { api, getPublicShareUrl } from "@/lib/api";
 import { useTheme } from "@/lib/theme";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -43,7 +43,7 @@ export function ResultsClient({ formId }: { formId: number }) {
   }
 
   const accent = form.theme_color || "#0d0d0d";
-  const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/f/${form.share_slug}` : "";
+  const shareUrl = getPublicShareUrl(form.share_slug);
   const partial = summary.total_responses - summary.completed_responses;
 
   return (
@@ -69,8 +69,9 @@ export function ResultsClient({ formId }: { formId: number }) {
               variant="secondary"
               size="sm"
               onClick={() => {
-                navigator.clipboard.writeText(shareUrl);
-                toast.success("Share link copied");
+                const link = getPublicShareUrl(form.share_slug);
+                navigator.clipboard.writeText(link);
+                toast.success("Share link copied: " + link);
               }}
             >
               <LinkIcon width={14} height={14} />

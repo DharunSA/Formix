@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { api, getPublicShareUrl } from "@/lib/api";
 import type { FormListItem } from "@/lib/types";
 import { Badge } from "@/components/ui/Badge";
 import { DropdownMenu } from "@/components/ui/DropdownMenu";
@@ -42,7 +43,7 @@ export function FormCard({
   onTogglePublish: () => void;
 }) {
   const router = useRouter();
-  const publicUrl = typeof window !== "undefined" ? `${window.location.origin}/f/${form.share_slug}` : "";
+  const publicUrl = getPublicShareUrl(form.share_slug);
 
   return (
     <div className="group relative bg-card border border-border rounded-2xl p-5 hover:shadow-md dark:hover:shadow-black/30 hover:-translate-y-0.5 transition-all duration-150 flex flex-col">
@@ -71,8 +72,9 @@ export function FormCard({
                     label: "Copy share link",
                     icon: <LinkIcon width={15} height={15} />,
                     onClick: () => {
-                      navigator.clipboard.writeText(publicUrl);
-                      toast.success("Share link copied");
+                      const link = getPublicShareUrl(form.share_slug);
+                      navigator.clipboard.writeText(link);
+                      toast.success("Share link copied: " + link);
                     },
                   },
                 ]

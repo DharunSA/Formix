@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { api, ApiError } from "@/lib/api";
+import { api, ApiError, getPublicShareUrl } from "@/lib/api";
 import type { FormDetail, Question, QuestionType } from "@/lib/types";
 import { emptyQuestionDefaults } from "@/lib/question-types";
 import { QuestionList } from "./QuestionList";
@@ -210,7 +210,7 @@ export function BuilderClient({ formId }: { formId: number }) {
 
   const selectedQuestion = questions?.find((q) => q.id === selectedId) ?? null;
   const selectedIndex = questions?.findIndex((q) => q.id === selectedId) ?? -1;
-  const shareUrl = data && typeof window !== "undefined" ? `${window.location.origin}/f/${data.share_slug}` : "";
+  const shareUrl = data ? getPublicShareUrl(data.share_slug) : "";
 
   if (isLoading || !meta || !questions) {
     return (
@@ -278,8 +278,9 @@ export function BuilderClient({ formId }: { formId: number }) {
               variant="secondary"
               size="sm"
               onClick={() => {
-                navigator.clipboard.writeText(shareUrl);
-                toast.success("Share link copied");
+                const link = data ? getPublicShareUrl(data.share_slug) : "";
+                navigator.clipboard.writeText(link);
+                toast.success("Share link copied: " + link);
               }}
             >
               <LinkIcon width={14} height={14} />

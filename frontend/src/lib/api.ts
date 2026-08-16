@@ -11,6 +11,14 @@ import type {
 const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 const API_URL = rawApiUrl.replace(/\/$/, "");
 
+export function getPublicShareUrl(shareSlug: string): string {
+  if (typeof window !== "undefined" && window.location?.origin && !window.location.origin.includes("localhost") && !window.location.origin.includes("127.0.0.1")) {
+    return `${window.location.origin}/f/${shareSlug}`;
+  }
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://formix-delta.vercel.app";
+  return `${appUrl.replace(/\/$/, "")}/f/${shareSlug}`;
+}
+
 
 export class ApiError extends Error {
   status: number;
